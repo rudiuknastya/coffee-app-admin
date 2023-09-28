@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      class="light-style layout-navbar-fixed layout-menu-fixed"
+      dir="ltr"
+      data-theme="theme-default"
+      data-template="vertical-menu-template-no-customizer" >
+<head th:replace="~{fragments :: head}"></head>
+<body>
+<div class="layout-wrapper layout-content-navbar">
+  <div class="layout-container">
+    <aside th:replace="~{fragments :: sidebar(${pageNum})}"></aside>
+    <div class="layout-page">
+      <nav th:replace="~{fragments :: navbar}"></nav>
+      <div class="content-wrapper">
+        <div class="container-xxl flex-grow-1 container-p-y">
+          <div class="card py-5 px-5">
+            <form th:action = "@{/admin/locations/{l} (l=${link})}" th:object = "${location}" method="post" class="row g-3" style="color:black;">
+              <div class="col-md-6" >
+                <label for="selectCity" class="form-label">Місто</label>
+                <select class="form-select" aria-label=".form-select-lg example" id="selectCity" th:field = "*{city}">
+                  <option th:each="c : ${cities}" th:value="${c}" th:text="${c}"></option>
+                </select>
+                <div class="text-danger" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></div>
+              </div>
+              <div class="col-md-6" >
+                <label for="inputPhone" class="form-label">Номер телефону</label>
+                <input type="text" class="form-control" id="inputPhone"  th:field = "*{phoneNumber}">
+                <div class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
+              </div>
+              <div>
+                <label for="exampleFormControlTextarea1" class="form-label">Адреса</label>
+                <input class="form-control" id="exampleFormControlTextarea1" th:field = "*{address}">
+                <div class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"> </div>
+              </div>
+              <div class="col-md-6" >
+                <label for="inputCoordinates" class="form-label">Координати</label>
+                <input type="text" class="form-control" id="inputCoordinates"  th:field = "*{coordinates}">
+                <div class="text-danger" th:if="${#fields.hasErrors('coordinates')}" th:errors="*{coordinates}"></div>
+              </div>
+              <div class="col-md-6" >
+                <label for="inputWorkingHours" class="form-label">Графік роботи</label>
+                <textarea type="text" class="form-control" id="inputWorkingHours" rows="2"  th:field = "*{workingHours}"></textarea>
+                <div class="text-danger" th:if="${#fields.hasErrors('workingHours')}" th:errors="*{workingHours}"></div>
+              </div>
+              <div class="col-md-12 text-center mt-5">
+                <button type="submit" class="btn btn-primary">Зберегти</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+<script th:src="@{/assets/vendor/libs/hammer/hammer.js}"></script>
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<script th:src="@{/assets/js/main.js}"></script>
+
+</body>
+</html>

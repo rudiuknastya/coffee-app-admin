@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      class="light-style layout-navbar-fixed layout-menu-fixed"
+      dir="ltr"
+      data-theme="theme-default"
+      data-template="vertical-menu-template-no-customizer" >
+<head th:replace="~{fragments :: head}"></head>
+<body>
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+    <aside th:replace="~{fragments :: sidebar(${pageNum})}"></aside>
+        <div class="layout-page">
+            <nav th:replace="~{fragments :: navbar}"></nav>
+            <div class="content-wrapper">
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <div class="card py-5 px-5">
+                        <h4>Філіали</h4>
+                        <div class="row d-flex justify-content-between mb-4">
+<!--                            <form class="col-5 d-flex" role="search">-->
+                            <div class="col-5">
+                                <input class="form-control me-2" type="search" id="searchInput" placeholder="Введіть адресу" aria-label="Search">
+                            </div>
+<!--                                <button class="btn btn-outline-primary" id="search" type="submit">Пошук</button>-->
+<!--                            </form>-->
+                            <div class="col-3">
+                                <select class="select2 form-select" id="citySelect" aria-label="Default select example">
+                                    <option selected>Місто</option>
+                                    <option th:each="c : ${cities}" th:value="${c}" th:text="${c}"></option>
+                                </select>
+                            </div>
+                            <a th:href="@{/admin/locations/new}" type="button" class="btn btn-label-primary col-3 me-3"><i class="ti ti-plus"></i>Створити філіал</a>
+                        </div>
+
+                        <div class="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="btn-close" onclick="closeModal()" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h4>Ви впевнені що хочете видалити цей елемент?</h4>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" onclick="closeModal()" data-bs-dismiss="modal">Закрити</button>
+                                        <button type="button" class="btn btn-danger" onclick="deleteLocation()">Видалити</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>Місто</th>
+                                <th>Адреса</th>
+                                <th>Номер телефону</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody id = "locationsTable">
+<!--                            <tr th:each = "location: ${locations}">-->
+<!--                                <td th:text="${location.city}"></td>-->
+<!--                                <td th:text="${location.address}"></td>-->
+<!--                                <td th:text="${location.phoneNumber}"></td>-->
+<!--                                <td>-->
+<!--                                    <a th:href="@{/admin/locations/edit/{id}(id=${location.id})}" role="button" class="btn btn-primary"><i class="ti ti-pencil"></i></a>-->
+<!--                                    <a href="@{/admin/users/delete/{id}(id=${user.id})}" role="button" class="btn btn-danger"><i class="ti ti-trash"></i></a>-->
+<!--                                </td>-->
+<!--                            </tr>-->
+
+                            </tbody>
+                        </table>
+                        <ul class="pagination mt-4 justify-content-end"></ul>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+<script th:src="@{/assets/vendor/libs/hammer/hammer.js}"></script>
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<script th:src="@{/assets/js/main.js}"></script>
+
+<script>
+    $(document).ready(function(){
+        getLocations(0);
+    });
+    var paginationType;
+    var data = "";
+	function getLocations(currentPage) {
+		$.ajax({
+					type : "GET",
+					url : "getLocations",
+					data: {
+                        page: currentPage
+                    },
+					success : function(response) {
+						$('.tr').remove();
+						$('ul.pagination li').remove();
+						data = response.content
+						for (i = 0; i < data.length; i++) {
+							$("#locationsTable")
+									.append(
+											'<tr class="tr"> <td>'
+													+ data[i].city
+													+ '</td> <td>'
+													+ data[i].address
+													+ '</td> <td>'
+													+ data[i].phoneNumber
+													+ '</td> <td><a th:href="@{/admin/locations/edit/'+data[i].id+'}" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openModal('
+													+ data[i].id
+													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
+
+						}
+
+                              paginationType = 1;
+                              buildPagination(response);
+
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+	}
+	function buildPagination(response) {
+		totalPages = response.totalPages;
+		var pageNumber = response.pageable.pageNumber;
+        if(totalPages > 1){
+		var prev = '';
+
+			if(pageNumber !== 0) {
+                prev = '<li class="page-item prev"><a class="page-link waves-effect" id="prev" href="javascript:void(0);"><i class="ti ti-chevron-left ti-xs"></i></a></li>';
+			} else {
+                prev = '<li class="page-item prev disabled"><a class="page-link waves-effect" href="javascript:void(0);"><i class="ti ti-chevron-left ti-xs"></i></a></li>';
+		    }
+
+
+		var next = '';
+
+			if(pageNumber !== totalPages - 1) {
+				next = '<li class="page-item next"><a class="page-link waves-effect" id="next" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
+			} else {
+                next = '<li class="page-item next disabled"><a class="page-link waves-effect" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
+		    }
+
+       var pages = '';
+       var dots = '<li class="page-item disabled"><a class="page-link waves-effect" href="javascript:void(0);"> ... </a></li>';
+       if(pageNumber < 3){
+            for(var i = 1; i <= 5; i++){
+                if(i <= totalPages) {
+                    if(pageNumber+1 !== i){
+                        pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+                    } else {
+                        pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+                    }
+                }
+            }
+            if(totalPages > 6){
+                pages += dots;
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+totalPages+'</a></li>';
+            }
+
+       } else if (3 > totalPages - 1 - pageNumber) {
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
+            if(totalPages > 6){
+                pages += dots
+            }
+            for(var i = totalPages - 4; i <= totalPages; i++){
+                if(i > 1 ){
+                    if(pageNumber+1 !== i){
+                        pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+                    } else {
+                        pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+                    }
+                }
+            }
+
+       } else {
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
+            pages += dots
+
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+pageNumber+'</a></li>';
+            pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+(pageNumber+1)+'</a></li>';
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+(pageNumber+2)+'</a></li>';
+
+            pages += dots;
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+totalPages+'</a></li>';
+       }
+
+		pages = prev + pages + next;
+
+		$("ul.pagination").append(pages);
+		}
+	}
+	$(document).on("click", "ul.pagination li a", function() {
+	    let val = $(this).text();
+	    let id = $(this).attr('id')
+	    console.log(paginationType);
+        if(id === "prev"){
+            let activeValue = parseInt($("ul.pagination li.active").text());
+            if(paginationType === 1){
+                getLocations(activeValue-2);
+            }
+            if(paginationType === 2){
+                searchAndFilter(activeValue-2);
+            }
+        } else if (id === "next"){
+            let activeValue = parseInt($("ul.pagination li.active").text());
+            if(paginationType === 1){
+                getLocations(activeValue);
+            }
+            if(paginationType === 2){
+                searchAndFilter(activeValue);
+            }
+        } else {
+            let currentPage = parseInt(val - 1);
+            console.log(currentPage)
+            if(paginationType === 1){
+                getLocations(currentPage);
+            }
+            if(paginationType === 2){
+                searchAndFilter(currentPage);
+            }
+        }
+	});
+    var locationId;
+	function openModal(id){
+	    locationId = id
+	    console.log(locationId)
+        $('#deleteModal').modal('show');
+	}
+	function closeModal(){
+	    $('#deleteModal').modal('hide');
+	}
+	function deleteLocation(){
+        $.ajax({
+					type : "GET",
+					url : "deleteLocation",
+					data: {
+                        id: locationId
+                    },
+					success : function(response) {
+					    $('#deleteModal').modal('hide');
+					    getLocations(0);
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+	}
+    var searchValue;
+    $('#searchInput').on("change", function(){
+        searchValue = $(this).val();
+        searchAndFilter(0);
+    });
+    var selectValue;
+    $('#citySelect').on("change", function(){
+        selectValue = $(this).val();
+        console.log(searchValue);
+        console.log(selectValue);
+        searchAndFilter(0);
+    });
+
+    function searchAndFilter(currentPage){
+        $.ajax({
+					type : "GET",
+					url : "searchLocation",
+					data: {
+					    page: currentPage,
+                        address: searchValue,
+                        city: selectValue
+                    },
+					success : function(response) {
+					    $('.tr').remove();
+						$('ul.pagination li').remove();
+						data = response.content
+						for (i = 0; i < data.length; i++) {
+							$("#locationsTable")
+									.append(
+											'<tr class="tr"> <td>'
+													+ data[i].city
+													+ '</td> <td>'
+													+ data[i].address
+													+ '</td> <td>'
+													+ data[i].phoneNumber
+													+ '</td> <td><a th:href="@{/admin/locations/edit/'+data[i].id+'}" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openModal('
+													+ data[i].id
+													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
+
+						}
+
+                              paginationType = 2;
+                              buildPagination(response);
+
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+    }
+
+</script>
+</html>
