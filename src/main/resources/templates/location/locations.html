@@ -16,12 +16,9 @@
                     <div class="card py-5 px-5">
                         <h4>Філіали</h4>
                         <div class="row d-flex justify-content-between mb-4">
-<!--                            <form class="col-5 d-flex" role="search">-->
                             <div class="col-5">
                                 <input class="form-control me-2" type="search" id="searchInput" placeholder="Введіть адресу" aria-label="Search">
                             </div>
-<!--                                <button class="btn btn-outline-primary" id="search" type="submit">Пошук</button>-->
-<!--                            </form>-->
                             <div class="col-3">
                                 <select class="select2 form-select" id="citySelect" aria-label="Default select example">
                                     <option selected>Місто</option>
@@ -35,13 +32,13 @@
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <button type="button" class="btn-close" onclick="closeModal()" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <h4>Ви впевнені що хочете видалити цей елемент?</h4>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" onclick="closeModal()" data-bs-dismiss="modal">Закрити</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
                                         <button type="button" class="btn btn-danger" onclick="deleteLocation()">Видалити</button>
                                     </div>
                                 </div>
@@ -60,16 +57,6 @@
                             </tr>
                             </thead>
                             <tbody id = "locationsTable">
-<!--                            <tr th:each = "location: ${locations}">-->
-<!--                                <td th:text="${location.city}"></td>-->
-<!--                                <td th:text="${location.address}"></td>-->
-<!--                                <td th:text="${location.phoneNumber}"></td>-->
-<!--                                <td>-->
-<!--                                    <a th:href="@{/admin/locations/edit/{id}(id=${location.id})}" role="button" class="btn btn-primary"><i class="ti ti-pencil"></i></a>-->
-<!--                                    <a href="@{/admin/users/delete/{id}(id=${user.id})}" role="button" class="btn btn-danger"><i class="ti ti-trash"></i></a>-->
-<!--                                </td>-->
-<!--                            </tr>-->
-
                             </tbody>
                         </table>
                         <ul class="pagination mt-4 justify-content-end"></ul>
@@ -238,9 +225,6 @@
 	    console.log(locationId)
         $('#deleteModal').modal('show');
 	}
-	function closeModal(){
-	    $('#deleteModal').modal('hide');
-	}
 	function deleteLocation(){
         $.ajax({
 					type : "GET",
@@ -266,8 +250,6 @@
     var selectValue;
     $('#citySelect').on("change", function(){
         selectValue = $(this).val();
-        console.log(searchValue);
-        console.log(selectValue);
         searchAndFilter(0);
     });
 

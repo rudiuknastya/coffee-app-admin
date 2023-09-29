@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      class="light-style layout-navbar-fixed layout-menu-fixed"
+      dir="ltr"
+      data-theme="theme-default"
+      data-template="vertical-menu-template-no-customizer" >
+<head th:replace="~{fragments :: head}"></head>
+<body>
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+        <aside th:replace="~{fragments :: sidebar(${pageNum})}"></aside>
+        <div class="layout-page">
+            <nav th:replace="~{fragments :: navbar}"></nav>
+            <div class="content-wrapper">
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <div class="card py-5 px-5">
+                        <h4>Категорії</h4>
+                        <div class="row d-flex justify-content-between mb-4">
+                            <div class="col-8">
+                                <input class="form-control me-2" type="search" id="searchInput" placeholder="Введіть назву" aria-label="Search">
+                            </div>
+                            <button type="button" id="createButton" class="btn btn-label-primary col-3 me-3"><i class="ti ti-plus"></i>Створити категорію</button>
+                        </div>
+
+                        <div class="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h4>Ви впевнені що хочете видалити цей елемент?</h4>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+                                        <button type="button" class="btn btn-danger" onclick="deleteLocation()">Видалити</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="categoryForm" class="row g-3">
+                                            <div class="col-md-6" >
+                                                <label for="inputName" class="form-label">Назва</label>
+                                                <input type="text" class="form-control" id="inputName">
+                                                <div id="saveValidation" class="text-danger"></div>
+                                            </div>
+                                            <div class="form-check form-switch col-md-6 d-flex flex-column">
+                                                <label class="form-check-label" for="status"> Статус</label>
+                                                <input class="form-check-input mx-1 mt-2" type="checkbox" role="switch" id="status">
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+                                        <button type="button" class="btn btn-primary" id="saveButton" onclick="save()">Зберегти</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form class="row g-3">
+                                            <div class="col-md-6" >
+                                                <label for="inputName" class="form-label">Назва</label>
+                                                <input type="text" class="form-control" id="editName">
+                                                <div id="editValidation" class="text-danger"></div>
+                                            </div>
+                                            <div class="form-check form-switch col-md-6 d-flex flex-column">
+                                                <label class="form-check-label" for="status"> Статус</label>
+                                                <input class="form-check-input mx-1 mt-2" type="checkbox" role="switch" id="editStatus">
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+                                        <button type="button" class="btn btn-primary" id="updateButton" onclick="edit()">Зберегти</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Назва</th>
+                                    <th>Кількість товарів</th>
+                                    <th>Статус</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody id = "myTable">
+                                </tbody>
+                            </table>
+                            <ul class="pagination mt-4 justify-content-end"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+<script th:src="@{/assets/vendor/libs/hammer/hammer.js}"></script>
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<script th:src="@{/assets/js/main.js}"></script>
+<script>
+    $(document).ready(function(){
+        getCategories(0);
+    });
+    var paginationType;
+    var data = "";
+	function getCategories(currentPage) {
+		$.ajax({
+					type : "GET",
+					url : "getCategories",
+					data: {
+                        page: currentPage
+                    },
+					success : function(response) {
+						$('.tr').remove();
+						$('ul.pagination li').remove();
+						data = response.content
+						for (i = 0; i < data.length; i++) {
+							$("#myTable")
+									.append(
+											'<tr class="tr"> <td>'
+													+ data[i].name
+													+ '</td> <td>'
+													+ data[i].goodsQuantity
+													+ '</td> <td>'
+													+ data[i].status
+													+ '</td> <td><button type="button" class="btn btn-primary" onclick="openEditModal('
+													+ data[i].id
+													+ ');"><i class="ti ti-pencil"></i></button> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
+													+ data[i].id
+													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
+
+						}
+
+                              paginationType = 1;
+                              buildPagination(response);
+
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+	}
+
+	function buildPagination(response) {
+		totalPages = response.totalPages;
+		var pageNumber = response.pageable.pageNumber;
+        if(totalPages > 1){
+		var prev = '';
+
+			if(pageNumber !== 0) {
+                prev = '<li class="page-item prev"><a class="page-link waves-effect" id="prev" href="javascript:void(0);"><i class="ti ti-chevron-left ti-xs"></i></a></li>';
+			} else {
+                prev = '<li class="page-item prev disabled"><a class="page-link waves-effect" href="javascript:void(0);"><i class="ti ti-chevron-left ti-xs"></i></a></li>';
+		    }
+
+
+		var next = '';
+
+			if(pageNumber !== totalPages - 1) {
+				next = '<li class="page-item next"><a class="page-link waves-effect" id="next" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
+			} else {
+                next = '<li class="page-item next disabled"><a class="page-link waves-effect" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
+		    }
+
+       var pages = '';
+       var dots = '<li class="page-item disabled"><a class="page-link waves-effect" href="javascript:void(0);"> ... </a></li>';
+       if(pageNumber < 3){
+            for(var i = 1; i <= 5; i++){
+                if(i <= totalPages) {
+                    if(pageNumber+1 !== i){
+                        pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+                    } else {
+                        pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+                    }
+                }
+            }
+            if(totalPages > 6){
+                pages += dots;
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+totalPages+'</a></li>';
+            }
+
+       } else if (3 > totalPages - 1 - pageNumber) {
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
+            if(totalPages > 6){
+                pages += dots
+            }
+            for(var i = totalPages - 4; i <= totalPages; i++){
+                if(i > 1 ){
+                    if(pageNumber+1 !== i){
+                        pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+                    } else {
+                        pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+                    }
+                }
+            }
+
+       } else {
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
+            pages += dots
+
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+pageNumber+'</a></li>';
+            pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+(pageNumber+1)+'</a></li>';
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+(pageNumber+2)+'</a></li>';
+
+            pages += dots;
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+totalPages+'</a></li>';
+       }
+
+		pages = prev + pages + next;
+
+		$("ul.pagination").append(pages);
+		}
+	}
+
+	$(document).on("click", "ul.pagination li a", function() {
+	    let val = $(this).text();
+	    let id = $(this).attr('id')
+	    console.log(paginationType);
+        if(id === "prev"){
+            let activeValue = parseInt($("ul.pagination li.active").text());
+            if(paginationType === 1){
+                getCategories(activeValue-2);
+            }
+            if(paginationType === 2){
+                search(activeValue-2);
+            }
+        } else if (id === "next"){
+            let activeValue = parseInt($("ul.pagination li.active").text());
+            if(paginationType === 1){
+                getCategories(activeValue);
+            }
+            if(paginationType === 2){
+                search(activeValue);
+            }
+        } else {
+            let currentPage = parseInt(val - 1);
+            console.log(currentPage)
+            if(paginationType === 1){
+                getCategories(currentPage);
+            }
+            if(paginationType === 2){
+                search(currentPage);
+            }
+        }
+	});
+
+	var categoryId;
+	function openDeleteModal(id){
+	    categoryId = id
+        $('#deleteModal').modal('show');
+	}
+	function deleteLocation(){
+        $.ajax({
+					type : "GET",
+					url : "deleteCategory/"+categoryId,
+					success : function(response) {
+					    $('#deleteModal').modal('hide');
+					    getCategories(0);
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+	}
+
+    function openEditModal(id){
+    categoryId = id;
+        $.ajax({
+					type : "GET",
+					url : "editCategory/"+id,
+					success : function(response) {
+					    $('#editName').val(response.name);
+					    $( "#editStatus" ).prop( "checked", response.status );
+					    $('#editModal').modal('show');
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+    }
+    function edit(){
+    var stat;
+    if($("#editStatus").is(':checked')){
+        stat = true;
+    } else {
+        stat = false;
+    }
+    if($('#editName').val() === ""){
+        $("#editValidation").text("Поле не може бути порожнім");
+    } else {
+        $.ajax({
+					type : "POST",
+					url : "editCategory",
+					data: {
+                        name: $('#editName').val(),
+                        status: stat,
+                        id: categoryId
+                    },
+					success : function(response) {
+					    $('#editModal').modal('hide');
+					    getCategories(0);
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+		}
+    }
+
+    $('#createButton').on("click", function(){
+        $('#categoryForm')[0].reset();
+        $('#formModal').modal('show');
+    });
+    function save(){
+    var stat;
+    if($("#status").is(':checked')){
+        stat = true;
+    } else {
+        stat = false;
+    }
+    if($('#inputName').val() === ""){
+        $("#saveValidation").text("Поле не може бути порожнім");
+    } else {
+        $.ajax({
+					type : "POST",
+					url : "saveCategory",
+					data: {
+                        name: $('#inputName').val(),
+                        status: stat
+                    },
+					success : function(response) {
+					    $('#categoryForm')[0].reset();
+					    $('#formModal').modal('hide');
+					    getCategories(0);
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+		}
+	}
+
+    $('#searchInput').on("change", function(){
+        var searchValue = $(this).val();
+        $.ajax({
+					type : "GET",
+					url : "searchCategories",
+					data: {
+					    page: 0,
+                        name: searchValue
+                    },
+					success : function(response) {
+					    $('.tr').remove();
+						$('ul.pagination li').remove();
+						data = response.content
+						for (i = 0; i < data.length; i++) {
+							$("#myTable")
+									.append(
+											'<tr class="tr"> <td>'
+													+ data[i].name
+													+ '</td> <td>'
+													+ data[i].goodsQuantity
+													+ '</td> <td>'
+													+ data[i].status
+													+ '</td> <td><button type="button" class="btn btn-primary" onclick="openEditModal('
+													+ data[i].id
+													+ ');"><i class="ti ti-pencil"></i></button> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
+													+ data[i].id
+													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
+
+						}
+
+                              paginationType = 2;
+                              buildPagination(response);
+
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+    });
+
+
+</script>
+</html>
