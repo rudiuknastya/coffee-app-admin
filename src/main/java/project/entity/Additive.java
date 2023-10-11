@@ -2,6 +2,8 @@ package project.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+
 @Entity
 @Table(name = "additive")
 public class Additive {
@@ -11,7 +13,7 @@ public class Additive {
     @NotEmpty(message = "Поле не може бути порожнім")
     @Column(nullable = false)
     private String name;
-    @NotEmpty(message = "Поле не може бути порожнім")
+    @NotNull(message = "Поле не може бути порожнім")
     @Column(nullable = false)
     private Integer price;
     private Boolean deleted;

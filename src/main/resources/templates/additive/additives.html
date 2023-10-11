@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      class="light-style layout-navbar-fixed layout-menu-fixed"
+      dir="ltr"
+      data-theme="theme-default"
+      data-template="vertical-menu-template-no-customizer" >
+<head th:replace="~{fragments :: head}"></head>
+<body>
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+        <aside th:replace="~{fragments :: sidebar(${pageNum})}"></aside>
+        <div class="layout-page">
+            <nav th:replace="~{fragments :: navbar}"></nav>
+            <div class="content-wrapper">
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <div class="card py-5 px-5">
+                        <h4>Додатки</h4>
+                        <div class="row d-flex justify-content-between mb-4">
+                            <div class="col-5">
+                                <input class="form-control" type="search" id="searchInput" placeholder="Пошук за назвою або ціною" aria-label="Search" maxlength="100">
+                            </div>
+                            <div class="col-3">
+                                <select class="select2 form-select" id="atSelect" aria-label="Default select example">
+                                    <option th:value="0" selected>Тип додатку</option>
+                                    <option th:each="at : ${adTypes}" th:value="${at.id}" th:text="${at.name}"></option>
+                                </select>
+                            </div>
+                            <button type="button" id="createButton" class="btn btn-label-primary col-3 me-3"><i class="ti ti-plus"></i>Створити додаток</button>
+                        </div>
+
+                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h4>Ви впевнені що хочете видалити цей елемент?</h4>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger" onclick="deleteAdditive()">Видалити</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="formModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="saveForm" class="row g-3">
+                                            <div class="col-md-6" >
+                                                <label for="inputName" class="form-label">Назва</label>
+                                                <input type="text" class="form-control" id="inputName" maxlength="100">
+                                                <div id="nameValidation" class="text-danger"></div>
+                                            </div>
+                                            <div class="col-md-6" >
+                                                <label for="inputPrice" class="form-label">Ціна</label>
+                                                <input type="number" class="form-control" id="inputPrice">
+                                                <div id="priceValidation" class="text-danger"></div>
+                                            </div>
+                                            <div class="col-md-6" >
+                                                <label for="selectAdType" class="form-label">Тип додатку</label>
+                                                <select class="select2 form-select" aria-label=".form-select-lg example" name="selectAdType" id="selectAdType">
+                                                    <option th:each="at : ${adTypes}" th:value="${at.id}" th:text="${at.name}"></option>
+                                                </select>
+                                            </div>
+                                            <div class="form-check form-switch col-md-6 d-flex flex-column">
+                                                <label class="form-check-label" for="saveStatus"> Статус</label>
+                                                <input class="form-check-input mx-1 mt-2" type="checkbox" role="switch" id="saveStatus">
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+                                        <button type="button" class="btn btn-primary" id="saveButton" onclick="save()">Зберегти</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form class="row g-3">
+                                            <div class="col-md-6" >
+                                                <label for="editName" class="form-label">Назва</label>
+                                                <input type="text" class="form-control" id="editName" maxlength="100">
+                                                <div id="editValidation" class="text-danger"></div>
+                                            </div>
+                                            <div class="col-md-6" >
+                                                <label for="editPrice" class="form-label">Ціна</label>
+                                                <input type="number" class="form-control" id="editPrice">
+                                                <div id="editPriceValidation" class="text-danger"></div>
+                                            </div>
+                                            <div class="col-md-6" >
+                                                <label for="selectAdType" class="form-label">Тип додатку</label>
+                                                <select class="select2 form-select" aria-label=".form-select-lg example" name="editSelectAdType" id="editSelectAdType">
+                                                    <option th:each="at : ${adTypes}" th:value="${at.id}" th:text="${at.name}"></option>
+                                                </select>
+                                            </div>
+                                            <div class="form-check form-switch col-md-6 d-flex flex-column">
+                                                <label class="form-check-label" for="editStatus"> Статус</label>
+                                                <input class="form-check-input mx-1 mt-2" type="checkbox" role="switch" id="editStatus">
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+                                        <button type="button" class="btn btn-primary" id="updateButton" onclick="edit()">Зберегти</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Назва</th>
+                                    <th>Ціна</th>
+                                    <th>Тип додатку</th>
+                                    <th>Статус</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody id = "myTable">
+                                </tbody>
+                            </table>
+                            <div class="d-flex justify-content-between">
+                                <div class="col-4 mt-4" id="paginationElements"></div>
+                                <ul class="pagination mt-4 justify-content-end"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+<script th:src="@{/assets/vendor/libs/hammer/hammer.js}"></script>
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<script th:src="@{/assets/js/main.js}"></script>
+<script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
+<script th:src="@{/assets/js/app-user-list.js}"></script>
+<script>
+    $(document).ready(function(){
+        getAdditives(0);
+    });
+    var paginationType;
+    var data = "";
+	function getAdditives(currentPage) {
+		$.ajax({
+					type : "GET",
+					url : "getAdditives",
+					data: {
+                        page: currentPage
+                    },
+					success : function(response) {
+						$('.tr').remove();
+						$('ul.pagination li').remove();
+						data = response.content
+						for (i = 0; i < data.length; i++) {
+						if(data[i].status == true){
+						    st = 'Увім'
+						} else {
+						    st = 'Вимк'
+						}
+							$("#myTable")
+									.append(
+											'<tr class="tr"> <td>'
+													+ data[i].name
+													+ '</td> <td>'
+													+ data[i].price
+													+ '</td> <td>'
+													+ data[i].additiveTypeName
+													+ '</td> <td>'
+													+ st
+													+ '</td> <td><button type="button" class="btn btn-primary" onclick="openEditModal('
+													+ data[i].id
+													+ ');"><i class="ti ti-pencil"></i></button> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
+													+ data[i].id
+													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
+
+						}
+
+                              paginationType = 1;
+                              buildPagination(response);
+
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+	}
+
+	function buildPagination(response) {
+		totalPages = response.totalPages;
+		var pageNumber = response.pageable.pageNumber;
+        if(totalPages > 1){
+		var prev = '';
+
+			if(pageNumber !== 0) {
+                prev = '<li class="page-item prev"><a class="page-link waves-effect" id="prev" href="javascript:void(0);"><i class="ti ti-chevron-left ti-xs"></i></a></li>';
+			} else {
+                prev = '<li class="page-item prev disabled"><a class="page-link waves-effect" href="javascript:void(0);"><i class="ti ti-chevron-left ti-xs"></i></a></li>';
+		    }
+
+
+		var next = '';
+
+			if(pageNumber !== totalPages - 1) {
+				next = '<li class="page-item next"><a class="page-link waves-effect" id="next" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
+			} else {
+                next = '<li class="page-item next disabled"><a class="page-link waves-effect" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
+		    }
+
+       var pages = '';
+       var dots = '<li class="page-item disabled"><a class="page-link waves-effect" href="javascript:void(0);"> ... </a></li>';
+       if(pageNumber < 3){
+            for(var i = 1; i <= 5; i++){
+                if(i <= totalPages) {
+                    if(pageNumber+1 !== i){
+                        pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+                    } else {
+                        pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+                    }
+                }
+            }
+            if(totalPages > 6){
+                pages += dots;
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+totalPages+'</a></li>';
+            }
+
+       } else if (3 > totalPages - 1 - pageNumber) {
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
+            if(totalPages > 6){
+                pages += dots
+            }
+            for(var i = totalPages - 4; i <= totalPages; i++){
+                if(i > 1 ){
+                    if(pageNumber+1 !== i){
+                        pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+                    } else {
+                        pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+                    }
+                }
+            }
+
+       } else {
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
+            pages += dots
+
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+pageNumber+'</a></li>';
+            pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+(pageNumber+1)+'</a></li>';
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+(pageNumber+2)+'</a></li>';
+
+            pages += dots;
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+totalPages+'</a></li>';
+       }
+
+		pages = prev + pages + next;
+        $("#paginationElements").text("Показано "+response.numberOfElements+" з "+response.size+" елементів");
+		$("ul.pagination").append(pages);
+		}else {
+            $("#paginationElements").text("")
+            if(response.numberOfElements == 0){
+                $("#myTable").append('<tr class="tr"><td colspan="5" class="text-center">Дані не знайдено</td>></tr>')
+            }
+		}
+	}
+	$(document).on("click", "ul.pagination li a", function() {
+	    let val = $(this).text();
+	    let id = $(this).attr('id')
+	    console.log(paginationType);
+        if(id === "prev"){
+            let activeValue = parseInt($("ul.pagination li.active").text());
+            if(paginationType === 1){
+                getAdditives(activeValue-2);
+            }
+            if(paginationType === 2){
+                searchAndFilter(activeValue-2);
+            }
+        } else if (id === "next"){
+            let activeValue = parseInt($("ul.pagination li.active").text());
+            if(paginationType === 1){
+                getAdditives(activeValue);
+            }
+            if(paginationType === 2){
+                searchAndFilter(activeValue);
+            }
+        } else {
+            let currentPage = parseInt(val - 1);
+            console.log(currentPage)
+            if(paginationType === 1){
+                getAdditives(currentPage);
+            }
+            if(paginationType === 2){
+                searchAndFilter(currentPage);
+            }
+        }
+	});
+	var additiveId;
+	function openDeleteModal(id){
+	    additiveId = id
+        $('#deleteModal').modal('show');
+	}
+	function deleteAdditive(){
+        $.ajax({
+					type : "GET",
+					url : "deleteAdditive/"+additiveId,
+					success : function(response) {
+					    $('#deleteModal').modal('hide');
+					    getAdditives(0);
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+	}
+	$('#createButton').on("click", function(){
+	    $("#nameValidation").text("");
+	    $("#inputName").removeClass("is-invalid");
+	    $("#priceValidation").text("");
+	    $("#inputPrice").removeClass("is-invalid");
+	    $('#saveForm')[0].reset();
+        $('#formModal').modal('show');
+    });
+    function save(){
+    $("#nameValidation").text("");
+	$("#inputName").removeClass("is-invalid");
+	$("#priceValidation").text("");
+	$("#inputPrice").removeClass("is-invalid");
+    var stat;
+    if($("#saveStatus").is(':checked')){
+        stat = true;
+    } else {
+        stat = false;
+    }
+    if($('#inputName').val() === "" || $('#inputPrice').val() === ""){
+        if($('#inputName').val() === ""){
+            $("#nameValidation").text("Поле не може бути порожнім");
+            $("#inputName").addClass("is-invalid");
+        }
+        if($('#inputPrice').val() === ""){
+            $("#priceValidation").text("Поле не може бути порожнім");
+            $("#inputPrice").addClass("is-invalid");
+        }
+    } else {
+        $.ajax({
+					type : "POST",
+					url : "saveAdditive",
+					data: {
+                        name: $('#inputName').val(),
+                        price: $('#inputPrice').val(),
+                        status: stat,
+                        selectAdType: $('#selectAdType').val()
+                    },
+					success : function(response) {
+					    $('#saveForm')[0].reset();
+					    $('#formModal').modal('hide');
+					    getAdditives(0);
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+		}
+	}
+
+	function openEditModal(id){
+    additiveId = id;
+    $("#editValidation").text("");
+	$("#editName").removeClass("is-invalid");
+	$("#editPriceValidation").text("");
+	$("#editPrice").removeClass("is-invalid");
+        $.ajax({
+					type : "GET",
+					url : "editAdditive/"+id,
+					success : function(response) {
+					    $('#editName').val(response.name);
+					    $('#editPrice').val(response.price);
+					    $("#editStatus").prop( "checked", response.status );
+					    $("#editSelectAdType option").filter(function() {
+                            return $(this).text() == response.additiveTypeName;
+                        }).prop('selected', true);
+					    $('#editModal').modal('show');
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+    }
+    function edit(){
+    $("#editValidation").text("");
+	$("#editName").removeClass("is-invalid");
+	$("#editPriceValidation").text("");
+	$("#editPrice").removeClass("is-invalid");
+    var stat;
+    if($("#editStatus").is(':checked')){
+        stat = true;
+    } else {
+        stat = false;
+    }
+    if($('#editName').val() === "" || $('#editPrice').val() === ""){
+        if($('#editName').val() === ""){
+            $("#editValidation").text("Поле не може бути порожнім");
+            $("#editName").addClass("is-invalid");
+        }
+        if($('#editPrice').val() === ""){
+            $("#editPriceValidation").text("Поле не може бути порожнім");
+            $("#editPrice").addClass("is-invalid");
+        }
+    } else {
+        $.ajax({
+					type : "POST",
+					url : "editAdditive",
+					data: {
+                        name: $('#editName').val(),
+                        price: $("#editPrice").val(),
+                        status: stat,
+                        id: additiveId,
+                        editSelectAdType: $('#editSelectAdType').val()
+                    },
+					success : function(response) {
+					    $('#editModal').modal('hide');
+					    getAdditives(0);
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+		}
+    }
+
+    var searchValue;
+    $('#searchInput').on("change", function(){
+        searchValue = $(this).val();
+        searchAndFilter(0);
+    });
+    var selectValue;
+    $('#atSelect').on("change", function(){
+        selectValue = $(this).val();
+        searchAndFilter(0);
+    });
+
+    function searchAndFilter(currentPage){
+        $.ajax({
+					type : "GET",
+					url : "searchAdditive",
+					data: {
+					    page: currentPage,
+                        searchValue: searchValue,
+                        additiveType: selectValue
+                    },
+					success : function(response) {
+					    $('.tr').remove();
+						$('ul.pagination li').remove();
+						data = response.content
+						for (i = 0; i < data.length; i++) {
+						if(data[i].status == true){
+						    st = 'Увім'
+						} else {
+						    st = 'Вимк'
+						}
+							$("#myTable")
+									.append(
+											'<tr class="tr"> <td>'
+													+ data[i].name
+													+ '</td> <td>'
+													+ data[i].price
+													+ '</td> <td>'
+													+ data[i].additiveTypeName
+													+ '</td> <td>'
+													+ st
+													+ '</td> <td><button type="button" class="btn btn-primary" onclick="openEditModal('
+													+ data[i].id
+													+ ');"><i class="ti ti-pencil"></i></button> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
+													+ data[i].id
+													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
+
+						}
+
+                              paginationType = 2;
+                              buildPagination(response);
+
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+    }
+
+
+</script>
+</html>

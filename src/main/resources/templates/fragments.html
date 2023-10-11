@@ -14,6 +14,7 @@
             rel="stylesheet"
     />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/assets/vendor/libs/select2/select2.css}" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 
     <!-- Icons -->
@@ -74,26 +75,26 @@
                         <div data-i18n="Roles">Категорії</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="app-access-permission.html" class="menu-link">
+                <li th:class="'menu-item'+${number == 3 ? ' active' : ''}">
+                    <a th:href="@{/admin/products}"  class="menu-link">
                         <div data-i18n="Permission">Товари</div>
                     </a>
                 </li>
             </ul>
         </li>
-        <li class="menu-item">
+        <li th:class="'menu-item'+${number == 4 or number == 5? ' active open' : ''}">
             <a href="javascript:void(0);" class="menu-link menu-toggle">
                 <i class="menu-icon tf-icons ti ti-milk"></i>
                 <div data-i18n="Roles & Permissions">Додатки та типи додатків</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item">
-                    <a href="app-access-roles.html" class="menu-link">
+                <li th:class="'menu-item'+${number == 4 ? ' active' : ''}">
+                    <a th:href="@{/admin/additive_types}" class="menu-link">
                         <div data-i18n="Roles">Типи додатків</div>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="app-access-permission.html" class="menu-link">
+                <li th:class="'menu-item'+${number == 5 ? ' active' : ''}">
+                    <a th:href="@{/admin/additives}" class="menu-link">
                         <div data-i18n="Permission">Додатки</div>
                     </a>
                 </li>
