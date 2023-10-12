@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import project.dto.ProductDTO;
+import project.dto.ProductNameDTO;
 import project.entity.Product;
 import project.mapper.ProductMapper;
 import project.repository.ProductRepository;
@@ -96,5 +97,23 @@ public class ProductServiceImpl implements ProductService {
         List<Product> products = productRepository.findProductsForCategory(id);
         logger.info("getProductsForCategory() - Products were found");
         return products;
+    }
+
+    @Override
+    public List<ProductNameDTO> getProductNames() {
+        logger.info("getProductNames() - Finding product names");
+        List<Product> products = productRepository.findAll(byDeleted());
+        List<ProductNameDTO> productNameDTOS = ProductMapper.PRODUCT_MAPPER.productListToProductNameDTOList(products);
+        logger.info("getProductNames() - Product names were found");
+        return productNameDTOS;
+    }
+
+    @Override
+    public ProductNameDTO getProductNameDTO(Long id) {
+        logger.info("getProductNameDTO() - Finding product name");
+        Product product = productRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        ProductNameDTO productNameDTO = ProductMapper.PRODUCT_MAPPER.productToProductNameDTO(product);
+        logger.info("getProductNameDTO() - Product name was found");
+        return productNameDTO;
     }
 }

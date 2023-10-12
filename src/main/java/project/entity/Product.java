@@ -1,5 +1,6 @@
 package project.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -27,13 +28,15 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
-    @ManyToMany(cascade = { CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = { CascadeType.PERSIST})
     @JoinTable(
             name = "product_additive_types",
             joinColumns = { @JoinColumn(name = "product_id") },
             inverseJoinColumns = { @JoinColumn(name = "additive_type_id") }
     )
     private List<AdditiveType> additiveTypes;
+    @ManyToMany(mappedBy = "products")
+    private List<User> users;
 
     public List<AdditiveType> getAdditiveTypes() {
         return additiveTypes;

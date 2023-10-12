@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -37,6 +38,21 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
     private Boolean deleted;
+    @ManyToMany(cascade = { CascadeType.PERSIST})
+    @JoinTable(
+            name = "award",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "product_id") }
+    )
+    private List<Product> products;
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
 
     public Boolean getDeleted() {
         return deleted;

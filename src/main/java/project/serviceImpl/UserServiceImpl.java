@@ -72,4 +72,12 @@ public class UserServiceImpl implements UserService {
         logger.info("searchUser() - Users were found");
         return userDTOPage;
     }
+
+    @Override
+    public User getUserWithProducts(Long id) {
+        logger.info("getUserWithProducts() - Finding user with products by id "+id);
+        User user = userRepository.findUserWithProductsById(id);
+        logger.info("getUserWithProducts() - User was found");
+        return user;
+    }
 }

@@ -5,6 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 import project.dto.ProductDTO;
+import project.dto.ProductNameDTO;
 import project.entity.Product;
 
 import java.util.ArrayList;
@@ -12,8 +13,14 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
+    ProductMapper PRODUCT_MAPPER = Mappers.getMapper(ProductMapper.class);
+    List<ProductNameDTO> productListToProductNameDTOList(List<Product> products);
+    ProductNameDTO productToProductNameDTO(Product product);
     @Named("productToProductDTO")
     static List<ProductDTO> productToProductDTO(List<Product> products){
+        if(products == null){
+            return null;
+        }
         List<ProductDTO> productDTOS = new ArrayList<>(products.size());
         for(Product product: products ){
             ProductDTO productDTO = new ProductDTO();

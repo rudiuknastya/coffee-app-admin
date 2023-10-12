@@ -11,4 +11,5 @@ public interface UserService {
     User getUserById(Long id);
     User saveUser(User user);
     Page<UserDTO> searchUser(String phone, UserStatus status, Pageable pageable);
+    User getUserWithProducts(Long id);
 }
