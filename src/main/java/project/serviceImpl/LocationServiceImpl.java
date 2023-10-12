@@ -13,7 +13,7 @@ import project.service.LocationService;
 import java.util.List;
 
 import static org.springframework.data.jpa.domain.Specification.where;
-import static project.repository.LocationRepository.Spec.*;
+import static project.specifications.LocationSpecification.*;
 
 @Service
 public class LocationServiceImpl implements LocationService {

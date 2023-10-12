@@ -17,19 +17,19 @@
                         <h4>Філіали</h4>
                         <div class="row d-flex justify-content-between mb-4">
                             <div class="col-5">
-                                <input class="form-control me-2" type="search" id="searchInput" placeholder="Введіть адресу" aria-label="Search">
+                                <input class="form-control me-2" type="search" id="searchInput" placeholder="Пошук за адресою" aria-label="Search" maxlength="100">
                             </div>
                             <div class="col-3">
                                 <select class="select2 form-select" id="citySelect" aria-label="Default select example">
                                     <option selected>Місто</option>
-                                    <option th:each="c : ${cities}" th:value="${c}" th:text="${c}"></option>
+                                    <option th:each="c : ${cities}" th:value="${c.city}" th:text="${c.city}"></option>
                                 </select>
                             </div>
                             <a th:href="@{/admin/locations/new}" type="button" class="btn btn-label-primary col-3 me-3"><i class="ti ti-plus"></i>Створити філіал</a>
                         </div>
 
-                        <div class="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                            <div class="modal-dialog">
+                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -38,7 +38,6 @@
                                         <h4>Ви впевнені що хочете видалити цей елемент?</h4>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
                                         <button type="button" class="btn btn-danger" onclick="deleteLocation()">Видалити</button>
                                     </div>
                                 </div>
@@ -59,7 +58,10 @@
                             <tbody id = "locationsTable">
                             </tbody>
                         </table>
-                        <ul class="pagination mt-4 justify-content-end"></ul>
+                        <div class="d-flex justify-content-between">
+                            <div class="col-4 mt-4" id="paginationElements"></div>
+                            <ul class="pagination mt-4 col-8 justify-content-end"></ul>
+                        </div>
                     </div>
                     </div>
                 </div>
@@ -75,7 +77,8 @@
 <script th:src="@{/assets/vendor/libs/hammer/hammer.js}"></script>
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script th:src="@{/assets/js/app-user-list.js}"></script>
 <script>
     $(document).ready(function(){
         getLocations(0);
@@ -102,7 +105,7 @@
 													+ data[i].address
 													+ '</td> <td>'
 													+ data[i].phoneNumber
-													+ '</td> <td><a th:href="@{/admin/locations/edit/'+data[i].id+'}" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openModal('
+													+ '</td> <td><a href="/admin/locations/edit/'+data[i].id+'" type="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 
@@ -184,14 +187,18 @@
        }
 
 		pages = prev + pages + next;
-
+        $("#paginationElements").text("Показано "+response.numberOfElements+" з "+response.size+" елементів");
 		$("ul.pagination").append(pages);
+		}else {
+            $("#paginationElements").text("")
+            if(response.numberOfElements == 0){
+                $("#locationsTable").append('<tr class="tr"><td colspan="4" class="text-center">Дані не знайдено</td>></tr>')
+            }
 		}
 	}
 	$(document).on("click", "ul.pagination li a", function() {
 	    let val = $(this).text();
-	    let id = $(this).attr('id')
-	    console.log(paginationType);
+	    let id = $(this).attr('id');
         if(id === "prev"){
             let activeValue = parseInt($("ul.pagination li.active").text());
             if(paginationType === 1){
@@ -221,8 +228,7 @@
 	});
     var locationId;
 	function openModal(id){
-	    locationId = id
-	    console.log(locationId)
+	    locationId = id;
         $('#deleteModal').modal('show');
 	}
 	function deleteLocation(){
@@ -242,6 +248,7 @@
 					}
 				});
 	}
+
     var searchValue;
     $('#searchInput').on("change", function(){
         searchValue = $(this).val();
@@ -275,7 +282,7 @@
 													+ data[i].address
 													+ '</td> <td>'
 													+ data[i].phoneNumber
-													+ '</td> <td><a th:href="@{/admin/locations/edit/'+data[i].id+'}" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openModal('
+													+ '</td> <td><a href="/admin/locations/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 

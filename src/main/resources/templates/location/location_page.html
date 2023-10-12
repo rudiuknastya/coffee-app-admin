@@ -17,32 +17,32 @@
             <form th:action = "@{/admin/locations/{l} (l=${link})}" th:object = "${location}" method="post" class="row g-3" style="color:black;">
               <div class="col-md-6" >
                 <label for="selectCity" class="form-label">Місто</label>
-                <select class="form-select" aria-label=".form-select-lg example" id="selectCity" th:field = "*{city}">
-                  <option th:each="c : ${cities}" th:value="${c}" th:text="${c}"></option>
+                <select class="select2 form-select" aria-label=".form-select-lg example" id="selectCity" th:field = "*{city}">
+                  <option th:each="c : ${cities}" th:value="${c.city}" th:text="${c.city}"></option>
                 </select>
                 <div class="text-danger" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></div>
               </div>
               <div class="col-md-6" >
                 <label for="inputPhone" class="form-label">Номер телефону</label>
-                <input type="text" class="form-control" id="inputPhone"  th:field = "*{phoneNumber}">
+                <input type="text" th:class="'form-control'+${#fields.hasErrors('phoneNumber')? ' is-invalid' : ''}" id="inputPhone" maxlength="20"  th:field = "*{phoneNumber}">
                 <div class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
               </div>
               <div>
                 <label for="exampleFormControlTextarea1" class="form-label">Адреса</label>
-                <input class="form-control" id="exampleFormControlTextarea1" th:field = "*{address}">
+                <input th:class="'form-control'+${#fields.hasErrors('address')? ' is-invalid' : ''}" id="exampleFormControlTextarea1" maxlength="100" th:field = "*{address}">
                 <div class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"> </div>
               </div>
               <div class="col-md-6" >
                 <label for="inputCoordinates" class="form-label">Координати</label>
-                <input type="text" class="form-control" id="inputCoordinates"  th:field = "*{coordinates}">
+                <input type="text" th:class="'form-control'+${#fields.hasErrors('coordinates')? ' is-invalid' : ''}" id="inputCoordinates" maxlength="100" th:field = "*{coordinates}">
                 <div class="text-danger" th:if="${#fields.hasErrors('coordinates')}" th:errors="*{coordinates}"></div>
               </div>
               <div class="col-md-6" >
                 <label for="inputWorkingHours" class="form-label">Графік роботи</label>
-                <textarea type="text" class="form-control" id="inputWorkingHours" rows="2"  th:field = "*{workingHours}"></textarea>
+                <textarea type="text" th:class="'form-control'+${#fields.hasErrors('workingHours')? ' is-invalid' : ''}" id="inputWorkingHours" rows="2" maxlength="100" th:field = "*{workingHours}"></textarea>
                 <div class="text-danger" th:if="${#fields.hasErrors('workingHours')}" th:errors="*{workingHours}"></div>
               </div>
-              <div class="col-md-12 text-center mt-5">
+              <div class="col-md-12 mt-5 d-flex justify-content-end">
                 <button type="submit" class="btn btn-primary">Зберегти</button>
               </div>
             </form>
@@ -59,6 +59,7 @@
 <script th:src="@{/assets/vendor/libs/hammer/hammer.js}"></script>
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
-
+<script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
+<script th:src="@{/assets/js/app-user-list.js}"></script>
 </body>
 </html>

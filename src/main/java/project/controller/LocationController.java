@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import project.entity.Location;
+import project.service.CityService;
 import project.service.LocationService;
 
 import java.util.List;
@@ -16,13 +17,17 @@ import java.util.List;
 @Controller
 public class LocationController {
     private final LocationService locationService;
-    private List<String> cities = List.of("Київ","Львів","Харків","Дніпро","Одеса");
-    public LocationController(LocationService locationService) {
+    private final CityService cityService;
+    //private List<String> cities = List.of("Київ","Львів","Харків","Дніпро","Одеса");
+
+    public LocationController(LocationService locationService, CityService cityService) {
         this.locationService = locationService;
+        this.cityService = cityService;
     }
+
     @GetMapping("/admin/locations")
     public String locations(Model model){
-        model.addAttribute("cities",cities);
+        model.addAttribute("cities",cityService.getAllCities());
         model.addAttribute("pageNum", 7);
         return "location/locations";
     }
@@ -47,7 +52,7 @@ public class LocationController {
     @GetMapping("/admin/locations/new")
     public String createLocation(Model model){
         String l = "new";
-        model.addAttribute("cities",cities);
+        model.addAttribute("cities",cityService.getAllCities());
         model.addAttribute("location", new Location());
         model.addAttribute("link", l);
         model.addAttribute("pageNum", 7);
@@ -55,10 +60,9 @@ public class LocationController {
     }
     @PostMapping("/admin/locations/new")
     public String saveLocation(@Valid @ModelAttribute("location") Location location, BindingResult bindingResult, Model model){
-        System.out.println(location.getPhoneNumber());
         if (bindingResult.hasErrors()) {
             String l = "new";
-            model.addAttribute("cities",cities);
+            model.addAttribute("cities",cityService.getAllCities());
             model.addAttribute("link", l);
             model.addAttribute("pageNum", 7);
             return "location/location_page";
@@ -71,7 +75,7 @@ public class LocationController {
     @GetMapping("/admin/locations/edit/{id}")
     public String editLocation(@PathVariable Long id, Model model){
         String l = "edit/"+id;
-        model.addAttribute("cities",cities);
+        model.addAttribute("cities",cityService.getAllCities());
         model.addAttribute("location", locationService.getLocationById(id));
         model.addAttribute("link", l);
         model.addAttribute("pageNum", 7);
@@ -81,7 +85,7 @@ public class LocationController {
     public String updateLocation(@PathVariable Long id, @Valid @ModelAttribute("location") Location location, BindingResult bindingResult, Model model){
         if (bindingResult.hasErrors()) {
             String l = "edit/"+id;
-            model.addAttribute("cities",cities);
+            model.addAttribute("cities",cityService.getAllCities());
             model.addAttribute("link", l);
             model.addAttribute("pageNum", 7);
             return "location/location_page";
