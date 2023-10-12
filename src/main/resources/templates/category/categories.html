@@ -16,14 +16,14 @@
                     <div class="card py-5 px-5">
                         <h4>Категорії</h4>
                         <div class="row d-flex justify-content-between mb-4">
-                            <div class="col-8">
-                                <input class="form-control me-2" type="search" id="searchInput" placeholder="Введіть назву" aria-label="Search">
+                            <div class="col-9">
+                                <input class="form-control" type="search" id="searchInput" placeholder="Пошук за назвою" aria-label="Search" maxlength="100">
                             </div>
-                            <button type="button" id="createButton" class="btn btn-label-primary col-3 me-3"><i class="ti ti-plus"></i>Створити категорію</button>
+                            <button type="button" id="createButton" class="btn btn-label-primary col-3"><i class="ti ti-plus"></i>Створити категорію</button>
                         </div>
 
-                        <div class="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                            <div class="modal-dialog">
+                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -32,15 +32,14 @@
                                         <h4>Ви впевнені що хочете видалити цей елемент?</h4>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
                                         <button type="button" class="btn btn-danger" onclick="deleteLocation()">Видалити</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
+                        <div class="modal fade" id="formModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -49,7 +48,7 @@
                                         <form id="categoryForm" class="row g-3">
                                             <div class="col-md-6" >
                                                 <label for="inputName" class="form-label">Назва</label>
-                                                <input type="text" class="form-control" id="inputName">
+                                                <input type="text" class="form-control" id="inputName" maxlength="100">
                                                 <div id="saveValidation" class="text-danger"></div>
                                             </div>
                                             <div class="form-check form-switch col-md-6 d-flex flex-column">
@@ -67,8 +66,8 @@
                         </div>
 
 
-                        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
+                        <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -77,7 +76,7 @@
                                         <form class="row g-3">
                                             <div class="col-md-6" >
                                                 <label for="inputName" class="form-label">Назва</label>
-                                                <input type="text" class="form-control" id="editName">
+                                                <input type="text" class="form-control" id="editName" maxlength="100">
                                                 <div id="editValidation" class="text-danger"></div>
                                             </div>
                                             <div class="form-check form-switch col-md-6 d-flex flex-column">
@@ -107,7 +106,10 @@
                                 <tbody id = "myTable">
                                 </tbody>
                             </table>
-                            <ul class="pagination mt-4 justify-content-end"></ul>
+                            <div class="d-flex justify-content-between">
+                                <div class="col-4 mt-4" id="paginationElements"></div>
+                                <ul class="pagination mt-4 justify-content-end"></ul>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -141,6 +143,12 @@
 						$('ul.pagination li').remove();
 						data = response.content
 						for (i = 0; i < data.length; i++) {
+						var st;
+						if(data[i].status == true){
+						    st = 'Увім'
+						} else {
+						    st = 'Вимк'
+						}
 							$("#myTable")
 									.append(
 											'<tr class="tr"> <td>'
@@ -148,7 +156,7 @@
 													+ '</td> <td>'
 													+ data[i].goodsQuantity
 													+ '</td> <td>'
-													+ data[i].status
+													+ st
 													+ '</td> <td><button type="button" class="btn btn-primary" onclick="openEditModal('
 													+ data[i].id
 													+ ');"><i class="ti ti-pencil"></i></button> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
@@ -234,15 +242,19 @@
        }
 
 		pages = prev + pages + next;
-
+        $("#paginationElements").text("Показано "+response.numberOfElements+" з "+response.size+" елементів");
 		$("ul.pagination").append(pages);
+		} else {
+            $("#paginationElements").text("")
+            if(response.numberOfElements == 0){
+                $("#myTable").append('<tr class="tr"><td colspan="4" class="text-center">Дані не знайдено</td>></tr>')
+            }
 		}
 	}
 
 	$(document).on("click", "ul.pagination li a", function() {
 	    let val = $(this).text();
-	    let id = $(this).attr('id')
-	    console.log(paginationType);
+	    let id = $(this).attr('id');
         if(id === "prev"){
             let activeValue = parseInt($("ul.pagination li.active").text());
             if(paginationType === 1){
@@ -261,7 +273,6 @@
             }
         } else {
             let currentPage = parseInt(val - 1);
-            console.log(currentPage)
             if(paginationType === 1){
                 getCategories(currentPage);
             }
@@ -292,6 +303,8 @@
 	}
 
     function openEditModal(id){
+    $("#editValidation").text("");
+    $("#editName").removeClass("is-invalid");
     categoryId = id;
         $.ajax({
 					type : "GET",
@@ -307,7 +320,9 @@
 					}
 				});
     }
-    function edit(){
+    function edit() {
+    $("#editValidation").text("");
+    $("#editName").removeClass("is-invalid");
     var stat;
     if($("#editStatus").is(':checked')){
         stat = true;
@@ -316,6 +331,7 @@
     }
     if($('#editName').val() === ""){
         $("#editValidation").text("Поле не може бути порожнім");
+        $("#editName").addClass("is-invalid");
     } else {
         $.ajax({
 					type : "POST",
@@ -338,10 +354,14 @@
     }
 
     $('#createButton').on("click", function(){
+        $("#saveValidation").text("");
+        $("#inputName").removeClass("is-invalid");
         $('#categoryForm')[0].reset();
         $('#formModal').modal('show');
     });
-    function save(){
+    function save() {
+    $("#saveValidation").text("");
+    $("#inputName").removeClass("is-invalid");
     var stat;
     if($("#status").is(':checked')){
         stat = true;
@@ -350,6 +370,7 @@
     }
     if($('#inputName').val() === ""){
         $("#saveValidation").text("Поле не може бути порожнім");
+        $("#inputName").addClass("is-invalid");
     } else {
         $.ajax({
 					type : "POST",
@@ -370,14 +391,17 @@
 				});
 		}
 	}
-
+    var searchValue
     $('#searchInput').on("change", function(){
-        var searchValue = $(this).val();
+        searchValue = $(this).val();
+        search(0);
+    });
+    function search(currentPage){
         $.ajax({
 					type : "GET",
 					url : "searchCategories",
 					data: {
-					    page: 0,
+					    page: currentPage,
                         name: searchValue
                     },
 					success : function(response) {
@@ -385,6 +409,12 @@
 						$('ul.pagination li').remove();
 						data = response.content
 						for (i = 0; i < data.length; i++) {
+						var st;
+						if(data[i].status == true){
+						    st = 'Увім'
+						} else {
+						    st = 'Вимк'
+						}
 							$("#myTable")
 									.append(
 											'<tr class="tr"> <td>'
@@ -392,7 +422,7 @@
 													+ '</td> <td>'
 													+ data[i].goodsQuantity
 													+ '</td> <td>'
-													+ data[i].status
+													+ st
 													+ '</td> <td><button type="button" class="btn btn-primary" onclick="openEditModal('
 													+ data[i].id
 													+ ');"><i class="ti ti-pencil"></i></button> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
@@ -410,7 +440,7 @@
 						alert("error is" + err)
 					}
 				});
-    });
+    }
 
 
 </script>

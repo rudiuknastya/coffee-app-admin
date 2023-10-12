@@ -7,9 +7,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import project.dto.CategoryDTO;
+import project.dto.CategoryNameDTO;
 import project.entity.Category;
 import project.repository.CategoryRepository;
 import project.service.CategoryService;
+
+import java.util.List;
+
 @Service
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
@@ -50,5 +54,13 @@ public class CategoryServiceImpl implements CategoryService {
         Page<CategoryDTO> categoryDTOS = categoryRepository.searchCategories(n,pageable);
         logger.info("searchCategories() - Categories were found");
         return categoryDTOS;
+    }
+
+    @Override
+    public List<CategoryNameDTO> getCategoriesName() {
+        logger.info("getCategoriesName() - Finding categories name");
+        List<CategoryNameDTO> categoryNameDTOS = categoryRepository.findCategoriesName();
+        logger.info("getCategoriesName() - Categories name were found");
+        return categoryNameDTOS;
     }
 }

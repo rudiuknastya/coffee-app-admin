@@ -118,8 +118,8 @@
                 <div data-i18n="Users">Адміни</div>
             </a>
         </li>
-        <li class="menu-item">
-            <a href="app-kanban.html" class="menu-link">
+        <li th:class="'menu-item'+${number == 10 ? ' active' : ''}">
+            <a th:href="@{/admin/users}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-users"></i>
                 <div data-i18n="Users">Користувачі</div>
             </a>
