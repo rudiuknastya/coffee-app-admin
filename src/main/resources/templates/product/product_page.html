@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      class="light-style layout-navbar-fixed layout-menu-fixed"
+      dir="ltr"
+      data-theme="theme-default"
+      data-template="vertical-menu-template-no-customizer" >
+<head th:replace="~{fragments :: head}"></head>
+<body>
+<div class="layout-wrapper layout-content-navbar">
+  <div class="layout-container">
+    <aside th:replace="~{fragments :: sidebar(${pageNum})}"></aside>
+    <div class="layout-page">
+      <nav th:replace="~{fragments :: navbar}"></nav>
+      <div class="content-wrapper">
+        <div class="container-xxl flex-grow-1 container-p-y">
+          <div class="card py-5 px-5">
+            <form th:action = "@{/admin/products/{l} (l=${link})}" th:object = "${product}" method="post" enctype="multipart/form-data" class="row g-3" style="color:black;" id="productForm">
+              <div class="form-check form-switch d-flex justify-content-end">
+                <input class="form-check-input mx-1" type="checkbox" role="switch" id="flexSwitchCheckDefault" th:field = "*{status}">
+                <label class="form-check-label" for="flexSwitchCheckDefault"> Статус</label>
+              </div>
+              <div class="col-md-6" >
+                <label for="inputName" class="form-label">Назва</label>
+                <input type="text" th:class="'form-control'+${#fields.hasErrors('name')? ' is-invalid' : ''}" id="inputName" maxlength="100" th:field = "*{name}">
+                <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                <div class="text-danger" id="nameValidation"></div>
+              </div>
+              <div class="col-md-6" >
+                <label for="inputPrice" class="form-label">Ціна</label>
+                <input type="number" th:class="'form-control'+${#fields.hasErrors('price')? ' is-invalid' : ''}" id="inputPrice"  th:field = "*{price}">
+                <div class="text-danger" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+                <div class="text-danger" id="priceValidation"></div>
+              </div>
+              <div>
+                <label for="inputDescription" class="form-label">Опис</label>
+                <textarea th:class="'form-control'+${#fields.hasErrors('description')? ' is-invalid' : ''}" id="inputDescription" rows="3" maxlength="300" th:field = "*{description}"></textarea>
+                <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"> </div>
+                <div class="text-danger" id="descriptionValidation"></div>
+              </div>
+
+              <div class="row g-3 align-items-center">
+                <div class="col-auto">
+                  <label class="col-form-label" for="inputMainImage" style="color:black;">Зображення</label>
+                </div>
+                <div class="col-auto">
+                  <img th:src="*{image} != null? @{'/uploads/'+ *{image}}: @{'https://static.vecteezy.com/system/resources/previews/004/141/669/non_2x/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg'}" style="width:150px; height:150px;" id="main_image">
+                  <input type="file" accept="image/jpeg, image/jpg, image/png" class="form-control d-none"  id="inputMainImage" onchange="main_image.src=window.URL.createObjectURL(this.files[0])" name="mainImage">
+                </div>
+                <div class="col-auto">
+                  <label class="input-group-text col-form-label" for="inputMainImage" style="color:black;">Завантажити</label>
+                  <div th:text="${mainWarning}" class="text-danger" id="imageValidation"></div>
+                  <input type="text" class="d-none"  th:value = "*{image}" id="mainImageName" name="mainImageName">
+                </div>
+                <div class="col-auto">
+                  <button type="button" class="btn btn-outline-danger" onclick="main_image.src='https://static.vecteezy.com/system/resources/previews/004/141/669/non_2x/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg'; inputMainImage.value = ''; mainImageName.value = ''">Видалити</button>
+                </div>
+              </div>
+
+              <div class="col-md-6" >
+                <label for="selectCategory" class="form-label">Категорія</label>
+                <select class="form-select" aria-label=".form-select-lg example" name="selectCategory" id="selectCategory">
+                  <option th:each="c : ${categories}" th:value="${c.getId()}" th:text="${c.getName()}" th:selected="${c.getId() == categoryId}"></option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="multipleSelect" class="form-label">Типи додатків</label>
+                <select class="form-select" aria-label=".form-select-lg example" id="multipleSelect" name="adTypes" multiple>
+                  <option th:each="at : ${additiveTypes}" th:value="${at.id}" th:text="${at.name}" th:selected="${chosenAdditiveTypes != null and #strings.contains(chosenAdditiveTypes, at.id)}"></option>
+                </select>
+              </div>
+              <div class="col-md-12 mt-5 d-flex justify-content-end">
+                <button type="button" class="btn btn-primary" onclick="save()">Зберегти</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+<script th:src="@{/assets/vendor/libs/hammer/hammer.js}"></script>
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<script th:src="@{/assets/js/main.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $("#selectCategory").select2 ();
+    $("#multipleSelect").select2 ();
+});
+  function save(){
+  $("#inputName").removeClass("is-invalid");
+  $("#nameValidation").text("");
+  $("#inputPrice").removeClass("is-invalid");
+  $("#priceValidation").text("");
+  $("#inputDescription").removeClass("is-invalid");
+  $("#descriptionValidation").text("");
+    if($('#inputName').val() == "" || $('#inputPrice').val() == "" || $('#inputDescription').val() == "" || validateFile() == false){
+        if($('#inputName').val() == ""){
+          $("#nameValidation").text("Поле не може бути порожнім");
+          $("#inputName").addClass("is-invalid");
+        }
+        if($('#inputPrice').val() == ""){
+          $("#priceValidation").text("Поле не може бути порожнім");
+          $("#inputPrice").addClass("is-invalid");
+        }
+        if($('#inputDescription').val() == ""){
+          $("#descriptionValidation").text("Поле не може бути порожнім");
+          $("#inputDescription").addClass("is-invalid");
+        }
+        if(validateFile() == false){
+          $("#imageValidation").text("Некоректний тип файлу");
+        }
+    } else {
+        $("#productForm").submit();
+		}
+  }
+  function validateFile(){
+    var value = $("#inputMainImage").val();
+    var ext = value.substring(value.lastIndexOf('.') + 1).toLowerCase();
+    if($.inArray(ext, ['png','jpg','jpeg']) == -1 && value != "") {
+      return false;
+    } else {
+      return true;
+    }
+  }
+</script>
+</body>
+</html>

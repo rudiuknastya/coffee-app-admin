@@ -2,6 +2,7 @@ package project.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public class Product {
     @NotEmpty(message = "Поле не може бути порожнім")
     @Column(nullable = false)
     private String name;
-    @NotEmpty(message = "Поле не може бути порожнім")
+    @NotNull(message = "Поле не може бути порожнім")
     @Column(nullable = false)
     private Integer price;
     @NotEmpty(message = "Поле не може бути порожнім")
@@ -26,7 +27,7 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private Category category;
-    @ManyToMany(cascade = { CascadeType.PERSIST})
+    @ManyToMany(cascade = { CascadeType.PERSIST}, fetch = FetchType.LAZY)
     @JoinTable(
             name = "product_additive_types",
             joinColumns = { @JoinColumn(name = "product_id") },
