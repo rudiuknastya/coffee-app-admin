@@ -8,17 +8,24 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import project.dto.AdditiveTypeDTO;
 import project.dto.CategoryDTO;
+import project.entity.Additive;
 import project.entity.AdditiveType;
 import project.entity.Category;
+import project.service.AdditiveService;
 import project.service.AdditiveTypeService;
+
+import java.util.List;
 
 @Controller
 public class AdditiveTypeController {
     private final AdditiveTypeService additiveTypeService;
+    private final AdditiveService additiveService;
 
-    public AdditiveTypeController(AdditiveTypeService additiveTypeService) {
+    public AdditiveTypeController(AdditiveTypeService additiveTypeService, AdditiveService additiveService) {
         this.additiveTypeService = additiveTypeService;
+        this.additiveService = additiveService;
     }
+
     private int pageSize = 1;
 
     @GetMapping("/admin/additive_types")
@@ -37,6 +44,11 @@ public class AdditiveTypeController {
     public @ResponseBody String deleteAdditiveType(@PathVariable Long id){
         AdditiveType additiveType = additiveTypeService.getAdditiveTypeById(id);
         additiveType.setDeleted(true);
+        List<Additive> additives = additiveService.getAdditivesForAdditiveType(id);
+        for(Additive additive: additives){
+            additive.setDeleted(true);
+            additiveService.saveAdditive(additive);
+        }
         additiveTypeService.saveAdditiveType(additiveType);
         return "deleted";
     }

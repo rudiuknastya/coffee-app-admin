@@ -13,4 +13,5 @@ public interface AdditiveService {
     Additive getAdditiveById(Long id);
     AdditiveDTO getAdditiveDTOById(Long id);
     Page<AdditiveDTO> searchAdditive(String input, Long additiveType, Pageable pageable);
+    List<Additive> getAdditivesForAdditiveType(Long id);
 }

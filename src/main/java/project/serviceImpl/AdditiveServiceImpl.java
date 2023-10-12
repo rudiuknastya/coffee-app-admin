@@ -89,4 +89,11 @@ public class AdditiveServiceImpl implements AdditiveService {
         return additiveDTOPage;
     }
 
+    @Override
+    public List<Additive> getAdditivesForAdditiveType(Long id) {
+        logger.info("getAdditivesForAdditiveType() - Finding additives for additive type with id "+id);
+        List<Additive> additives = additiveRepository.findAdditivesForAdditiveType(id);
+        logger.info("getAdditivesForAdditiveType() - Additives were found");
+        return additives;
+    }
 }

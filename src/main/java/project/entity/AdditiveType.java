@@ -1,5 +1,6 @@
 package project.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 
@@ -16,7 +17,8 @@ public class AdditiveType {
     private String name;
     private Boolean deleted;
     private Boolean status;
-    @ManyToMany(mappedBy = "additiveTypes")
+    @ManyToMany(mappedBy = "additiveTypes", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Product> products;
 
     public List<Product> getProducts() {
