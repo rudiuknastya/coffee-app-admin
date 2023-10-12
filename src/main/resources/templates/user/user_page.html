@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      class="light-style layout-navbar-fixed layout-menu-fixed"
+      dir="ltr"
+      data-theme="theme-default"
+      data-template="vertical-menu-template-no-customizer" >
+<head th:replace="~{fragments :: head}"></head>
+<body>
+<div class="layout-wrapper layout-content-navbar">
+  <div class="layout-container">
+    <aside th:replace="~{fragments :: sidebar(${pageNum})}"></aside>
+    <div class="layout-page">
+      <nav th:replace="~{fragments :: navbar}"></nav>
+      <div class="content-wrapper">
+        <div class="container-xxl flex-grow-1 container-p-y">
+          <div class="card py-5 px-5">
+            <form th:action = "@{/admin/users/{l} (l=${link})}" th:object = "${user}" method="post" class="row g-3" style="color:black;">
+              <div class="col-md-6">
+                <label for="exampleFormControlTextarea1" class="form-label">Ім'я</label>
+                <input th:class="'form-control'+${#fields.hasErrors('name')? ' is-invalid' : ''}" id="exampleFormControlTextarea1" maxlength="100" th:field = "*{name}">
+                <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"> </div>
+              </div>
+              <div class="col-md-6" >
+                <label for="inputPhone" class="form-label">Номер телефону</label>
+                <input type="text" th:class="'form-control'+${#fields.hasErrors('phoneNumber')? ' is-invalid' : ''}" id="inputPhone" maxlength="20"  th:field = "*{phoneNumber}">
+                <div class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
+              </div>
+
+              <div class="col-md-6" >
+                <label for="selectLanguage" class="form-label">Мова</label>
+                <select class="select2 form-select" aria-label=".form-select-lg example" id="selectLanguage" th:field = "*{language}">
+                  <option th:each="l : ${languages}" th:value="${l}" th:text="${l}"></option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="birthdate" class="form-label">Дата народження</label>
+                <input id="birthdate" class="form-control" type="date" min="1923-01-01" max="2017-01-01" th:field = "*{birthDate}" th:value="${birthDate}">
+                <div class="text-danger" th:if="${#fields.hasErrors('birthDate')}" th:errors="*{birthDate}"> </div>
+              </div>
+
+              <div class="col-md-6" >
+                <label for="selectStatus" class="form-label">Статус</label>
+                <select class="form-select" aria-label=".form-select-lg example" id="selectStatus" th:field = "*{status}">
+                  <option th:each="s : ${status}" th:value="${s}" th:text="${s}"></option>
+                </select>
+              </div>
+
+              <div class="col-md-12 mt-5 d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">Зберегти</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+<script th:src="@{/assets/vendor/libs/hammer/hammer.js}"></script>
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<script th:src="@{/assets/js/main.js}"></script>
+<script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
+<script th:src="@{/assets/js/app-user-list.js}"></script>
+</body>
+</html>
