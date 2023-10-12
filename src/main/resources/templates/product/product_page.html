@@ -58,13 +58,13 @@
 
               <div class="col-md-6" >
                 <label for="selectCategory" class="form-label">Категорія</label>
-                <select class="form-select" aria-label=".form-select-lg example" name="selectCategory" id="selectCategory">
+                <select class="select2 form-select" aria-label=".form-select-lg example" name="selectCategory" id="selectCategory">
                   <option th:each="c : ${categories}" th:value="${c.getId()}" th:text="${c.getName()}" th:selected="${c.getId() == categoryId}"></option>
                 </select>
               </div>
               <div class="col-md-6">
                 <label for="multipleSelect" class="form-label">Типи додатків</label>
-                <select class="form-select" aria-label=".form-select-lg example" id="multipleSelect" name="adTypes" multiple>
+                <select class="select2 form-select" id="multipleSelect" name="adTypes" multiple>
                   <option th:each="at : ${additiveTypes}" th:value="${at.id}" th:text="${at.name}" th:selected="${chosenAdditiveTypes != null and #strings.contains(chosenAdditiveTypes, at.id)}"></option>
                 </select>
               </div>
@@ -85,12 +85,9 @@
 <script th:src="@{/assets/vendor/libs/hammer/hammer.js}"></script>
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
+<script th:src="@{/assets/js/forms-selects.js}"></script>
 <script>
-  $(document).ready(function() {
-    $("#selectCategory").select2 ();
-    $("#multipleSelect").select2 ();
-});
   function save(){
   $("#inputName").removeClass("is-invalid");
   $("#nameValidation").text("");

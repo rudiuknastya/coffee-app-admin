@@ -20,7 +20,7 @@
                                 <input class="form-control" type="search" id="searchInput" placeholder="Пошук за назвою або ціною" aria-label="Search" maxlength="100">
                             </div>
                             <div class="col-3">
-                                <select class="form-select" id="atSelect" aria-label="Default select example">
+                                <select class="select2 form-select" id="atSelect">
                                     <option th:value="0" selected>Тип додатку</option>
                                     <option th:each="at : ${adTypes}" th:value="${at.id}" th:text="${at.name}"></option>
                                 </select>
@@ -64,7 +64,7 @@
                                             </div>
                                             <div class="col-md-6" >
                                                 <label for="selectAdType" class="form-label">Тип додатку</label>
-                                                <select class="form-select" aria-label=".form-select-lg example" name="selectAdType" id="selectAdType">
+                                                <select class="select2 form-select" aria-label=".form-select-lg example" name="selectAdType" id="selectAdType">
                                                     <option th:each="at : ${adTypes}" th:value="${at.id}" th:text="${at.name}"></option>
                                                 </select>
                                             </div>
@@ -103,7 +103,7 @@
                                             </div>
                                             <div class="col-md-6" >
                                                 <label for="editSelectAdType" class="form-label">Тип додатку</label>
-                                                <select class="form-select" aria-label=".form-select-lg example" name="editSelectAdType" id="editSelectAdType">
+                                                <select class="select2 form-select" name="editSelectAdType" id="editSelectAdType" >
                                                     <option th:each="at : ${adTypes}" th:value="${at.id}" th:text="${at.name}"></option>
                                                 </select>
                                             </div>
@@ -155,12 +155,9 @@
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
-<!--<script th:src="@{/assets/js/app-user-list.js}"></script>-->
+<script th:src="@{/assets/js/forms-selects.js}"></script>
 <script>
     $(document).ready(function(){
-        $("#atSelect").select2();
-        $("#selectAdType").select2();
-        $("#editSelectAdType").select2();
         getAdditives(0);
     });
     var paginationType;

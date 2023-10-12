@@ -17,7 +17,7 @@
             <form th:action = "@{/admin/locations/{l} (l=${link})}" th:object = "${location}" method="post" class="row g-3" style="color:black;">
               <div class="col-md-6" >
                 <label for="selectCity" class="form-label">Місто</label>
-                <select class="select2 form-select" aria-label=".form-select-lg example" id="selectCity" th:field = "*{city}">
+                <select class="select2 form-select" id="selectCity" th:field = "*{city}">
                   <option th:each="c : ${cities}" th:value="${c.city}" th:text="${c.city}"></option>
                 </select>
                 <div class="text-danger" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></div>
@@ -60,6 +60,6 @@
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
-<script th:src="@{/assets/js/app-user-list.js}"></script>
+<script th:src="@{/assets/js/forms-selects.js}"></script>
 </body>
 </html>
