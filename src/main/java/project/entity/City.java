@@ -8,7 +8,7 @@ public class City {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    String city;
+    private String city;
 
     public Long getId() {
         return id;

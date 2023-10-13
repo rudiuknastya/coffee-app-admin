@@ -7,68 +7,66 @@
 <head th:replace="~{fragments :: head}"></head>
 <body>
 <div class="layout-wrapper layout-content-navbar">
-  <div class="layout-container">
-    <aside th:replace="~{fragments :: sidebar(${pageNum})}"></aside>
-    <div class="layout-page">
-      <nav th:replace="~{fragments :: navbar}"></nav>
-      <div class="content-wrapper">
-        <div class="container-xxl flex-grow-1 container-p-y">
-          <div class="card py-5 px-5">
-            <h4>Товари</h4>
-            <div class="row d-flex justify-content-between mb-4">
-              <div class="col-5">
-                <input class="form-control" type="search" id="searchInput" placeholder="Пошук за назвою або ціною" aria-label="Search" maxlength="100">
-              </div>
-              <div class="col-3">
-                <select class="select2 form-select" id="categorySelect" aria-label="Default select example">
-                  <option selected th:value="0">Категорії</option>
-                  <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}"></option>
-                </select>
-              </div>
-              <a th:href="@{/admin/products/new}" type="button" class="btn btn-label-primary col-3 me-3"><i class="ti ti-plus"></i>Створити товар</a>
-            </div>
+    <div class="layout-container">
+        <aside th:replace="~{fragments :: sidebar(${pageNum})}"></aside>
+        <div class="layout-page">
+            <nav th:replace="~{fragments :: navbar}"></nav>
+            <div class="content-wrapper">
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <div class="card py-5 px-5">
+                        <h4>Адміни</h4>
+                        <div class="row d-flex justify-content-between mb-4">
+                            <div class="col-9">
+                                <input class="form-control" type="search" id="searchInput" placeholder="Пошук за прізвищем або email" aria-label="Search" maxlength="100">
+                            </div>
+                            <div class="col-3">
+                                <select class="select2 form-select" id="roleSelect" aria-label="Default select example">
+                                    <option selected value="null">Роль</option>
+                                    <option th:each="r : ${roles}" th:value="${r}" th:text="${r}"></option>
+                                </select>
+                            </div>
+                        </div>
 
-            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <h4>Ви впевнені що хочете видалити цей елемент?</h4>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" onclick="deleteProduct()">Видалити</button>
-                  </div>
+                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h4>Ви впевнені що хочете видалити цей елемент?</h4>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger" onclick="deleteAdmin()">Видалити</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Ім'я</th>
+                                    <th>Прізвище</th>
+                                    <th>E-mail</th>
+                                    <th>Роль</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody id = "myTable">
+                                </tbody>
+                            </table>
+                            <div class="d-flex justify-content-between">
+                                <div class="col-4 mt-4" id="paginationElements"></div>
+                                <ul class="pagination mt-4 justify-content-end"></ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
-
-
-            <div class="table-responsive">
-              <table class="table table-bordered">
-                <thead>
-                <tr>
-                  <th>Назва</th>
-                  <th>Ціна</th>
-                  <th>Категорія</th>
-                  <th>Статус</th>
-                  <th></th>
-                </tr>
-                </thead>
-                <tbody id = "myTable">
-                </tbody>
-              </table>
-              <div class="d-flex justify-content-between">
-                <div class="col-4 mt-4" id="paginationElements"></div>
-                <ul class="pagination mt-4 justify-content-end"></ul>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 </body>
 <script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
@@ -82,14 +80,14 @@
 <script th:src="@{/assets/js/forms-selects.js}"></script>
 <script>
 $(document).ready(function(){
-        getProducts(0);
+        getAdmins(0);
     });
     var paginationType;
     var data = "";
-	function getProducts(currentPage) {
+	function getAdmins(currentPage) {
 		$.ajax({
 					type : "GET",
-					url : "getProducts",
+					url : "getAdmins",
 					data: {
                         page: currentPage
                     },
@@ -98,23 +96,17 @@ $(document).ready(function(){
 						$('ul.pagination li').remove();
 						data = response.content
 						for (i = 0; i < data.length; i++) {
-						var st;
-						if(data[i].status == true){
-						    st = 'Увім'
-						} else {
-						    st = 'Вимк'
-						}
 							$("#myTable")
 									.append(
 											'<tr class="tr"> <td>'
-													+ data[i].name
+													+ data[i].firstName
 													+ '</td> <td>'
-													+ data[i].price
+													+ data[i].lastName
 													+ '</td> <td>'
-													+ data[i].categoryName
+													+ data[i].email
 													+ '</td> <td>'
-													+ st
-													+ '</td> <td><a href="/admin/products/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
+													+ data[i].role
+													+ '</td> <td><a href="/admin/admins/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 
@@ -213,7 +205,7 @@ $(document).ready(function(){
         if(id === "prev"){
             let activeValue = parseInt($("ul.pagination li.active").text());
             if(paginationType === 1){
-                getProducts(activeValue-2);
+                getAdmins(activeValue-2);
             }
             if(paginationType === 2){
                 searchAndFilter(activeValue-2);
@@ -221,7 +213,7 @@ $(document).ready(function(){
         } else if (id === "next"){
             let activeValue = parseInt($("ul.pagination li.active").text());
             if(paginationType === 1){
-                getProducts(activeValue);
+                getAdmins(activeValue);
             }
             if(paginationType === 2){
                 searchAndFilter(activeValue);
@@ -229,7 +221,7 @@ $(document).ready(function(){
         } else {
             let currentPage = parseInt(val - 1);
             if(paginationType === 1){
-                getProducts(currentPage);
+                getAdmins(currentPage);
             }
             if(paginationType === 2){
                 searchAndFilter(currentPage);
@@ -237,18 +229,18 @@ $(document).ready(function(){
         }
 	});
 
-	var productId;
+	var adminId;
 	function openDeleteModal(id){
-	    productId = id
+	    adminId = id
         $('#deleteModal').modal('show');
 	}
-	function deleteProduct(){
+	function deleteAdmin(){
         $.ajax({
 					type : "GET",
-					url : "deleteProduct/"+productId,
+					url : "deleteAdmin/"+adminId,
 					success : function(response) {
 					    $('#deleteModal').modal('hide');
-					    getProducts(0);
+					    getAdmins(0);
 
 					},
 					error : function(err) {
@@ -263,41 +255,40 @@ $(document).ready(function(){
         searchAndFilter(0);
     });
     var selectValue;
-    $('#categorySelect').on("change", function(){
-        selectValue = $(this).val();
+    $('#roleSelect').on("change", function(){
+        if($(this).val().localeCompare('null') == 0){
+            selectValue = null;
+        } else {
+            selectValue = $(this).val();
+        }
         searchAndFilter(0);
     });
 
     function searchAndFilter(currentPage){
         $.ajax({
 					type : "GET",
-					url : "searchProduct",
+					url : "searchAdmins",
 					data: {
 					    page: currentPage,
                         searchValue: searchValue,
-                        categoryId: selectValue
+                        role: selectValue
                     },
 					success : function(response) {
 					    $('.tr').remove();
 						$('ul.pagination li').remove();
 						data = response.content
 						for (i = 0; i < data.length; i++) {
-						if(data[i].status == true){
-						    st = 'Увім'
-						} else {
-						    st = 'Вимк'
-						}
 							$("#myTable")
 									.append(
 											'<tr class="tr"> <td>'
-													+ data[i].name
+													+ data[i].firstName
 													+ '</td> <td>'
-													+ data[i].price
+													+ data[i].lastName
 													+ '</td> <td>'
-													+ data[i].categoryName
+													+ data[i].email
 													+ '</td> <td>'
-													+ st
-													+ '</td> <td><a href="/admin/products/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
+													+ data[i].role
+													+ '</td> <td><a href="/admin/admins/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 
