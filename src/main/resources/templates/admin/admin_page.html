@@ -46,7 +46,7 @@
               <div class="col-md-6">
                 <label for="roleSelect" class="form-label">Роль</label>
                 <select class="form-select" id="roleSelect" th:field="*{role}">
-                  <option th:each="r : ${roles}" th:value="${r}" th:text="${r}"></option>
+                  <option th:each="r : ${roles}" th:value="${r}" th:text="${r.getRoleName()}"></option>
                 </select>
               </div>
 

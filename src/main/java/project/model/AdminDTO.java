@@ -7,7 +7,7 @@ public class AdminDTO {
     private String firstName;
     private String lastName;
     private String email;
-    private Role role;
+    private String role;
 
     public Long getId() {
         return id;
@@ -41,11 +41,11 @@ public class AdminDTO {
         this.email = email;
     }
 
-    public Role getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(String role) {
         this.role = role;
     }
 }

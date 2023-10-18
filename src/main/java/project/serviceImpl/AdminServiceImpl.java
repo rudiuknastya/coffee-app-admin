@@ -32,7 +32,7 @@ public class AdminServiceImpl implements AdminService {
     public Page<AdminDTO> getAdmins(Pageable pageable) {
         logger.info("getAdmins() - Finding admins for page "+ pageable.getPageNumber());
         Page<Admin> admins = adminRepository.findAll(pageable);
-        List<AdminDTO> adminDTOS = AdminMapper.ADMIN_MAPPER.adminListToAdminDTOList(admins.getContent());
+        List<AdminDTO> adminDTOS = AdminMapper.adminListToAdminDTOList(admins.getContent());
         Page<AdminDTO> adminDTOPage = new PageImpl<>(adminDTOS, pageable, admins.getTotalElements());
         logger.info("getAdmins() - Admins were found");
         return adminDTOPage;
@@ -67,7 +67,7 @@ public class AdminServiceImpl implements AdminService {
         } else {
             admins = adminRepository.findAll(pageable);
         }
-        List<AdminDTO> adminDTOS = AdminMapper.ADMIN_MAPPER.adminListToAdminDTOList(admins.getContent());
+        List<AdminDTO> adminDTOS = AdminMapper.adminListToAdminDTOList(admins.getContent());
         Page<AdminDTO> adminDTOPage = new PageImpl<>(adminDTOS, pageable, admins.getTotalElements());
         logger.info("searchAdmins() - Admins were found");
         return adminDTOPage;
