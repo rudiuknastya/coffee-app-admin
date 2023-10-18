@@ -7,9 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import project.dto.AdditiveDTO;
+import project.model.additiveModel.AdditiveDTO;
 import project.entity.Additive;
 import project.mapper.AdditiveMapper;
+import project.model.additiveModel.AdditiveRequest;
 import project.repository.AdditiveRepository;
 import project.service.AdditiveService;
 
@@ -52,12 +53,13 @@ public class AdditiveServiceImpl implements AdditiveService {
     }
 
     @Override
-    public AdditiveDTO getAdditiveDTOById(Long id) {
-        logger.info("getAdditiveDTOById() - Finding additive for dto by id "+id);
+    public AdditiveRequest getAdditiveRequestById(Long id) {
+        logger.info("getAdditiveRequestById() - Finding additive for additive request by id "+id);
         Additive additive = additiveRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        AdditiveDTO additiveDTO = AdditiveMapper.ADDITIVE_MAPPER.additiveToDTO(additive);
-        logger.info("getAdditiveDTOById() - Additive was found");
-        return additiveDTO;
+        AdditiveRequest additiveRequest = AdditiveMapper.ADDITIVE_MAPPER.additiveToAdditiveRequest(additive);
+        System.out.println(additiveRequest.getAdditiveTypeId());
+        logger.info("getAdditiveRequestById() - Additive was found");
+        return additiveRequest;
     }
 
     @Override

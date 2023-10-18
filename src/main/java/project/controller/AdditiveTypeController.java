@@ -6,11 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import project.dto.AdditiveTypeDTO;
-import project.dto.CategoryDTO;
+import project.model.additiveTypeModel.AdditiveTypeDTO;
 import project.entity.Additive;
 import project.entity.AdditiveType;
-import project.entity.Category;
 import project.service.AdditiveService;
 import project.service.AdditiveTypeService;
 

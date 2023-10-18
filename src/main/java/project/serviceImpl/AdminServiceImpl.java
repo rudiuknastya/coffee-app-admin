@@ -7,13 +7,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import project.dto.AdminDTO;
+import project.model.AdminDTO;
 import project.entity.Admin;
 import project.entity.Role;
 import project.mapper.AdminMapper;
 import project.repository.AdminRepository;
 import project.service.AdminService;
-import project.specifications.UserSpecification;
 
 import java.util.List;
 

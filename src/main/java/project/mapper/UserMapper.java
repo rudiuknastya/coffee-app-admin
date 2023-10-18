@@ -2,7 +2,7 @@ package project.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-import project.dto.UserDTO;
+import project.model.UserDTO;
 import project.entity.User;
 
 import java.util.List;

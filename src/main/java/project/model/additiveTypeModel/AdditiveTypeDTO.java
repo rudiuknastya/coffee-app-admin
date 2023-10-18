@@ -1,4 +1,4 @@
-package project.dto;
+package project.model.additiveTypeModel;
 
 public interface AdditiveTypeDTO {
     Long getId();

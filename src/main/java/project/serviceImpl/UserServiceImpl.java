@@ -7,13 +7,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import project.dto.UserDTO;
+import project.model.UserDTO;
 import project.entity.User;
 import project.entity.UserStatus;
 import project.mapper.UserMapper;
 import project.repository.UserRepository;
 import project.service.UserService;
-import project.specifications.UserSpecification;
 
 import java.util.List;
 

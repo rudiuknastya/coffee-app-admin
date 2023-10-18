@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import project.dto.CategoryDTO;
+import project.model.CategoryDTO;
 import project.entity.Category;
 import project.entity.Product;
 import project.service.CategoryService;

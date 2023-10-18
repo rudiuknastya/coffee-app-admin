@@ -20,9 +20,7 @@
                                 <input class="form-control" type="search" id="searchInput" placeholder="Пошук за назвою або ціною" aria-label="Search" maxlength="100">
                             </div>
                             <div class="col-3">
-                                <select class="select2 form-select" id="atSelect">
-                                    <option th:value="0" selected>Тип додатку</option>
-                                    <option th:each="at : ${adTypes}" th:value="${at.id}" th:text="${at.name}"></option>
+                                <select class="form-select" id="atSelect">
                                 </select>
                             </div>
                             <button type="button" id="createButton" class="btn btn-label-primary col-3 me-3"><i class="ti ti-plus"></i>Створити додаток</button>
@@ -64,9 +62,9 @@
                                             </div>
                                             <div class="col-md-6" >
                                                 <label for="selectAdType" class="form-label">Тип додатку</label>
-                                                <select class="select2 form-select" aria-label=".form-select-lg example" name="selectAdType" id="selectAdType">
-                                                    <option th:each="at : ${adTypes}" th:value="${at.id}" th:text="${at.name}"></option>
+                                                <select class="form-select" aria-label=".form-select-lg example" name="selectAdType" id="selectAdType">
                                                 </select>
+                                                <div id="adTypeValidation" class="text-danger"></div>
                                             </div>
                                             <div class="form-check form-switch col-md-6 d-flex flex-column">
                                                 <label class="form-check-label" for="saveStatus"> Статус</label>
@@ -103,8 +101,7 @@
                                             </div>
                                             <div class="col-md-6" >
                                                 <label for="editSelectAdType" class="form-label">Тип додатку</label>
-                                                <select class="select2 form-select" name="editSelectAdType" id="editSelectAdType" >
-                                                    <option th:each="at : ${adTypes}" th:value="${at.id}" th:text="${at.name}"></option>
+                                                <select class="form-select" name="editSelectAdType" id="editSelectAdType" >
                                                 </select>
                                             </div>
                                             <div class="form-check form-switch col-md-6 d-flex flex-column">
@@ -155,9 +152,37 @@
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
-<script th:src="@{/assets/js/forms-selects.js}"></script>
 <script>
     $(document).ready(function(){
+        $('#atSelect').select2({
+            placeholder: "Оберіть тип додатку",
+            allowClear: true,
+            maximumInputLength: 100,
+            ajax: {
+                type: "get",
+                url: "/admin/getAdTypesForAdditives",
+                data: function (params) {
+                    return {
+                        search: params.term,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: $.map(response.content, function (item) {
+                            return {
+                                text: item.name,
+                                id: item.id
+                            }
+                        }),
+                        pagination: {
+                            more: (response.pageable.pageNumber+1)  < response.totalPages
+                        }
+                    };
+                }
+
+            }
+        });
         getAdditives(0);
     });
     var paginationType;
@@ -338,7 +363,38 @@
 	    $("#inputName").removeClass("is-invalid");
 	    $("#priceValidation").text("");
 	    $("#inputPrice").removeClass("is-invalid");
+	    $("#adTypeValidation").text("");
+        $('#selectAdType').removeClass("is-invalid");
 	    $('#saveForm')[0].reset();
+	    $('#selectAdType').select2({
+	        dropdownParent: $("#formModal"),
+	        placeholder: "Оберіть тип додатку",
+	        maximumInputLength: 100,
+            ajax: {
+                type: "get",
+                url: "/admin/getAdTypesForAdditives",
+                data: function (params) {
+                    return {
+                        search: params.term,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: $.map(response.content, function (item) {
+                            return {
+                                text: item.name,
+                                id: item.id
+                            }
+                        }),
+                        pagination: {
+                            more: (response.pageable.pageNumber+1)  < response.totalPages
+                        }
+                    };
+                }
+
+            }
+        });
         $('#formModal').modal('show');
     });
     function save(){
@@ -346,13 +402,15 @@
 	$("#inputName").removeClass("is-invalid");
 	$("#priceValidation").text("");
 	$("#inputPrice").removeClass("is-invalid");
+	$("#adTypeValidation").text("");
+    $('#selectAdType').removeClass("is-invalid");
     var stat;
     if($("#saveStatus").is(':checked')){
         stat = true;
     } else {
         stat = false;
     }
-    if($('#inputName').val() === "" || $('#inputPrice').val() === ""){
+    if($('#inputName').val() === "" || $('#inputPrice').val() === "" || $('#selectAdType').val() == null){
         if($('#inputName').val() === ""){
             $("#nameValidation").text("Поле не може бути порожнім");
             $("#inputName").addClass("is-invalid");
@@ -360,6 +418,10 @@
         if($('#inputPrice').val() === ""){
             $("#priceValidation").text("Поле не може бути порожнім");
             $("#inputPrice").addClass("is-invalid");
+        }
+        if($('#selectAdType').val() == null){
+            $("#adTypeValidation").text("Поле не може бути порожнім");
+            $('#selectAdType').addClass("is-invalid");
         }
     } else {
         $.ajax({
@@ -390,6 +452,37 @@
 	$("#editName").removeClass("is-invalid");
 	$("#editPriceValidation").text("");
 	$("#editPrice").removeClass("is-invalid");
+	var adType;
+
+	$('#editSelectAdType').select2({
+	        dropdownParent: $("#editModal"),
+	        maximumInputLength: 100,
+            ajax: {
+                type: "get",
+                url: "/admin/getAdTypesForAdditives",
+                data: function (params) {
+                    return {
+                        search: params.term,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: $.map(response.content, function (item) {
+                            return {
+                                text: item.name,
+                                id: item.id
+                            }
+                        }),
+                        pagination: {
+                            more: (response.pageable.pageNumber+1)  < response.totalPages
+                        }
+                    };
+                }
+
+            }
+        });
+
         $.ajax({
 					type : "GET",
 					url : "editAdditive/"+id,
@@ -397,15 +490,29 @@
 					    $('#editName').val(response.name);
 					    $('#editPrice').val(response.price);
 					    $("#editStatus").prop( "checked", response.status );
-					    $("#editSelectAdType option").filter(function() {
-                            return $(this).text() == response.additiveTypeName;
-                        }).prop('selected', true);
+					    adType = response.additiveTypeId;
+					    var adTypeSelect = $('#editSelectAdType');
+                          $.ajax({
+                              type: 'GET',
+                              url: '/admin/getAdTypeForAdditive/'+adType
+                          }).then(function (data) {
+                              var option = new Option(data.name, data.id, true, true);
+                              adTypeSelect.append(option).trigger('change');
+
+                              adTypeSelect.trigger({
+                                  type: 'select2:select',
+                                  params: {
+                                      data: data
+                                  }
+                              });
+                          });
 					    $('#editModal').modal('show');
 					},
 					error : function(err) {
 						alert("error is" + err)
 					}
 				});
+
     }
     function edit(){
     $("#editValidation").text("");

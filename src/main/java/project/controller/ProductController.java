@@ -10,11 +10,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import project.dto.ProductDTO;
+import project.model.CategoryNameDTO;
+import project.model.productModel.ProductDTO;
 import project.entity.AdditiveType;
 import project.entity.Category;
-import project.entity.Location;
 import project.entity.Product;
+import project.model.productModel.ProductRequest;
 import project.service.AdditiveTypeService;
 import project.service.CategoryService;
 import project.service.ProductService;
@@ -43,13 +44,21 @@ public class ProductController {
     @GetMapping("/admin/products")
     public String products(Model model){
         model.addAttribute("pageNum", 3);
-        model.addAttribute("categories", categoryService.getCategoriesName());
         return "product/products";
     }
     @GetMapping("/admin/getProducts")
     public @ResponseBody Page<ProductDTO> getProducts(@RequestParam("page")int page){
         Pageable pageable = PageRequest.of(page, pageSize);
         return productService.getProducts(pageable);
+    }
+    @GetMapping("/admin/getCategoriesForProducts")
+    public @ResponseBody Page<CategoryNameDTO> getCategoriesForProducts(@RequestParam(value = "search", required = false)String name, @RequestParam("page")int page){
+        Pageable pageable = PageRequest.of(page-1, pageSize);
+        return categoryService.getCategoriesName(pageable, name);
+    }
+    @GetMapping("/admin/getCategoryForProduct/{id}")
+    public @ResponseBody CategoryNameDTO getCategoryForProduct(@PathVariable Long id){
+        return categoryService.getCategoryNameDTOById(id);
     }
     @GetMapping("/admin/searchProduct")
     public @ResponseBody Page<ProductDTO> searchProduct(@RequestParam("page")int page, @RequestParam(name="searchValue", required = false)String input, @RequestParam(name="categoryId", required = false)Long categoryId){
@@ -67,44 +76,22 @@ public class ProductController {
     @GetMapping("/admin/products/new")
     public String createProduct(Model model){
         String l = "new";
-        model.addAttribute("categories", categoryService.getCategoriesName());
-        model.addAttribute("product", new Product());
+        model.addAttribute("product", new ProductRequest());
         model.addAttribute("link", l);
         model.addAttribute("pageNum", 3);
-        model.addAttribute("additiveTypes", additiveTypeService.getAdditiveTypeNames());
         return "product/product_page";
     }
 
     @PostMapping("/admin/products/new")
-    public String saveProduct(@Valid @ModelAttribute("product") Product product, BindingResult bindingResult,
+    public String saveProduct(@Valid @ModelAttribute("product") ProductRequest product, BindingResult bindingResult,
                               @RequestParam("mainImage") MultipartFile mainImage, @RequestParam("mainImageName") String mainImageName,
-                              @RequestParam("selectCategory")Long categoryId, @RequestParam(name = "adTypes", required = false) Long [] adTypes,
+                              @RequestParam(name = "adTypes", required = false) Long [] adTypes,
                               Model model){
         if(isSupportedExtension(FilenameUtils.getExtension(
                 mainImage.getOriginalFilename()))) {
             saveImage(mainImage, product, mainImageName);
         } else if(!mainImage.getOriginalFilename().equals("")){
             model.addAttribute("mainWarning", "Некоректний тип файлу");
-        }
-        if (bindingResult.hasErrors()) {
-            String l = "new";
-            model.addAttribute("product",product);
-            model.addAttribute("link", l);
-            model.addAttribute("pageNum", 3);
-            model.addAttribute("categories", categoryService.getCategoriesName());
-            model.addAttribute("additiveTypes", additiveTypeService.getAdditiveTypeNames());
-            return "product/product_page";
-        }
-
-        if(!mainImage.getOriginalFilename().equals("") && !isSupportedExtension(FilenameUtils.getExtension(
-                mainImage.getOriginalFilename()))){
-            String l = "new";
-            model.addAttribute("product",product);
-            model.addAttribute("link", l);
-            model.addAttribute("pageNum", 3);
-            model.addAttribute("categories", categoryService.getCategoriesName());
-            model.addAttribute("additiveTypes", additiveTypeService.getAdditiveTypeNames());
-            return "product/product_page";
         }
         if(adTypes != null){
             List<AdditiveType> additiveTypes = new ArrayList<>();
@@ -114,34 +101,47 @@ public class ProductController {
             }
             product.setAdditiveTypes(additiveTypes);
         }
-        Category category = categoryService.getCategoryById(categoryId);
-        product.setCategory(category);
-        product.setDeleted(false);
-        productService.saveProduct(product);
+        if (bindingResult.hasErrors()) {
+            String l = "new";
+            model.addAttribute("product",product);
+            model.addAttribute("link", l);
+            model.addAttribute("pageNum", 3);
+            return "product/product_page";
+        }
+
+        if(!mainImage.getOriginalFilename().equals("") && !isSupportedExtension(FilenameUtils.getExtension(
+                mainImage.getOriginalFilename()))){
+            String l = "new";
+            model.addAttribute("product",product);
+            model.addAttribute("link", l);
+            model.addAttribute("pageNum", 3);
+            return "product/product_page";
+        }
+        Product productToSave = new Product();
+        productToSave.setName(product.getName());
+        productToSave.setDescription(product.getDescription());
+        productToSave.setImage(product.getImage());
+        productToSave.setPrice(product.getPrice());
+        productToSave.setStatus(product.getStatus());
+        productToSave.setDeleted(false);
+        productToSave.setCategory(categoryService.getCategoryById(product.getCategoryId()));
+        productToSave.setAdditiveTypes(product.getAdditiveTypes());
+        productService.saveProduct(productToSave);
         return "redirect:/admin/products";
     }
 
     @GetMapping("/admin/products/edit/{id}")
     public String editProduct(@PathVariable Long id, Model model){
         String l = "edit/"+id;
-        Product product = productService.getProductWithAdditiveTypesById(id);
-        String chosenAdditiveTypes = "";
-        for(AdditiveType at: product.getAdditiveTypes()){
-            chosenAdditiveTypes += at.getId();
-        }
-        model.addAttribute("categories", categoryService.getCategoriesName());
-        model.addAttribute("categoryId", product.getCategory().getId());
-        model.addAttribute("product", product);
-        model.addAttribute("chosenAdditiveTypes", chosenAdditiveTypes);
+        model.addAttribute("product", productService.getProductRequestById(id));
         model.addAttribute("link", l);
         model.addAttribute("pageNum", 3);
-        model.addAttribute("additiveTypes", additiveTypeService.getAdditiveTypeNames());
         return "product/product_page";
     }
 
     @PostMapping("/admin/products/edit/{id}")
-    public String updateProduct(@Valid @ModelAttribute("product") Product product, BindingResult bindingResult,
-                                @RequestParam("selectCategory")Long categoryId, @RequestParam(name = "adTypes", required = false) Long [] adTypes,
+    public String updateProduct(@Valid @ModelAttribute("product") ProductRequest product, BindingResult bindingResult,
+                                @RequestParam(name = "adTypes", required = false) Long [] adTypes,
                                 @RequestParam("mainImage") MultipartFile mainImage, @RequestParam("mainImageName") String mainImageName, Model model) {
         if(isSupportedExtension(FilenameUtils.getExtension(
                 mainImage.getOriginalFilename()))) {
@@ -149,33 +149,7 @@ public class ProductController {
         } else if(!mainImage.getOriginalFilename().equals("")){
             model.addAttribute("mainWarning", "Некоректний тип файлу");
         }
-        if (bindingResult.hasErrors()) {
-            String l = "edit/"+product.getId();
-            model.addAttribute("product", product);
-            model.addAttribute("link", l);
-            model.addAttribute("pageNum", 3);
-            model.addAttribute("categories", categoryService.getCategoriesName());
-            model.addAttribute("additiveTypes", additiveTypeService.getAdditiveTypeNames());
-            return "product/product_page";
-        }
-        if(!mainImage.getOriginalFilename().equals("") && !isSupportedExtension(FilenameUtils.getExtension(
-                mainImage.getOriginalFilename()))){
-            String l = "edit/"+product.getId();
-            System.out.println(product.getImage());
-            System.out.println(mainImageName);
-            model.addAttribute("product",product);
-            model.addAttribute("link", l);
-            model.addAttribute("pageNum", 3);
-            model.addAttribute("categories", categoryService.getCategoriesName());
-            model.addAttribute("additiveTypes", additiveTypeService.getAdditiveTypeNames());
-            return "product/product_page";
-        }
         Product productInDB = productService.getProductWithAdditiveTypesById(product.getId());
-        productInDB.setName(product.getName());
-        productInDB.setPrice(product.getPrice());
-        productInDB.setStatus(product.getStatus());
-        productInDB.setDescription(product.getDescription());
-        productInDB.setImage(product.getImage());
         if(adTypes != null) {
             for (int i = 0; i < productInDB.getAdditiveTypes().size(); i++) {
                 if (i < adTypes.length && productInDB.getAdditiveTypes().get(i).getId() != adTypes[i]) {
@@ -196,12 +170,33 @@ public class ProductController {
                 }
             }
         }
-        System.out.println(productInDB.getAdditiveTypes().size());
+        product.setAdditiveTypes(productInDB.getAdditiveTypes());
+        if (bindingResult.hasErrors()) {
+            String l = "edit/"+product.getId();
+            model.addAttribute("product", product);
+            model.addAttribute("link", l);
+            model.addAttribute("pageNum", 3);
+            return "product/product_page";
+        }
+        if(!mainImage.getOriginalFilename().equals("") && !isSupportedExtension(FilenameUtils.getExtension(
+                mainImage.getOriginalFilename()))){
+            String l = "edit/"+product.getId();
+            model.addAttribute("product",product);
+            model.addAttribute("link", l);
+            model.addAttribute("pageNum", 3);
+            return "product/product_page";
+        }
+        productInDB.setName(product.getName());
+        productInDB.setPrice(product.getPrice());
+        productInDB.setStatus(product.getStatus());
+        productInDB.setDescription(product.getDescription());
+        productInDB.setImage(product.getImage());
+        productInDB.setCategory(categoryService.getCategoryById(product.getCategoryId()));
         productService.saveProduct(productInDB);
         return "redirect:/admin/products";
     }
 
-    private void saveImage(MultipartFile image, Product product, String name){
+    private void saveImage(MultipartFile image, ProductRequest product, String name){
         File uploadDir = new File(uploadPath);
         if (!uploadDir.exists()){
             uploadDir.mkdir();

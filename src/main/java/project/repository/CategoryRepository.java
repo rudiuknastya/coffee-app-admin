@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import project.dto.CategoryDTO;
-import project.dto.CategoryNameDTO;
+import project.model.CategoryDTO;
+import project.model.CategoryNameDTO;
 import project.entity.Category;
 
 import java.util.List;
@@ -20,7 +20,5 @@ public interface CategoryRepository extends JpaRepository<Category, Long>, JpaSp
     @Query(value = "select category.id as id, category.name as name, count(product.id) as goodsQuantity, category.status as status from category left join product on category.id = product.category_id where category.deleted = 0 and upper(category.name) like :catName group by category.id", nativeQuery = true)
     Page<CategoryDTO> searchCategories(@Param("catName")String name, Pageable pageable);
 
-    @Query(value = "select id, name from category where deleted=0", nativeQuery = true)
-    List<CategoryNameDTO> findCategoriesName();
 
 }

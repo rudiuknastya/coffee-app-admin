@@ -20,9 +20,8 @@
                 <input class="form-control" type="search" id="searchInput" placeholder="Пошук за назвою або ціною" aria-label="Search" maxlength="100">
               </div>
               <div class="col-3">
-                <select class="select2 form-select" id="categorySelect" aria-label="Default select example">
-                  <option selected th:value="0">Категорії</option>
-                  <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}"></option>
+                <select class="form-select" id="categorySelect" aria-label="Default select example">
+                  <option></option>
                 </select>
               </div>
               <a th:href="@{/admin/products/new}" type="button" class="btn btn-label-primary col-3 me-3"><i class="ti ti-plus"></i>Створити товар</a>
@@ -79,9 +78,37 @@
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
-<script th:src="@{/assets/js/forms-selects.js}"></script>
 <script>
 $(document).ready(function(){
+        $('#categorySelect').select2({
+            placeholder: "Оберіть категорію",
+            allowClear: true,
+            maximumInputLength: 100,
+            ajax: {
+                type: "get",
+                url: "/admin/getCategoriesForProducts",
+                data: function (params) {
+                    return {
+                        search: params.term,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: $.map(response.content, function (item) {
+                            return {
+                                text: item.name,
+                                id: item.id
+                            }
+                        }),
+                        pagination: {
+                            more: (response.pageable.pageNumber+1)  < response.totalPages
+                        }
+                    };
+                }
+
+            }
+        });
         getProducts(0);
     });
     var paginationType;

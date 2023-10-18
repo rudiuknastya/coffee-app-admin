@@ -20,9 +20,7 @@
                                 <input class="form-control me-2" type="search" id="searchInput" placeholder="Пошук за адресою" aria-label="Search" maxlength="100">
                             </div>
                             <div class="col-3">
-                                <select class="select2 form-select" id="citySelect" aria-label="Default select example">
-                                    <option selected>Місто</option>
-                                    <option th:each="c : ${cities}" th:value="${c.city}" th:text="${c.city}"></option>
+                                <select class="form-select" id="selectCity" aria-label="Default select example">
                                 </select>
                             </div>
                             <a th:href="@{/admin/locations/new}" type="button" class="btn btn-label-primary col-3 me-3"><i class="ti ti-plus"></i>Створити філіал</a>
@@ -81,6 +79,35 @@
 <script th:src="@{/assets/js/forms-selects.js}"></script>
 <script>
     $(document).ready(function(){
+        $('#selectCity').select2({
+            placeholder: "Оберіть місто",
+            allowClear: true,
+            maximumInputLength: 100,
+            ajax: {
+                type: "get",
+                url: "/admin/getCitiesForLocations",
+                data: function (params) {
+                    return {
+                        search: params.term,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: $.map(response.content, function (item) {
+                            return {
+                                text: item.city,
+                                id: item.city
+                            }
+                        }),
+                        pagination: {
+                            more: (response.pageable.pageNumber+1)  < response.totalPages
+                        }
+                    };
+                }
+
+            }
+        });
         getLocations(0);
     });
     var paginationType;
@@ -255,7 +282,7 @@
         searchAndFilter(0);
     });
     var selectValue;
-    $('#citySelect').on("change", function(){
+    $('#selectCity').on("change", function(){
         selectValue = $(this).val();
         searchAndFilter(0);
     });

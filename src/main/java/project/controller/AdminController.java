@@ -8,8 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import project.dto.AdminDTO;
-import project.dto.ProductDTO;
+import project.model.AdminDTO;
 import project.entity.*;
 import project.service.AdminService;
 import project.service.CityService;
@@ -30,7 +29,7 @@ public class AdminController {
 
     private int pageSize = 1;
     @GetMapping("/admin/admins")
-    public String products(Model model){
+    public String admins(Model model){
         List<Role> roles = new ArrayList<Role>(Arrays.asList(Role.values()));
         roles.remove(0);
 
@@ -48,6 +47,15 @@ public class AdminController {
         Pageable pageable = PageRequest.of(page, pageSize);
         return adminService.searchAdmins(input,role,pageable);
     }
+    @GetMapping("/admin/admins/edit/getCities")
+    public @ResponseBody Page<City> getCities(@RequestParam(value = "search", required = false)String name, @RequestParam("page")int page){
+        Pageable pageable = PageRequest.of(page-1, 2);
+        return cityService.getCities(pageable, name);
+    }
+    @GetMapping("/admin/admins/edit/getCity")
+    public @ResponseBody City getCity( @RequestParam("city")String city){
+        return cityService.getCityByName(city);
+    }
     @GetMapping("/admin/deleteAdmin/{id}")
     public @ResponseBody String deleteAdmin(@PathVariable Long id){
         adminService.deleteAdmin(id);
@@ -62,7 +70,7 @@ public class AdminController {
         model.addAttribute("link", l);
         model.addAttribute("pageNum", 9);
         model.addAttribute("roles", roles);
-        model.addAttribute("cities",cityService.getAllCities());
+        //model.addAttribute("cities",cityService.getAllCities());
         return "admin/admin_page";
     }
     @PostMapping("/admin/admins/edit/{id}")
@@ -74,7 +82,7 @@ public class AdminController {
             model.addAttribute("link", l);
             model.addAttribute("pageNum", 9);
             model.addAttribute("roles", roles);
-            model.addAttribute("cities", cityService.getAllCities());
+//            model.addAttribute("cities", cityService.getAllCities());
             return "admin/admin_page";
         }
         Admin adminInDB = adminService.getAdminById(admin.getId());

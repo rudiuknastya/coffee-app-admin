@@ -44,7 +44,7 @@
                 </div>
                 <div class="col-auto">
                   <img th:src="*{image} != null? @{'/uploads/'+ *{image}}: @{'https://static.vecteezy.com/system/resources/previews/004/141/669/non_2x/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg'}" style="width:150px; height:150px;" id="main_image">
-                  <input type="file" accept="image/jpeg, image/jpg, image/png" class="form-control d-none"  id="inputMainImage" onchange="main_image.src=window.URL.createObjectURL(this.files[0])" name="mainImage">
+                  <input type="file" accept="image/jpeg, image/jpg, image/png" class="form-control d-none"  id="inputMainImage" name="mainImage">
                 </div>
                 <div class="col-auto">
                   <label class="input-group-text col-form-label" for="inputMainImage" style="color:black;">Завантажити</label>
@@ -58,18 +58,17 @@
 
               <div class="col-md-6" >
                 <label for="selectCategory" class="form-label">Категорія</label>
-                <select class="select2 form-select" aria-label=".form-select-lg example" name="selectCategory" id="selectCategory">
-                  <option th:each="c : ${categories}" th:value="${c.getId()}" th:text="${c.getName()}" th:selected="${c.getId() == categoryId}"></option>
+                <select th:class="'form-select'+${#fields.hasErrors('categoryId')? ' is-invalid' : ''}" name="selectCategory" id="selectCategory" th:field = "*{categoryId}">
                 </select>
+                <div class="text-danger" th:if="${#fields.hasErrors('categoryId')}" th:errors="*{categoryId}"> </div>
               </div>
               <div class="col-md-6">
                 <label for="multipleSelect" class="form-label">Типи додатків</label>
-                <select class="select2 form-select" id="multipleSelect" name="adTypes" multiple>
-                  <option th:each="at : ${additiveTypes}" th:value="${at.id}" th:text="${at.name}" th:selected="${chosenAdditiveTypes != null and #strings.contains(chosenAdditiveTypes, at.id)}"></option>
+                <select class="form-select" id="multipleSelect" name="adTypes" multiple>
                 </select>
               </div>
               <div class="col-md-12 mt-5 d-flex justify-content-end">
-                <button type="button" class="btn btn-primary" onclick="save()">Зберегти</button>
+                <button type="submit" class="btn btn-primary">Зберегти</button>
               </div>
             </form>
           </div>
@@ -86,44 +85,153 @@
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
-<script th:src="@{/assets/js/forms-selects.js}"></script>
-<script>
-  function save(){
-  $("#inputName").removeClass("is-invalid");
-  $("#nameValidation").text("");
-  $("#inputPrice").removeClass("is-invalid");
-  $("#priceValidation").text("");
-  $("#inputDescription").removeClass("is-invalid");
-  $("#descriptionValidation").text("");
-    if($('#inputName').val() == "" || $('#inputPrice').val() == "" || $('#inputDescription').val() == "" || validateFile() == false){
-        if($('#inputName').val() == ""){
-          $("#nameValidation").text("Поле не може бути порожнім");
-          $("#inputName").addClass("is-invalid");
+<script th:inline="javascript">
+var categoryId = [[${product.categoryId}]];
+var additiveTypes = [[${product.additiveTypes}]];
+  $(document).ready(function(){
+        $('#selectCategory').select2({
+        placeholder: "Оберіть категорію",
+            maximumInputLength: 100,
+            ajax: {
+                type: "get",
+                url: "/admin/getCategoriesForProducts",
+                data: function (params) {
+                    return {
+                        search: params.term,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: $.map(response.content, function (item) {
+                            return {
+                                text: item.name,
+                                id: item.id
+                            }
+                        }),
+                        pagination: {
+                            more: (response.pageable.pageNumber+1)  < response.totalPages
+                        }
+                    };
+                }
+
+            }
+        });
+        if(categoryId != null){
+          var categorySelect = $('#selectCategory');
+          $.ajax({
+              type: 'GET',
+              url: '/admin/getCategoryForProduct/'+categoryId
+          }).then(function (data) {
+              var option = new Option(data.name, data.id, true, true);
+              categorySelect.append(option).trigger('change');
+
+              categorySelect.trigger({
+                  type: 'select2:select',
+                  params: {
+                      data: data
+                  }
+              });
+          });
         }
-        if($('#inputPrice').val() == ""){
-          $("#priceValidation").text("Поле не може бути порожнім");
-          $("#inputPrice").addClass("is-invalid");
+
+        $('#multipleSelect').select2({
+            placeholder: "Оберіть тип додатку",
+            allowClear: true,
+            maximumInputLength: 100,
+            ajax: {
+                type: "get",
+                url: "/admin/getAdTypesForAdditives",
+                data: function (params) {
+                    return {
+                        search: params.term,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: $.map(response.content, function (item) {
+                            return {
+                                text: item.name,
+                                id: item.id
+                            }
+                        }),
+                        pagination: {
+                            more: (response.pageable.pageNumber+1)  < response.totalPages
+                        }
+                    };
+                }
+
+            }
+        });
+        if(additiveTypes != null){
+        var additiveSelect = $('#multipleSelect');
+          for(let ad of additiveTypes){
+            var option = new Option(ad.name, ad.id, true, true);
+            additiveSelect.append(option).trigger('change');
+          }
+                additiveSelect.trigger({
+                    type: 'select2:select',
+                    params: {
+                        data: additiveTypes
+                    }
+                });
+
         }
-        if($('#inputDescription').val() == ""){
-          $("#descriptionValidation").text("Поле не може бути порожнім");
-          $("#inputDescription").addClass("is-invalid");
+
+    }); inputMainImage
+    $('#inputMainImage').on("change", function() {
+        var myFile = $(this).prop('files');
+        if(validateFile(myFile[0].name) != false){
+          $("#main_image").attr("src", window.URL.createObjectURL(myFile[0]));
         }
-        if(validateFile() == false){
-          $("#imageValidation").text("Некоректний тип файлу");
+    });
+    function validateFile(value){
+        var ext = value.substring(value.lastIndexOf('.') + 1).toLowerCase();
+        if($.inArray(ext, ['png','jpg','jpeg']) == -1 && value != "") {
+          return false;
+        } else {
+          return true;
         }
-    } else {
-        $("#productForm").submit();
-		}
-  }
-  function validateFile(){
-    var value = $("#inputMainImage").val();
-    var ext = value.substring(value.lastIndexOf('.') + 1).toLowerCase();
-    if($.inArray(ext, ['png','jpg','jpeg']) == -1 && value != "") {
-      return false;
-    } else {
-      return true;
     }
-  }
 </script>
+<!--<script>-->
+<!--  function save(){-->
+<!--  $("#inputName").removeClass("is-invalid");-->
+<!--  $("#nameValidation").text("");-->
+<!--  $("#inputPrice").removeClass("is-invalid");-->
+<!--  $("#priceValidation").text("");-->
+<!--  $("#inputDescription").removeClass("is-invalid");-->
+<!--  $("#descriptionValidation").text("");-->
+<!--    if($('#inputName').val() == "" || $('#inputPrice').val() == "" || $('#inputDescription').val() == "" || validateFile() == false){-->
+<!--        if($('#inputName').val() == ""){-->
+<!--          $("#nameValidation").text("Поле не може бути порожнім");-->
+<!--          $("#inputName").addClass("is-invalid");-->
+<!--        }-->
+<!--        if($('#inputPrice').val() == ""){-->
+<!--          $("#priceValidation").text("Поле не може бути порожнім");-->
+<!--          $("#inputPrice").addClass("is-invalid");-->
+<!--        }-->
+<!--        if($('#inputDescription').val() == ""){-->
+<!--          $("#descriptionValidation").text("Поле не може бути порожнім");-->
+<!--          $("#inputDescription").addClass("is-invalid");-->
+<!--        }-->
+<!--        if(validateFile() == false){-->
+<!--          $("#imageValidation").text("Некоректний тип файлу");-->
+<!--        }-->
+<!--    } else {-->
+<!--        $("#productForm").submit();-->
+<!--		}-->
+<!--  }-->
+<!--  function validateFile(){-->
+<!--    var value = $("#inputMainImage").val();-->
+<!--    var ext = value.substring(value.lastIndexOf('.') + 1).toLowerCase();-->
+<!--    if($.inArray(ext, ['png','jpg','jpeg']) == -1 && value != "") {-->
+<!--      return false;-->
+<!--    } else {-->
+<!--      return true;-->
+<!--    }-->
+<!--  }-->
+<!--</script>-->
 </body>
 </html>

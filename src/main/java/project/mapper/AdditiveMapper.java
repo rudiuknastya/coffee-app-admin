@@ -3,8 +3,9 @@ package project.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-import project.dto.AdditiveDTO;
+import project.model.additiveModel.AdditiveDTO;
 import project.entity.Additive;
+import project.model.additiveModel.AdditiveRequest;
 
 import java.util.List;
 
@@ -16,5 +17,7 @@ public interface AdditiveMapper {
 
     @Mapping(target="additiveTypeName", source="additiveType.name")
     AdditiveDTO additiveToDTO(Additive additive);
+    @Mapping(target="additiveTypeId", source="additiveType.id")
+    AdditiveRequest additiveToAdditiveRequest(Additive additive);
 
 }

@@ -20,8 +20,8 @@
                                 <input class="form-control me-2" type="search" id="searchInput" placeholder="Пошук за номером телефону" aria-label="Search" maxlength="100">
                             </div>
                             <div class="col-3">
-                                <select class="select2 form-select" id="statusSelect">
-                                    <option value="null" selected>Статус</option>
+                                <select class="form-select" id="statusSelect">
+                                    <option></option>
                                     <option th:each="s : ${status}" th:value="${s}" th:text="${s}"></option>
                                 </select>
                             </div>
@@ -78,9 +78,13 @@
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
-<script th:src="@{/assets/js/app-user-list.js}"></script>
 <script>
     $(document).ready(function(){
+        $('#statusSelect').select2({
+            minimumResultsForSearch: -1,
+            placeholder: "Оберіть статус",
+            allowClear: true
+        });
         getUsers(0);
     });
     var paginationType;
@@ -255,11 +259,7 @@
     });
     var selectValue;
     $('#statusSelect').on("change", function(){
-        if($(this).val().localeCompare('null') == 0){
-            selectValue = null;
-        } else {
-            selectValue = $(this).val();
-        }
+        selectValue = $(this).val();
         searchAndFilter(0);
     });
 

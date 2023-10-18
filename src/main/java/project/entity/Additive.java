@@ -4,16 +4,16 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.List;
+
 @Entity
 @Table(name = "additive")
 public class Additive {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotEmpty(message = "Поле не може бути порожнім")
     @Column(nullable = false)
     private String name;
-    @NotNull(message = "Поле не може бути порожнім")
     @Column(nullable = false)
     private Integer price;
     private Boolean deleted;
@@ -21,6 +21,16 @@ public class Additive {
     @ManyToOne
     @JoinColumn(name = "additive_type_id", referencedColumnName = "id")
     private AdditiveType additiveType;
+    @ManyToMany(mappedBy = "additives")
+    private List<OrderItem> orderItems;
+
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
+    }
+
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
+    }
 
     public Long getId() {
         return id;

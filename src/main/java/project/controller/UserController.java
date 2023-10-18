@@ -8,7 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import project.dto.UserDTO;
+import project.model.UserDTO;
 import project.entity.Language;
 import project.entity.User;
 import project.entity.UserStatus;
@@ -21,7 +21,7 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
-    private int pageSize = 2;
+    private int pageSize = 1;
     @GetMapping("/admin/users")
     public String showUsers(Model model){
         model.addAttribute("pageNum", 10);

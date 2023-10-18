@@ -2,7 +2,7 @@ package project.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import project.dto.UserDTO;
+import project.model.UserDTO;
 import project.entity.User;
 import project.entity.UserStatus;
 

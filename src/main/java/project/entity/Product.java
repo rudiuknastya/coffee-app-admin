@@ -13,13 +13,10 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotEmpty(message = "Поле не може бути порожнім")
     @Column(nullable = false)
     private String name;
-    @NotNull(message = "Поле не може бути порожнім")
     @Column(nullable = false)
     private Integer price;
-    @NotEmpty(message = "Поле не може бути порожнім")
     @Column(columnDefinition="TEXT NOT NULL")
     private String description;
     private String image;
@@ -37,6 +34,14 @@ public class Product {
     private List<AdditiveType> additiveTypes;
     @ManyToMany(mappedBy = "products")
     private List<User> users;
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
 
     public List<AdditiveType> getAdditiveTypes() {
         return additiveTypes;

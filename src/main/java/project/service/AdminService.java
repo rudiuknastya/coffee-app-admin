@@ -2,7 +2,7 @@ package project.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import project.dto.AdminDTO;
+import project.model.AdminDTO;
 import project.entity.Admin;
 import project.entity.Role;
 

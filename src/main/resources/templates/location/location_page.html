@@ -17,8 +17,7 @@
             <form th:action = "@{/admin/locations/{l} (l=${link})}" th:object = "${location}" method="post" class="row g-3" style="color:black;">
               <div class="col-md-6" >
                 <label for="selectCity" class="form-label">Місто</label>
-                <select class="select2 form-select" id="selectCity" th:field = "*{city}">
-                  <option th:each="c : ${cities}" th:value="${c.city}" th:text="${c.city}"></option>
+                <select class="form-select" id="selectCity" th:field = "*{city}">
                 </select>
                 <div class="text-danger" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></div>
               </div>
@@ -61,5 +60,59 @@
 <script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
 <script th:src="@{/assets/js/forms-selects.js}"></script>
+<script th:inline="javascript">
+  var city = [[${location.city}]];
+  $(document).ready(function(){
+        $('#selectCity').select2({
+        placeholder: "Оберіть місто",
+        maximumInputLength: 100,
+            ajax: {
+                type: "GET",
+                url: "/admin/getCitiesForLocations",
+                data: function (params) {
+                    return {
+                        search: params.term,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: $.map(response.content, function (item) {
+                            return {
+                                text: item.city,
+                                id: item.city
+                            }
+                        }),
+                        pagination: {
+                            more: (response.pageable.pageNumber+1)  < response.totalPages
+                        }
+                    };
+                }
+
+            }
+        });
+        if(city != null) {
+          var citySelect = $('#selectCity');
+          $.ajax({
+              type: 'GET',
+              url: '/admin/getCityForLocation',
+              data : {
+                  city: city
+              }
+          }).then(function (data) {
+              var option = new Option(data.city, data.city, true, true);
+              citySelect.append(option).trigger('change');
+
+              citySelect.trigger({
+                  type: 'select2:select',
+                  params: {
+                      data: data
+                  }
+              });
+          });
+        }
+
+    });
+</script>
 </body>
 </html>

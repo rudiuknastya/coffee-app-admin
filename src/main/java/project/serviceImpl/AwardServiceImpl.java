@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import project.dto.AwardDTO;
+import project.model.AwardDTO;
 import project.repository.UserRepository;
 import project.service.AwardService;
 @Service

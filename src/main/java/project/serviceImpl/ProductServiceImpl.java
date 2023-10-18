@@ -7,10 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import project.dto.ProductDTO;
-import project.dto.ProductNameDTO;
+import project.model.productModel.ProductDTO;
+import project.model.productModel.ProductNameDTO;
 import project.entity.Product;
 import project.mapper.ProductMapper;
+import project.model.productModel.ProductRequest;
 import project.repository.ProductRepository;
 import project.service.ProductService;
 
@@ -30,9 +31,7 @@ public class ProductServiceImpl implements ProductService {
     public Page<ProductDTO> getProducts(Pageable pageable) {
         logger.info("getProducts() - Finding products for page "+ pageable.getPageNumber());
         Page<Product> products = productRepository.findAll(byDeleted(), pageable);
-        System.out.println(products.getContent().get(0).getCategory().getName());
         List<ProductDTO> productDTOS = ProductMapper.productToProductDTO(products.getContent());
-        System.out.println(productDTOS.get(0).getCategoryName());
         Page<ProductDTO> productDTOPage = new PageImpl<>(productDTOS, pageable, products.getTotalElements());
         logger.info("getProducts() - Products were found");
         return productDTOPage;
@@ -55,6 +54,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public ProductRequest getProductRequestById(Long id) {
+        logger.info("getProductRequestById() - Finding product for product request by id "+ id);
+        Product product = productRepository.findProductWithAdditiveTypesById(id);
+        ProductRequest productRequest = ProductMapper.productToProductRequest(product);
+        logger.info("getProductRequestById() - Product was found");
+        return productRequest;
+    }
+
+    @Override
     public Product getProductWithAdditiveTypesById(Long id) {
         logger.info("getProductWithAdditiveTypesById() - Finding product with additive types by id "+ id);
         Product product = productRepository.findProductWithAdditiveTypesById(id);
@@ -64,7 +72,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<ProductDTO> searchProducts(String input, Long categoryId, Pageable pageable) {
-        logger.info("searchProducts() - Finding products for input "+ input+" and category id"+ categoryId);
+        logger.info("searchProducts() - Finding products for input "+ input+" and category id "+ categoryId);
         Page<Product> products;
         if((categoryId != null && !categoryId.equals(0L)) &&  (input == null || input.equals(""))){
             products = productRepository.findAll(byDeleted().and(byCategory(categoryId)), pageable);
@@ -100,12 +108,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductNameDTO> getProductNames() {
-        logger.info("getProductNames() - Finding product names");
-        List<Product> products = productRepository.findAll(byDeleted());
-        List<ProductNameDTO> productNameDTOS = ProductMapper.PRODUCT_MAPPER.productListToProductNameDTOList(products);
+    public Page<ProductNameDTO> getProductNameDTOS(Pageable pageable, String name) {
+        logger.info("getProductNames() - Finding product names for page "+pageable.getPageNumber()+ " and search "+name);
+        Page<Product> products;
+        if(name == null) {
+            products = productRepository.findAll(byDeleted(),pageable);
+        } else {
+            products = productRepository.findAll(byDeleted().and(byNameLike(name)),pageable);
+        }
+        List<ProductNameDTO> productNameDTOS = ProductMapper.PRODUCT_MAPPER.productListToProductNameDTOList(products.getContent());
+        Page<ProductNameDTO> productNameDTOPage = new PageImpl<>(productNameDTOS, pageable, products.getTotalElements());
         logger.info("getProductNames() - Product names were found");
-        return productNameDTOS;
+        return productNameDTOPage;
     }
 
     @Override

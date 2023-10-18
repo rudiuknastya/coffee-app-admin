@@ -6,13 +6,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import project.dto.AdditiveDTO;
-import project.dto.AwardDTO;
-import project.dto.ProductNameDTO;
-import project.dto.UserDTO;
+import project.model.AwardDTO;
+import project.model.productModel.ProductNameDTO;
 import project.entity.Product;
 import project.entity.User;
-import project.entity.UserStatus;
 import project.service.AwardService;
 import project.service.ProductService;
 import project.service.UserService;
@@ -33,7 +30,7 @@ public class AwardController {
     @GetMapping("/admin/awards")
     public String showAwards(Model model){
         model.addAttribute("pageNum", 11);
-        model.addAttribute("products", productService.getProductNames());
+        //model.addAttribute("products", productService.getProductNames());
         return "award/awards";
     }
     @GetMapping("/admin/getAwards")
@@ -60,9 +57,14 @@ public class AwardController {
         return "success";
     }
 
-    @GetMapping("/admin/editAward/{id}")
+    @GetMapping("/admin/getProductForAward/{id}")
     public @ResponseBody ProductNameDTO editAward(@PathVariable Long id){
         return productService.getProductNameDTO(id);
+    }
+    @GetMapping("/admin/getProductsForAward")
+    public @ResponseBody Page<ProductNameDTO> getProductsForAward(@RequestParam(value = "search", required = false)String name, @RequestParam("page")int page){
+        Pageable pageable = PageRequest.of(page-1, pageSize);
+        return productService.getProductNameDTOS(pageable, name);
     }
     @PostMapping("/admin/editAward")
     public @ResponseBody String updateAward(@RequestParam("userId") Long userId, @RequestParam("newProductId") Long newProductId, @RequestParam("oldProductId") Long oldProductId){

@@ -48,7 +48,7 @@
                                             <div class="col-md-6" >
                                                 <label for="selectProduct" class="form-label">Товар</label>
                                                 <select class="select2 form-select" name="editSelectAdType" id="selectProduct">
-                                                    <option th:each="p : ${products}" th:value="${p.id}" th:text="${p.name}"></option>
+<!--                                                    <option th:each="p : ${products}" th:value="${p.id}" th:text="${p.name}"></option>-->
                                                 </select>
                                             </div>
                                         </form>
@@ -274,19 +274,51 @@
 	function openEditModal(userId, productId){
     user = userId;
     product = productId;
+    $('#selectProduct').select2({
+            dropdownParent: $("#editModal"),
+            maximumInputLength: 100,
+            ajax: {
+                type: "get",
+                url: "getProductsForAward",
+                data: function (params) {
+                    return {
+                        search: params.term,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: $.map(response.content, function (item, i) {
+                        console.log(i)
+                            return {
+                                text: item.name,
+                                id: item.id,
+                            }
+                        }),
+                        pagination: {
+                            more: (response.pageable.pageNumber+1)  < response.totalPages
+                        }
+                    };
+                }
+            }
+        });
+
+        var productSelect = $('#selectProduct');
         $.ajax({
-					type : "GET",
-					url : "editAward/"+productId,
-					success : function(response) {
-					    $("#selectProduct option").filter(function() {
-                            return $(this).text() == response.name;
-                        }).prop('selected', true);
-					    $('#editModal').modal('show');
-					},
-					error : function(err) {
-						alert("error is" + err)
-					}
-				});
+            type: 'GET',
+            url: 'getProductForAward/' + productId
+        }).then(function (data) {
+            var option = new Option(data.name, data.id, true, true);
+            productSelect.append(option).trigger('change');
+
+            productSelect.trigger({
+                type: 'select2:select',
+                params: {
+                    data: data
+                }
+            });
+        });
+        $('#editModal').modal('show');
     }
     function edit(){
         $.ajax({

@@ -1,4 +1,4 @@
-package project.dto;
+package project.model;
 
 public interface CategoryDTO {
     Long getId();

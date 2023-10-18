@@ -4,16 +4,17 @@ import jakarta.persistence.EntityNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import project.dto.AdditiveTypeDTO;
-import project.dto.AdditiveTypeNameDTO;
-import project.dto.CategoryDTO;
+import project.entity.Additive;
+import project.model.additiveTypeModel.AdditiveTypeDTO;
+import project.model.additiveTypeModel.AdditiveTypeNameDTO;
 import project.entity.AdditiveType;
 import project.mapper.AdditiveTypeMapper;
 import project.repository.AdditiveTypeRepository;
 import project.service.AdditiveTypeService;
-
+import static project.specifications.AdditiveTypeSpecification.*;
 import java.util.List;
 
 @Service
@@ -58,11 +59,26 @@ public class AdditiveTypeServiceImpl implements AdditiveTypeService {
     }
 
     @Override
-    public List<AdditiveTypeNameDTO> getAdditiveTypeNames() {
-        logger.info("getAdditiveTypeNames() - Finding additive type names");
-        List<AdditiveType> additiveTypes = additiveTypeRepository.findByDeletedNot(true);
-        List<AdditiveTypeNameDTO> additiveTypeNameDTOS = AdditiveTypeMapper.ADDITIVE_TYPE_MAPPER.additiveTypeToDTO(additiveTypes);
+    public Page<AdditiveTypeNameDTO> getAdditiveTypeNames(Pageable pageable, String name) {
+        logger.info("getAdditiveTypeNames() - Finding additive type names for page "+pageable.getPageNumber()+" and search "+name);
+        Page<AdditiveType> additiveTypes;
+        if(name != null){
+            additiveTypes = additiveTypeRepository.findAll(byDeleted().and(byNameLike(name)), pageable);
+        } else {
+            additiveTypes = additiveTypeRepository.findAll(byDeleted(), pageable);
+        }
+        List<AdditiveTypeNameDTO> additiveTypeNameDTOS = AdditiveTypeMapper.ADDITIVE_TYPE_MAPPER.additiveTypeToDTO(additiveTypes.getContent());
+        Page<AdditiveTypeNameDTO> additiveTypeNameDTOPage = new PageImpl<>(additiveTypeNameDTOS, pageable, additiveTypes.getTotalElements());
         logger.info("getAdditiveTypeNames() - Additive type names were found");
-        return additiveTypeNameDTOS;
+        return additiveTypeNameDTOPage;
+    }
+
+    @Override
+    public AdditiveTypeNameDTO getAdditiveTypeNameDTOById(Long id) {
+        logger.info("getAdditiveTypeNameDTOById() - Finding additive type for additive type name dto by id "+ id);
+        AdditiveType additiveType = additiveTypeRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        AdditiveTypeNameDTO additiveTypeNameDTO = AdditiveTypeMapper.ADDITIVE_TYPE_MAPPER.additiveTypeToAdditiveTypeNameDTO(additiveType);
+        logger.info("getAdditiveTypeNames() - Additive type name was found");
+        return additiveTypeNameDTO;
     }
 }

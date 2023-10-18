@@ -35,11 +35,11 @@ public class LocationServiceImpl implements LocationService {
     public Page<Location> getLocationsByAddressAndCity(String address, String city, Pageable pageable) {
         logger.info("getLocationsByAddress() - Finding all locations for address "+ address+ " and city "+ city);
         Page<Location> locations;
-        if((city != null && !city.equals("Місто")) &&  (address == null || address.equals(""))) {
+        if((city != null && !city.equals("")) &&  (address == null || address.equals(""))) {
             locations = locationRepository.findAll(where(byCity(city).and(byDeleted())),pageable);
-        } else if((address != null && !address.equals(""))  && (city == null || city.equals("Місто"))){
+        } else if((address != null && !address.equals(""))  && (city == null || city.equals(""))){
             locations = locationRepository.findAll(where(byAddressLike(address).and(byDeleted())),pageable);
-        } else if((address != null && !address.equals("")) && (city != null && !city.equals("Місто"))) {
+        } else if((address != null && !address.equals("")) && (city != null && !city.equals(""))) {
             locations = locationRepository.findAll(where(byCity(city).and(byAddressLike(address).and(byDeleted()))),pageable);
         } else {
             locations = locationRepository.findAll(byDeleted(),pageable);

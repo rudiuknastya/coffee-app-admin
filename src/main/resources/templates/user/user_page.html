@@ -63,6 +63,15 @@
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
-<script th:src="@{/assets/js/app-user-list.js}"></script>
+<script>
+  $(document).ready(function(){
+        $('#selectStatus').select2({
+            minimumResultsForSearch: -1
+        });
+        $('#selectLanguage').select2({
+            minimumResultsForSearch: -1
+        });
+    });
+</script>
 </body>
 </html>

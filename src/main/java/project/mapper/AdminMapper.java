@@ -2,7 +2,7 @@ package project.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
-import project.dto.AdminDTO;
+import project.model.AdminDTO;
 import project.entity.Admin;
 
 import java.util.List;

@@ -20,8 +20,8 @@
                                 <input class="form-control" type="search" id="searchInput" placeholder="Пошук за прізвищем або email" aria-label="Search" maxlength="100">
                             </div>
                             <div class="col-3">
-                                <select class="select2 form-select" id="roleSelect" aria-label="Default select example">
-                                    <option selected value="null">Роль</option>
+                                <select class="form-select" id="roleSelect" aria-label="Default select example">
+                                    <option></option>
                                     <option th:each="r : ${roles}" th:value="${r}" th:text="${r}"></option>
                                 </select>
                             </div>
@@ -77,9 +77,13 @@
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
-<script th:src="@{/assets/js/forms-selects.js}"></script>
 <script>
 $(document).ready(function(){
+        $('#roleSelect').select2({
+            minimumResultsForSearch: -1,
+            placeholder: "Оберіть роль",
+            allowClear: true
+        });
         getAdmins(0);
     });
     var paginationType;

@@ -1,16 +1,17 @@
 package project.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import project.dto.AdditiveDTO;
+import project.model.additiveModel.AdditiveDTO;
+import project.model.additiveModel.AdditiveRequest;
+import project.model.additiveTypeModel.AdditiveTypeNameDTO;
 import project.entity.Additive;
 import project.entity.AdditiveType;
-import project.entity.Category;
-import project.entity.Location;
 import project.service.AdditiveService;
 import project.service.AdditiveTypeService;
 
@@ -28,7 +29,6 @@ public class AdditiveController {
     @GetMapping("/admin/additives")
     public String additives(Model model){
         model.addAttribute("pageNum", 5);
-        model.addAttribute("adTypes", additiveTypeService.getAdditiveTypeNames());
         return "additive/additives";
     }
 
@@ -36,6 +36,15 @@ public class AdditiveController {
     public @ResponseBody Page<AdditiveDTO> getAdditives(@RequestParam("page")int page){
         Pageable pageable = PageRequest.of(page, pageSize);
         return additiveService.getAllAdditives(pageable);
+    }
+    @GetMapping("/admin/getAdTypesForAdditives")
+    public @ResponseBody Page<AdditiveTypeNameDTO> getAdTypesForAdditives(@RequestParam(value = "search", required = false)String name,@RequestParam("page")int page){
+        Pageable pageable = PageRequest.of(page-1, pageSize);
+        return additiveTypeService.getAdditiveTypeNames(pageable, name);
+    }
+    @GetMapping("/admin/getAdTypeForAdditive/{id}")
+    public @ResponseBody AdditiveTypeNameDTO getAdTypeForAdditive(@PathVariable Long id){
+        return additiveTypeService.getAdditiveTypeNameDTOById(id);
     }
     @GetMapping("/admin/deleteAdditive/{id}")
     public @ResponseBody String deleteAdditive(@PathVariable Long id){
@@ -46,7 +55,7 @@ public class AdditiveController {
     }
 
     @PostMapping("/admin/saveAdditive")
-    public @ResponseBody String saveAdditive(@ModelAttribute("saveAdditive") Additive additive, @RequestParam("selectAdType") Long adTypeId){
+    public @ResponseBody String saveAdditive(@Valid @ModelAttribute("saveAdditive") Additive additive, @RequestParam("selectAdType") Long adTypeId){
         AdditiveType additiveType = additiveTypeService.getAdditiveTypeById(adTypeId);
         additive.setAdditiveType(additiveType);
         additive.setDeleted(false);
@@ -54,11 +63,11 @@ public class AdditiveController {
         return "success";
     }
     @GetMapping("/admin/editAdditive/{id}")
-    public @ResponseBody AdditiveDTO editAdditive(@PathVariable Long id){
-        return additiveService.getAdditiveDTOById(id);
+    public @ResponseBody AdditiveRequest editAdditive(@PathVariable Long id){
+        return additiveService.getAdditiveRequestById(id);
     }
     @PostMapping("/admin/editAdditive")
-    public @ResponseBody String updateAdditive(@ModelAttribute("editAdditive") Additive additive, @RequestParam("editSelectAdType") Long adTypeId){
+    public @ResponseBody String updateAdditive(@Valid @ModelAttribute("editAdditive") Additive additive, @RequestParam("editSelectAdType") Long adTypeId){
         Additive additiveInDB = additiveService.getAdditiveById(additive.getId());
         additiveInDB.setName(additive.getName());
         additiveInDB.setPrice(additive.getPrice());

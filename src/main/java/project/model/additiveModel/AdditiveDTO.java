@@ -1,4 +1,4 @@
-package project.dto;
+package project.model.additiveModel;
 
 public class AdditiveDTO {
     private Long id;

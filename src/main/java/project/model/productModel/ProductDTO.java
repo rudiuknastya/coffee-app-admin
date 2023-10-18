@@ -1,4 +1,4 @@
-package project.dto;
+package project.model.productModel;
 
 public class ProductDTO {
     private Long id;

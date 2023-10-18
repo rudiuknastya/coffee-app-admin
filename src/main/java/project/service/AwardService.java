@@ -2,7 +2,7 @@ package project.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import project.dto.AwardDTO;
+import project.model.AwardDTO;
 
 public interface AwardService {
     Page<AwardDTO> getAwards(Pageable pageable);
