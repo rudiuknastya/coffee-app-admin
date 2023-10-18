@@ -15,14 +15,10 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotEmpty(message = "Поле не може бути порожнім")
     @Column(nullable = false)
     private String name;
-    @NotEmpty(message = "Поле не може бути порожнім")
-    @Size(max=15, message = "Розмір поля має бути не більше 15 символів")
     @Column(name = "phone_number", columnDefinition="VARCHAR(20) NOT NULL UNIQUE")
     private String phoneNumber;
-    @NotNull(message = "Поле не може бути порожнім")
     @Column(name = "birth_date", columnDefinition="DATE")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;

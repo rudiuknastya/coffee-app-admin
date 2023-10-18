@@ -8,10 +8,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import project.model.UserDTO;
+import project.model.userModel.UserDTO;
 import project.entity.Language;
 import project.entity.User;
 import project.entity.UserStatus;
+import project.model.userModel.UserRequest;
 import project.service.UserService;
 
 @Controller
@@ -48,15 +49,18 @@ public class UserController {
     @GetMapping("/admin/users/edit/{id}")
     public String editUser(@PathVariable Long id, Model model){
         String l = "edit/"+id;
+        Language language = Language.UKR;
+
+        System.out.println(language.getLanguageName());
         model.addAttribute("pageNum", 10);
-        model.addAttribute("user", userService.getUserById(id));
+        model.addAttribute("user", userService.getUserRequestById(id));
         model.addAttribute("link", l);
         model.addAttribute("status", UserStatus.values());
         model.addAttribute("languages", Language.values());
         return "user/user_page";
     }
     @PostMapping("/admin/users/edit/{id}")
-    public String updateUser(@Valid @ModelAttribute("user") User user, BindingResult bindingResult, Model model){
+    public String updateUser(@Valid @ModelAttribute("user") UserRequest user, BindingResult bindingResult, Model model){
         if(bindingResult.hasErrors()) {
             String l = "edit/" + user.getId();
             model.addAttribute("pageNum", 10);

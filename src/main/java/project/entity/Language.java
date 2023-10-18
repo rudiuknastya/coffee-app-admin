@@ -1,5 +1,15 @@
 package project.entity;
 
 public enum Language {
-    ENG, UKR, SPA
+    ENG("Англійська"), UKR("Українська"), SPA("Іспанська");
+
+    Language(String languageName) {
+        this.languageName = languageName;
+    }
+
+    private String languageName;
+
+    public String getLanguageName() {
+        return languageName;
+    }
 }

@@ -1,14 +1,34 @@
 package project.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
-import project.model.UserDTO;
+import project.model.userModel.UserDTO;
 import project.entity.User;
+import project.model.userModel.UserRequest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     UserMapper USER_MAPPER = Mappers.getMapper(UserMapper.class);
-    List<UserDTO> userListToUserDtoList(List<User> users);
+    @Named("userListToUserDtoList")
+    static List<UserDTO> userListToUserDtoList(List<User> users){
+        if(users == null){
+            return null;
+        }
+        List<UserDTO> userDTOS = new ArrayList<>(users.size());
+        for(User user: users){
+            UserDTO userDTO = new UserDTO();
+            userDTO.setId(user.getId());
+            userDTO.setName(user.getName());
+            userDTO.setPhoneNumber(user.getPhoneNumber());
+            userDTO.setBirthDate(user.getBirthDate());
+            userDTO.setStatus(user.getStatus().getStatusName());
+            userDTOS.add(userDTO);
+        }
+        return userDTOS;
+    }
+    UserRequest userToUserRequest(User user);
 }

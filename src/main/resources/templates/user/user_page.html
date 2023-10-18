@@ -29,7 +29,7 @@
               <div class="col-md-6" >
                 <label for="selectLanguage" class="form-label">Мова</label>
                 <select class="select2 form-select" aria-label=".form-select-lg example" id="selectLanguage" th:field = "*{language}">
-                  <option th:each="l : ${languages}" th:value="${l}" th:text="${l}"></option>
+                  <option th:each="l : ${languages}" th:value="${l}" th:text="${l.getLanguageName()}"></option>
                 </select>
               </div>
               <div class="col-md-6">
@@ -41,7 +41,7 @@
               <div class="col-md-6" >
                 <label for="selectStatus" class="form-label">Статус</label>
                 <select class="form-select" aria-label=".form-select-lg example" id="selectStatus" th:field = "*{status}">
-                  <option th:each="s : ${status}" th:value="${s}" th:text="${s}"></option>
+                  <option th:each="s : ${status}" th:value="${s}" th:text="${s.getStatusName()}"></option>
                 </select>
               </div>
 

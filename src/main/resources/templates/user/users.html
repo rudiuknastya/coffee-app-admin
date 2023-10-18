@@ -22,7 +22,7 @@
                             <div class="col-3">
                                 <select class="form-select" id="statusSelect">
                                     <option></option>
-                                    <option th:each="s : ${status}" th:value="${s}" th:text="${s}"></option>
+                                    <option th:each="s : ${status}" th:value="${s}" th:text="${s.getStatusName()}"></option>
                                 </select>
                             </div>
                         </div>
@@ -109,9 +109,9 @@
 													+ data[i].birthDate
 													+ '</td> <td>'
 													+ data[i].phoneNumber
-													+ '</td> <td>'
+													+ '</td> <td> <span class="badge bg-label-primary">'
 													+ data[i].status
-													+ '</td> <td><a href="/admin/users/edit/'+data[i].id+'" type="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openModal('
+													+ '</span></td> <td><a href="/admin/users/edit/'+data[i].id+'" type="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 
@@ -285,9 +285,9 @@
 													+ data[i].birthDate
 													+ '</td> <td>'
 													+ data[i].phoneNumber
-													+ '</td> <td>'
+													+ '</td> <td> <span class="badge bg-label-primary">'
 													+ data[i].status
-													+ '</td> <td><a href="/admin/users/edit/'+data[i].id+'" type="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openModal('
+													+ '</span> </td> <td><a href="/admin/users/edit/'+data[i].id+'" type="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 

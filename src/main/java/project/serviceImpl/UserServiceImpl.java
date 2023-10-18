@@ -7,10 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import project.model.UserDTO;
+import project.model.userModel.UserDTO;
 import project.entity.User;
 import project.entity.UserStatus;
 import project.mapper.UserMapper;
+import project.model.userModel.UserRequest;
 import project.repository.UserRepository;
 import project.service.UserService;
 
@@ -31,7 +32,7 @@ public class UserServiceImpl implements UserService {
     public Page<UserDTO> getUsers(Pageable pageable) {
         logger.info("getUsers() - Finding all users for page "+ pageable.getPageNumber());
         Page<User> users = userRepository.findAll(byDeleted(), pageable);
-        List<UserDTO> userDTOS = UserMapper.USER_MAPPER.userListToUserDtoList(users.getContent());
+        List<UserDTO> userDTOS = UserMapper.userListToUserDtoList(users.getContent());
         Page<UserDTO> userDTOPage = new PageImpl<>(userDTOS, pageable, users.getTotalElements());
         logger.info("getUsers() - All users were found");
         return userDTOPage;
@@ -66,7 +67,7 @@ public class UserServiceImpl implements UserService {
         } else {
             users = userRepository.findAll(byDeleted(),pageable);
         }
-        List<UserDTO> userDTOS = UserMapper.USER_MAPPER.userListToUserDtoList(users.getContent());
+        List<UserDTO> userDTOS = UserMapper.userListToUserDtoList(users.getContent());
         Page<UserDTO> userDTOPage = new PageImpl<>(userDTOS, pageable, users.getTotalElements());
         logger.info("searchUser() - Users were found");
         return userDTOPage;
@@ -78,5 +79,14 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findUserWithProductsById(id);
         logger.info("getUserWithProducts() - User was found");
         return user;
+    }
+
+    @Override
+    public UserRequest getUserRequestById(Long id) {
+        logger.info("getUserRequestById() - Finding user for user request by id "+id);
+        User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        UserRequest userRequest = UserMapper.USER_MAPPER.userToUserRequest(user);
+        logger.info("getUserRequestById() - User was found");
+        return userRequest;
     }
 }

@@ -1,4 +1,4 @@
-package project.model;
+package project.model.userModel;
 
 import project.entity.UserStatus;
 
@@ -9,7 +9,7 @@ public class UserDTO {
     private String name;
     private LocalDate birthDate;
     private String phoneNumber;
-    private UserStatus status;
+    private String status;
 
     public Long getId() {
         return id;
@@ -43,11 +43,11 @@ public class UserDTO {
         this.phoneNumber = phoneNumber;
     }
 
-    public UserStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(UserStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 }
