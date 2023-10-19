@@ -23,12 +23,12 @@
               </div>
               <div class="col-md-6" >
                 <label for="inputPhone" class="form-label">Номер телефону</label>
-                <input type="text" th:class="'form-control'+${#fields.hasErrors('phoneNumber')? ' is-invalid' : ''}" id="inputPhone" maxlength="20"  th:field = "*{phoneNumber}">
-                <div class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
+                <input type="text" th:class="'form-control inputPhone'+${#fields.hasErrors('phoneNumber')? ' is-invalid' : ''}" id="inputPhone" placeholder="+380994445566" maxlength="20"  th:field = "*{phoneNumber}">
+                <div class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:text="${#fields.errors('phoneNumber')[0]}"></div>
               </div>
               <div>
                 <label for="exampleFormControlTextarea1" class="form-label">Адреса</label>
-                <input th:class="'form-control'+${#fields.hasErrors('address')? ' is-invalid' : ''}" id="exampleFormControlTextarea1" maxlength="100" th:field = "*{address}">
+                <input th:class="'form-control'+${#fields.hasErrors('address')? ' is-invalid' : ''}" id="exampleFormControlTextarea1" placeholder="вул.Васильківська 5" maxlength="100" th:field = "*{address}">
                 <div class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"> </div>
               </div>
               <div class="col-md-6" >
@@ -59,10 +59,15 @@
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
-<script th:src="@{/assets/js/forms-selects.js}"></script>
+<script th:src="@{/assets/vendor/libs/cleavejs/cleave.js}"></script>
 <script th:inline="javascript">
   var city = [[${location.city}]];
   $(document).ready(function(){
+      new Cleave('.inputPhone', {
+        numericOnly: true,
+        blocks: [0, 15],
+        delimiters: ["+"]
+    });
         $('#selectCity').select2({
         placeholder: "Оберіть місто",
         maximumInputLength: 100,
