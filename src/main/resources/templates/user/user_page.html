@@ -22,8 +22,8 @@
               </div>
               <div class="col-md-6" >
                 <label for="inputPhone" class="form-label">Номер телефону</label>
-                <input type="text" th:class="'form-control'+${#fields.hasErrors('phoneNumber')? ' is-invalid' : ''}" id="inputPhone" maxlength="20"  th:field = "*{phoneNumber}">
-                <div class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
+                <input type="text" th:class="'form-control inputPhone'+${#fields.hasErrors('phoneNumber')? ' is-invalid' : ''}" id="inputPhone" maxlength="20" placeholder="+380994445566"  th:field = "*{phoneNumber}">
+                <div class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:text="${#fields.errors('phoneNumber')[0]}"></div>
               </div>
 
               <div class="col-md-6" >
@@ -63,8 +63,16 @@
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
+<script th:src="@{/assets/vendor/libs/cleavejs/cleave.js}"></script>
+<script th:src="@{/assets/vendor/libs/flatpickr/flatpickr.js}"></script>
 <script>
   $(document).ready(function(){
+        new Cleave('.inputPhone', {
+        numericOnly: true,
+        blocks: [0, 15],
+        delimiters: ["+"]
+    });
+    $("#birthdate").flatpickr();
         $('#selectStatus').select2({
             minimumResultsForSearch: -1
         });
