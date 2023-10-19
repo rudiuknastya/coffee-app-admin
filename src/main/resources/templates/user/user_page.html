@@ -72,7 +72,9 @@
         blocks: [0, 15],
         delimiters: ["+"]
     });
-    $("#birthdate").flatpickr();
+    $("#birthdate").flatpickr({
+      dateFormat: "d.m.Y"
+    });
         $('#selectStatus').select2({
             minimumResultsForSearch: -1
         });

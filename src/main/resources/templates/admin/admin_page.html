@@ -71,7 +71,9 @@
 <script th:inline="javascript">
     var city = [[${admin.city}]];
   $(document).ready(function(){
-        $("#birthdate").flatpickr();
+        $("#birthdate").flatpickr({
+          dateFormat: "d.m.Y"
+        });
         $('#roleSelect').select2({
             minimumResultsForSearch: -1
         });
