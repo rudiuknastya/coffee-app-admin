@@ -29,7 +29,6 @@
               <div class="col-md-6" >
                 <label for="selectCity" class="form-label">Місто</label>
                 <select class="form-select" id="selectCity" th:field = "*{city}">
-<!--                  <option th:each="c : ${cities}" th:value="${c.city}" th:text="${c.city}"></option>-->
                 </select>
               </div>
               <div class="col-md-6">
@@ -41,7 +40,7 @@
               <div class="col-md-6" >
                 <label for="inputEmail" class="form-label">E-mail</label>
                 <input type="text" th:class="'form-control'+${#fields.hasErrors('email')? ' is-invalid' : ''}" id="inputEmail" maxlength="100" th:field = "*{email}">
-                <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:text="${#fields.errors('email')[0]}"></div>
               </div>
               <div class="col-md-6">
                 <label for="roleSelect" class="form-label">Роль</label>
@@ -68,9 +67,11 @@
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
+<script th:src="@{/assets/vendor/libs/flatpickr/flatpickr.js}"></script>
 <script th:inline="javascript">
     var city = [[${admin.city}]];
   $(document).ready(function(){
+        $("#birthdate").flatpickr();
         $('#roleSelect').select2({
             minimumResultsForSearch: -1
         });

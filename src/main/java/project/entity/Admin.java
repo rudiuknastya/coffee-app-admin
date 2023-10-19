@@ -20,7 +20,7 @@ public class Admin {
     @NotEmpty(message = "Поле не може бути порожнім")
     @Column(nullable = false)
     private String lastName;
-    @NotEmpty(message = "Поле не може бути порожнім")
+    @NotEmpty(message = "Поле не може бути порожнім ")
     @Email(regexp = "[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\\.[a-z]{2,3}", message = "Невірний формат email")
     @Column(nullable = false, unique = true)
     private String email;
