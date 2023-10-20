@@ -29,7 +29,7 @@
     <link rel="stylesheet" th:href="@{/assets/vendor/libs/select2/select2.css}" />
     <link rel="stylesheet" th:href="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css}" />
     <link rel="stylesheet" th:href="@{/assets/vendor/libs/node-waves/node-waves.css}" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <link rel="stylesheet" th:href="@{/assets/vendor/libs/flatpickr/flatpickr.css}" />
     <!-- Helpers -->
     <script th:src="@{/assets/vendor/js/helpers.js}"></script>
 
@@ -101,8 +101,8 @@
                 </li>
             </ul>
         </li>
-        <li class="menu-item">
-            <a href="app-kanban.html" class="menu-link">
+        <li th:class="'menu-item'+${number == 6 ? ' active' : ''}">
+            <a th:href="@{/admin/orders}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
                 <div data-i18n="Kanban">Замовлення</div>
             </a>
