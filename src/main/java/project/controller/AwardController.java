@@ -14,6 +14,9 @@ import project.service.AwardService;
 import project.service.ProductService;
 import project.service.UserService;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Controller
 public class AwardController {
     private final AwardService awardService;
@@ -47,12 +50,17 @@ public class AwardController {
     public @ResponseBody String deleteAward(@RequestParam("userId") Long userId, @RequestParam("productId") Long productId){
         User user = userService.getUserWithProducts(userId);
         int count = 0;
+        System.out.println(user.getProducts());
+        int productToRemove = 0;
+        int i = 0;
         for(Product product: user.getProducts()){
             if(product.getId() == productId && count <= 0){
-                user.getProducts().remove(product);
+                productToRemove = i;
                 count++;
             }
+            i++;
         }
+        user.getProducts().remove(productToRemove);
         userService.saveUser(user);
         return "success";
     }
