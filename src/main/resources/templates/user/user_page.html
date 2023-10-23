@@ -14,39 +14,37 @@
       <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
           <div class="card py-5 px-5">
-            <form th:action = "@{/admin/users/{l} (l=${link})}" th:object = "${user}" method="post" class="row g-3" style="color:black;">
+            <form class="row g-3" style="color:black;">
               <div class="col-md-6">
-                <label for="exampleFormControlTextarea1" class="form-label">Ім'я</label>
-                <input th:class="'form-control'+${#fields.hasErrors('name')? ' is-invalid' : ''}" id="exampleFormControlTextarea1" maxlength="100" th:field = "*{name}">
-                <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"> </div>
+                <label for="inputName" class="form-label">Ім'я</label>
+                <input id="inputName" class="form-control" maxlength="100">
+                <div class="text-danger" id="nameValidation"></div>
               </div>
               <div class="col-md-6" >
                 <label for="inputPhone" class="form-label">Номер телефону</label>
-                <input type="text" th:class="'form-control inputPhone'+${#fields.hasErrors('phoneNumber')? ' is-invalid' : ''}" id="inputPhone" maxlength="20" placeholder="+380994445566"  th:field = "*{phoneNumber}">
-                <div class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:text="${#fields.errors('phoneNumber')[0]}"></div>
+                <input type="text" class="form-control inputPhone" id="inputPhone" maxlength="20" placeholder="+380994445566">
+                <div class="text-danger" id="phoneValidation"></div>
               </div>
 
               <div class="col-md-6" >
                 <label for="selectLanguage" class="form-label">Мова</label>
-                <select class="select2 form-select" aria-label=".form-select-lg example" id="selectLanguage" th:field = "*{language}">
-                  <option th:each="l : ${languages}" th:value="${l}" th:text="${l.getLanguageName()}"></option>
+                <select class="select2 form-select" aria-label=".form-select-lg example" id="selectLanguage">
                 </select>
               </div>
               <div class="col-md-6">
                 <label for="birthdate" class="form-label">Дата народження</label>
-                <input id="birthdate" class="form-control" type="date" min="1923-01-01" max="2017-01-01" th:field = "*{birthDate}" th:value="${birthDate}">
-                <div class="text-danger" th:if="${#fields.hasErrors('birthDate')}" th:errors="*{birthDate}"> </div>
+                <input id="birthdate" class="form-control flatpickr" type="text">
+                <div class="text-danger" id="birthDateValidation"> </div>
               </div>
 
               <div class="col-md-6" >
                 <label for="selectStatus" class="form-label">Статус</label>
-                <select class="form-select" aria-label=".form-select-lg example" id="selectStatus" th:field = "*{status}">
-                  <option th:each="s : ${status}" th:value="${s}" th:text="${s.getStatusName()}"></option>
+                <select class="form-select" aria-label=".form-select-lg example" id="selectStatus">
                 </select>
               </div>
 
               <div class="col-md-12 mt-5 d-flex justify-content-end">
-                <button type="submit" class="btn btn-primary">Зберегти</button>
+                <button type="button" class="btn btn-primary" onclick="edit()">Зберегти</button>
               </div>
             </form>
           </div>
@@ -62,26 +60,137 @@
 <script th:src="@{/assets/vendor/libs/hammer/hammer.js}"></script>
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
+<script th:src="@{/assets/vendor/libs/moment/moment.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/i18n/uk.js"></script>
 <script th:src="@{/assets/vendor/libs/cleavejs/cleave.js}"></script>
 <script th:src="@{/assets/vendor/libs/flatpickr/flatpickr.js}"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/uk.js"></script>
 <script>
+var url = window.location.pathname;
+var id = url.substring(url.lastIndexOf('/') + 1);
   $(document).ready(function(){
         new Cleave('.inputPhone', {
         numericOnly: true,
         blocks: [0, 15],
         delimiters: ["+"]
     });
-    $("#birthdate").flatpickr({
-      dateFormat: "d.m.Y"
-    });
-        $('#selectStatus').select2({
-            minimumResultsForSearch: -1
+
+    $('#selectStatus').select2({
+            language: "uk",
+            minimumResultsForSearch: -1,
+            ajax: {
+                type: "GET",
+                url: "/admin/users/getUserStatuses",
+                processResults: function (response) {
+                    return {
+                        results: $.map(response, function (item) {
+                            return {
+                                text: item.name,
+                                id: item.userStatus
+                            }
+                        })
+                    };
+                }
+
+            }
         });
+
         $('#selectLanguage').select2({
-            minimumResultsForSearch: -1
+            language: "uk",
+            minimumResultsForSearch: -1,
+            ajax: {
+                type: "GET",
+                url: "/admin/users/getUserLanguages",
+                processResults: function (response) {
+                    return {
+                        results: $.map(response, function (item) {
+                            return {
+                                text: item.name,
+                                id: item.language
+                            }
+                        })
+                    };
+                }
+
+            }
         });
+
+    $.ajax({
+					type : "GET",
+					url : "getUser/"+id,
+					success : function(response) {
+					    $('#inputName').val(response.name);
+					    $('#inputPhone').val(response.phoneNumber);
+					    $("#birthdate").flatpickr({
+					      locale: "uk",
+					      defaultDate: moment(response.birthDate, 'YYYY-MM-DD').format('DD.MM.YYYY'),
+					      dateFormat: "d.m.Y"
+                        });
+
+                      var option = new Option(response.status.name, response.status.userStatus, true, true);
+                      $('#selectStatus').append(option).trigger('change');
+
+                      var option = new Option(response.language.name, response.language.language, true, true);
+                      $('#selectLanguage').append(option).trigger('change');
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+
     });
+
+    function edit(){
+    $("#nameValidation").text("");
+	$("#inputName").removeClass("is-invalid");
+	$("#phoneValidation").text("");
+	$("#inputPhone").removeClass("is-invalid");
+	$("#birthDateValidation").text("");
+	$("#birthdate").removeClass("is-invalid");
+	var d = moment($("#birthdate").val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
+      $.ajax({
+					type : "POST",
+					url : "editUser",
+					data: {
+                        id: id,
+                        name: $("#inputName").val(),
+                        phoneNumber: $("#inputPhone").val(),
+                        birthDate: d,
+                        language: $('#selectLanguage').val(),
+                        status: $('#selectStatus').val()
+                    },
+					success : function(response) {
+					console.log(typeof response)
+					  if(typeof response === "object"){
+                        for(er of response){
+                          if(er.field.localeCompare('name') == 0 ){
+                            $("#nameValidation").text(er.defaultMessage);
+                            $("#inputName").addClass("is-invalid");
+                          }
+                          if(er.field.localeCompare('phoneNumber') == 0){
+                            $("#phoneValidation").text(er.defaultMessage);
+                            $("#inputPhone").addClass("is-invalid");
+                          }
+                          if(er.field.localeCompare('birthDate') == 0){
+                            $("#birthDateValidation").text(er.defaultMessage);
+                            $("#birthdate").addClass("is-invalid");
+                          }
+                        }
+                      } else {
+                        window.location.href = '/admin/users';
+                      }
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+    }
+
+
+
 </script>
 </body>
 </html>

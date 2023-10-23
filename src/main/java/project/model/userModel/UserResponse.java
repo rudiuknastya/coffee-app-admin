@@ -6,11 +6,12 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 import project.entity.Language;
+import project.entity.Role;
 import project.entity.UserStatus;
 
 import java.time.LocalDate;
 
-public class UserRequest {
+public class UserResponse {
     private Long id;
     @NotEmpty(message = "Поле не може бути порожнім")
     private String name;
@@ -22,9 +23,9 @@ public class UserRequest {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
 
-    private Language language;
+    private LanguageDTO language;
 
-    private UserStatus status;
+    private UserStatusDTO status;
 
     public Long getId() {
         return id;
@@ -58,19 +59,20 @@ public class UserRequest {
         this.birthDate = birthDate;
     }
 
-    public Language getLanguage() {
+    public LanguageDTO getLanguage() {
         return language;
     }
 
-    public void setLanguage(Language language) {
+    public void setLanguage(LanguageDTO language) {
         this.language = language;
     }
 
-    public UserStatus getStatus() {
+    public UserStatusDTO getStatus() {
         return status;
     }
 
-    public void setStatus(UserStatus status) {
+    public void setStatus(UserStatusDTO status) {
         this.status = status;
     }
+
 }

@@ -78,6 +78,7 @@
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
+<script th:src="@{/assets/vendor/libs/moment/moment.js}"></script>
 <script>
     $(document).ready(function(){
         $('#statusSelect').select2({
@@ -101,27 +102,19 @@
 						$('ul.pagination li').remove();
 						data = response.content
 						for (i = 0; i < data.length; i++) {
-						var date = new Date(data[i].birthDate);
-						var month = date.getMonth()+1;
-						if(month < 10){
-						    month = "0"+month;
-						}
-						var day = date.getDate();
-						if(day < 10){
-						    day = "0"+day;
-						}
-						var formatedDate = day + "." + month + "." + date.getFullYear();
+						var date = moment(data[i].birthDate).format('DD.MM.YYYY');
+                            var d = date.toString();
 							$("#myTable")
 									.append(
 											'<tr class="tr"> <td>'
 													+ data[i].name
 													+ '</td> <td>'
-													+ formatedDate
+													+ d
 													+ '</td> <td>'
 													+ data[i].phoneNumber
 													+ '</td> <td> <span class="badge bg-label-primary">'
 													+ data[i].status
-													+ '</span></td> <td><a href="/admin/users/edit/'+data[i].id+'" type="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openModal('
+													+ '</span></td> <td><a href="/admin/users/edit/'+data[i].id+'" type="button" title="Редагувати" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити"  onclick="openModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 
@@ -287,27 +280,19 @@
 						$('ul.pagination li').remove();
 						data = response.content
 						for (i = 0; i < data.length; i++) {
-						var date = new Date(data[i].birthDate);
-						var month = date.getMonth()+1;
-						if(month < 10){
-						    month = "0"+month;
-						}
-						var day = date.getDate();
-						if(day < 10){
-						    day = "0"+day;
-						}
-						var formatedDate = day + "." + month + "." + date.getFullYear();
+						var date = moment(data[i].birthDate).format('DD.MM.YYYY');
+                            var d = date.toString();
 							$("#myTable")
 									.append(
 											'<tr class="tr"> <td>'
 													+ data[i].name
 													+ '</td> <td>'
-													+ formatedDate
+													+ d
 													+ '</td> <td>'
 													+ data[i].phoneNumber
 													+ '</td> <td> <span class="badge bg-label-primary">'
 													+ data[i].status
-													+ '</span> </td> <td><a href="/admin/users/edit/'+data[i].id+'" type="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openModal('
+													+ '</span> </td> <td><a href="/admin/users/edit/'+data[i].id+'" type="button" title="Редагувати" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 

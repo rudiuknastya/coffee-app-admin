@@ -11,7 +11,7 @@ import project.model.userModel.UserDTO;
 import project.entity.User;
 import project.entity.UserStatus;
 import project.mapper.UserMapper;
-import project.model.userModel.UserRequest;
+import project.model.userModel.UserResponse;
 import project.repository.UserRepository;
 import project.service.UserService;
 
@@ -82,11 +82,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserRequest getUserRequestById(Long id) {
-        logger.info("getUserRequestById() - Finding user for user request by id "+id);
+    public UserResponse getUserResponseById(Long id) {
+        logger.info("getUserResponseById() - Finding user for user response by id "+id);
         User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        UserRequest userRequest = UserMapper.USER_MAPPER.userToUserRequest(user);
-        logger.info("getUserRequestById() - User was found");
+        UserResponse userRequest = UserMapper.userToUserRequest(user);
+        logger.info("getUserResponseById() - User was found");
         return userRequest;
+    }
+
+    @Override
+    public User getUserByPhoneNumber(String phoneNumber) {
+        logger.info("getUserByPhoneNumber() - Finding user by phoneNumber "+phoneNumber);
+        User user = userRepository.findByPhoneNumber(phoneNumber);
+        logger.info("getUserByPhoneNumber() - User was found");
+        return user;
     }
 }

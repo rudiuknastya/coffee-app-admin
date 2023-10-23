@@ -7,13 +7,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
-import project.model.userModel.UserDTO;
+import project.model.userModel.*;
 import project.entity.Language;
 import project.entity.User;
 import project.entity.UserStatus;
-import project.model.userModel.UserRequest;
 import project.service.UserService;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 public class UserController {
@@ -48,26 +51,54 @@ public class UserController {
     }
     @GetMapping("/admin/users/edit/{id}")
     public String editUser(@PathVariable Long id, Model model){
-        String l = "edit/"+id;
-        Language language = Language.UKR;
-
-        System.out.println(language.getLanguageName());
         model.addAttribute("pageNum", 10);
-        model.addAttribute("user", userService.getUserRequestById(id));
-        model.addAttribute("link", l);
-        model.addAttribute("status", UserStatus.values());
-        model.addAttribute("languages", Language.values());
         return "user/user_page";
     }
-    @PostMapping("/admin/users/edit/{id}")
-    public String updateUser(@Valid @ModelAttribute("user") UserRequest user, BindingResult bindingResult, Model model){
-        if(bindingResult.hasErrors()) {
-            String l = "edit/" + user.getId();
-            model.addAttribute("pageNum", 10);
-            model.addAttribute("link", l);
-            model.addAttribute("status", UserStatus.values());
-            model.addAttribute("languages", Language.values());
-            return "user/user_page";
+    @GetMapping("/admin/users/edit/getUser/{id}")
+    public @ResponseBody UserResponse getUser(@PathVariable Long id){
+        return userService.getUserResponseById(id);
+    }
+    @GetMapping("/admin/users/getUserStatuses")
+    public @ResponseBody UserStatusDTO[] getUserStatuses(){
+        UserStatus[] userStatuses = UserStatus.values();
+        UserStatusDTO[] userStatusDTOs = new UserStatusDTO[userStatuses.length];
+        for(int i = 0; i < userStatuses.length; i++){
+            UserStatusDTO userStatusDTO = new UserStatusDTO();
+            userStatusDTO.setUserStatus(userStatuses[i]);
+            userStatusDTO.setName(userStatuses[i].getStatusName());
+            userStatusDTOs[i] = userStatusDTO;
+        }
+        return userStatusDTOs;
+    }
+
+    @GetMapping("/admin/users/getUserLanguages")
+    public @ResponseBody LanguageDTO[] getUserLanguages(){
+        Language[] languages = Language.values();
+        LanguageDTO[] languageDTOS = new LanguageDTO[languages.length];
+        for(int i = 0; i < languages.length; i++){
+            LanguageDTO languageDTO = new LanguageDTO();
+            languageDTO.setLanguage(languages[i]);
+            languageDTO.setName(languages[i].getLanguageName());
+            languageDTOS[i] = languageDTO;
+        }
+        return languageDTOS;
+    }
+    @PostMapping("/admin/users/edit/editUser")
+    public @ResponseBody List<FieldError> updateUser(@Valid @ModelAttribute("editUser") UserRequest user, BindingResult bindingResult, Model model){
+        User user1 = userService.getUserByPhoneNumber(user.getPhoneNumber());
+        if(bindingResult.hasErrors() ) {
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+            if(user1 != null && user1.getId() != user.getId()){
+                FieldError fieldError = new FieldError("Number exist","phoneNumber","Такий номер телефону вже існує");
+                fieldErrors.add(fieldError);
+            }
+            return fieldErrors;
+        }
+        if(user1 != null && user1.getId() != user.getId()){
+            FieldError fieldError = new FieldError("Number exist","phoneNumber","Такий номер телефону вже існує");
+            List<FieldError> fieldErrors = new ArrayList<>();
+            fieldErrors.add(fieldError);
+            return fieldErrors;
         }
         User userInDB = userService.getUserById(user.getId());
         userInDB.setName(user.getName());
@@ -76,7 +107,7 @@ public class UserController {
         userInDB.setBirthDate(user.getBirthDate());
         userInDB.setStatus(user.getStatus());
         userService.saveUser(userInDB);
-        return "redirect:/admin/users";
+        return null;
     }
 
 }

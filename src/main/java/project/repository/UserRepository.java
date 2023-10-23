@@ -9,6 +9,8 @@ import org.springframework.data.repository.query.Param;
 import project.model.AwardDTO;
 import project.entity.User;
 
+import java.util.Optional;
+
 public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
     @Query(value = "select award.user_id as userId, user.name as userName, user.phone_number as phoneNumber, award.product_id as productId, product.name as productName from user join award on user.id = award.user_id join product on award.product_id = product.id", nativeQuery = true)
     Page<AwardDTO> findUserAwards(Pageable pageable);
@@ -17,5 +19,6 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     Page<AwardDTO> findUserAwardsByUserPhoneNumber(@Param("phone")String phone, Pageable pageable);
     @Query(value = "SELECT u FROM User u INNER JOIN FETCH u.products p WHERE u.deleted=false AND u.id= :id")
     User findUserWithProductsById(@Param("id")Long id);
+    User findByPhoneNumber(String phoneNumber);
 
 }

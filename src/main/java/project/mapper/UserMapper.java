@@ -3,9 +3,11 @@ package project.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
+import project.model.userModel.LanguageDTO;
 import project.model.userModel.UserDTO;
 import project.entity.User;
-import project.model.userModel.UserRequest;
+import project.model.userModel.UserResponse;
+import project.model.userModel.UserStatusDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,5 +32,23 @@ public interface UserMapper {
         }
         return userDTOS;
     }
-    UserRequest userToUserRequest(User user);
+    static UserResponse userToUserRequest(User user){
+        if(user == null){
+            return null;
+        }
+        UserResponse userResponse = new UserResponse();
+        userResponse.setId(user.getId());
+        userResponse.setName(user.getName());
+        userResponse.setPhoneNumber(user.getPhoneNumber());
+        userResponse.setBirthDate(user.getBirthDate());
+        LanguageDTO languageDTO = new LanguageDTO();
+        languageDTO.setLanguage(user.getLanguage());
+        languageDTO.setName(user.getLanguage().getLanguageName());
+        userResponse.setLanguage(languageDTO);
+        UserStatusDTO userStatusDTO = new UserStatusDTO();
+        userStatusDTO.setUserStatus(user.getStatus());
+        userStatusDTO.setName(user.getStatus().getStatusName());
+        userResponse.setStatus(userStatusDTO);
+        return userResponse;
+    }
 }
