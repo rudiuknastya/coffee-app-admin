@@ -2,18 +2,20 @@ package project.model.productModel;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import project.entity.AdditiveType;
+import project.entity.Category;
 
-public class ProductRequest {
+import java.util.List;
+
+public class ProductResponse {
     private Long id;
-    @NotEmpty(message = "Поле не може бути порожнім")
     private String name;
-    @NotNull(message = "Поле не може бути порожнім")
     private Integer price;
-    @NotEmpty(message = "Поле не може бути порожнім")
     private String description;
+    private String image;
     private Boolean status;
-    @NotNull(message = "Поле не може бути порожнім")
-    private Long categoryId;
+    private Category category;
+    private List<AdditiveType> additiveTypes;
 
     public Long getId() {
         return id;
@@ -47,7 +49,15 @@ public class ProductRequest {
         this.description = description;
     }
 
-    public Boolean getStatus() {
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+     public Boolean getStatus() {
         return status;
     }
 
@@ -55,11 +65,19 @@ public class ProductRequest {
         this.status = status;
     }
 
-    public Long getCategoryId() {
-        return categoryId;
+    public Category getCategory() {
+        return category;
     }
 
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public List<AdditiveType> getAdditiveTypes() {
+        return additiveTypes;
+    }
+
+    public void setAdditiveTypes(List<AdditiveType> additiveTypes) {
+        this.additiveTypes = additiveTypes;
     }
 }

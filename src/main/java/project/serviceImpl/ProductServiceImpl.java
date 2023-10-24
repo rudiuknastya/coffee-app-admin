@@ -11,7 +11,7 @@ import project.model.productModel.ProductDTO;
 import project.model.productModel.ProductNameDTO;
 import project.entity.Product;
 import project.mapper.ProductMapper;
-import project.model.productModel.ProductRequest;
+import project.model.productModel.ProductResponse;
 import project.repository.ProductRepository;
 import project.service.ProductService;
 
@@ -54,12 +54,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductRequest getProductRequestById(Long id) {
-        logger.info("getProductRequestById() - Finding product for product request by id "+ id);
+    public ProductResponse getProductResponseById(Long id) {
+        logger.info("getProductResponseById() - Finding product for product response by id "+ id);
         Product product = productRepository.findProductWithAdditiveTypesById(id);
-        ProductRequest productRequest = ProductMapper.productToProductRequest(product);
-        logger.info("getProductRequestById() - Product was found");
-        return productRequest;
+        ProductResponse productResponse = ProductMapper.productToProductResponse(product);
+        logger.info("getProductResponseById() - Product was found");
+        return productResponse;
     }
 
     @Override

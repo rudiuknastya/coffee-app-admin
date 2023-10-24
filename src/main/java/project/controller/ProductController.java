@@ -8,14 +8,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import project.model.CategoryNameDTO;
 import project.model.productModel.ProductDTO;
 import project.entity.AdditiveType;
-import project.entity.Category;
 import project.entity.Product;
 import project.model.productModel.ProductRequest;
+import project.model.productModel.ProductResponse;
 import project.service.AdditiveTypeService;
 import project.service.CategoryService;
 import project.service.ProductService;
@@ -75,79 +76,91 @@ public class ProductController {
     }
     @GetMapping("/admin/products/new")
     public String createProduct(Model model){
-        String l = "new";
-        model.addAttribute("product", new ProductRequest());
+        String l = "saveProduct";
         model.addAttribute("link", l);
         model.addAttribute("pageNum", 3);
         return "product/product_page";
     }
 
-    @PostMapping("/admin/products/new")
-    public String saveProduct(@Valid @ModelAttribute("product") ProductRequest product, BindingResult bindingResult,
-                              @RequestParam("mainImage") MultipartFile mainImage, @RequestParam("mainImageName") String mainImageName,
-                              @RequestParam(name = "adTypes", required = false) Long [] adTypes,
-                              Model model){
-        if(isSupportedExtension(FilenameUtils.getExtension(
-                mainImage.getOriginalFilename()))) {
-            saveImage(mainImage, product, mainImageName);
-        } else if(!mainImage.getOriginalFilename().equals("")){
-            model.addAttribute("mainWarning", "Некоректний тип файлу");
+    @PostMapping("/admin/products/saveProduct")
+    public @ResponseBody List<FieldError> saveProduct(@Valid @ModelAttribute("product") ProductRequest product, BindingResult bindingResult,
+                                                      @RequestParam(name = "mainImage", required = false) MultipartFile mainImage, @RequestParam("mainImageName") String mainImageName,
+                                                      @RequestParam(name = "adTypes", required = false) Long [] adTypes){
+        if (bindingResult.hasErrors()) {
+            System.out.println("1 if");
+            List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
+            System.out.println(bindingResult.getFieldErrors());
+            if(mainImage != null && !mainImage.getOriginalFilename().equals("") && !isSupportedExtension(FilenameUtils.getExtension(
+                    mainImage.getOriginalFilename()))) {
+                System.out.println("2 if");
+                FieldError fieldError = new FieldError("Image format wrong","image","Некоректний тип файлу");
+                fieldErrors.add(fieldError);
+            }
+            return fieldErrors;
         }
+
+        if(mainImage != null && !mainImage.getOriginalFilename().equals("") && !isSupportedExtension(FilenameUtils.getExtension(
+                mainImage.getOriginalFilename()))){
+            System.out.println("3 if");
+            List<FieldError> fieldErrors = new ArrayList<>(1);
+            FieldError fieldError = new FieldError("Image format wrong","image","Некоректний тип файлу");
+            fieldErrors.add(fieldError);
+            return fieldErrors;
+        }
+        List<AdditiveType> additiveTypes = null;
         if(adTypes != null){
-            List<AdditiveType> additiveTypes = new ArrayList<>();
+            additiveTypes = new ArrayList<>();
             for(int i = 0; i < adTypes.length; i++){
                 AdditiveType additiveType = additiveTypeService.getAdditiveTypeById(adTypes[i]);
                 additiveTypes.add(additiveType);
             }
-            product.setAdditiveTypes(additiveTypes);
-        }
-        if (bindingResult.hasErrors()) {
-            String l = "new";
-            model.addAttribute("product",product);
-            model.addAttribute("link", l);
-            model.addAttribute("pageNum", 3);
-            return "product/product_page";
-        }
-
-        if(!mainImage.getOriginalFilename().equals("") && !isSupportedExtension(FilenameUtils.getExtension(
-                mainImage.getOriginalFilename()))){
-            String l = "new";
-            model.addAttribute("product",product);
-            model.addAttribute("link", l);
-            model.addAttribute("pageNum", 3);
-            return "product/product_page";
         }
         Product productToSave = new Product();
+        if(mainImage != null) {
+            saveImage(mainImage, productToSave, mainImageName);
+        }
         productToSave.setName(product.getName());
         productToSave.setDescription(product.getDescription());
-        productToSave.setImage(product.getImage());
         productToSave.setPrice(product.getPrice());
         productToSave.setStatus(product.getStatus());
         productToSave.setDeleted(false);
         productToSave.setCategory(categoryService.getCategoryById(product.getCategoryId()));
-        productToSave.setAdditiveTypes(product.getAdditiveTypes());
+        productToSave.setAdditiveTypes(additiveTypes);
         productService.saveProduct(productToSave);
-        return "redirect:/admin/products";
+        return null;
     }
 
     @GetMapping("/admin/products/edit/{id}")
     public String editProduct(@PathVariable Long id, Model model){
-        String l = "edit/"+id;
-        model.addAttribute("product", productService.getProductRequestById(id));
+        String l = "editProduct";
         model.addAttribute("link", l);
         model.addAttribute("pageNum", 3);
         return "product/product_page";
     }
-
-    @PostMapping("/admin/products/edit/{id}")
-    public String updateProduct(@Valid @ModelAttribute("product") ProductRequest product, BindingResult bindingResult,
+    @GetMapping("/admin/products/edit/getProduct/{id}")
+    public @ResponseBody ProductResponse editProduct(@PathVariable Long id){
+        return productService.getProductResponseById(id);
+    }
+    @PostMapping("/admin/products/edit/editProduct")
+    public @ResponseBody List<FieldError> updateProduct(@Valid @ModelAttribute("product") ProductRequest product, BindingResult bindingResult,
                                 @RequestParam(name = "adTypes", required = false) Long [] adTypes,
-                                @RequestParam("mainImage") MultipartFile mainImage, @RequestParam("mainImageName") String mainImageName, Model model) {
-        if(isSupportedExtension(FilenameUtils.getExtension(
-                mainImage.getOriginalFilename()))) {
-            saveImage(mainImage, product, mainImageName);
-        } else if(!mainImage.getOriginalFilename().equals("")){
-            model.addAttribute("mainWarning", "Некоректний тип файлу");
+                                @RequestParam(name = "mainImage", required = false) MultipartFile mainImage, @RequestParam("mainImageName") String mainImageName) {
+        if (bindingResult.hasErrors()) {
+            List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
+            if(mainImage != null && !mainImage.getOriginalFilename().equals("") && !isSupportedExtension(FilenameUtils.getExtension(
+                    mainImage.getOriginalFilename()))) {
+                FieldError fieldError = new FieldError("Image format wrong","image","Некоректний тип файлу");
+                fieldErrors.add(fieldError);
+            }
+            return fieldErrors;
+        }
+
+        if(mainImage != null && !mainImage.getOriginalFilename().equals("") && !isSupportedExtension(FilenameUtils.getExtension(
+                mainImage.getOriginalFilename()))){
+            List<FieldError> fieldErrors = new ArrayList<>(1);
+            FieldError fieldError = new FieldError("Image format wrong","image","Некоректний тип файлу");
+            fieldErrors.add(fieldError);
+            return fieldErrors;
         }
         Product productInDB = productService.getProductWithAdditiveTypesById(product.getId());
         if(adTypes != null) {
@@ -170,33 +183,19 @@ public class ProductController {
                 }
             }
         }
-        product.setAdditiveTypes(productInDB.getAdditiveTypes());
-        if (bindingResult.hasErrors()) {
-            String l = "edit/"+product.getId();
-            model.addAttribute("product", product);
-            model.addAttribute("link", l);
-            model.addAttribute("pageNum", 3);
-            return "product/product_page";
-        }
-        if(!mainImage.getOriginalFilename().equals("") && !isSupportedExtension(FilenameUtils.getExtension(
-                mainImage.getOriginalFilename()))){
-            String l = "edit/"+product.getId();
-            model.addAttribute("product",product);
-            model.addAttribute("link", l);
-            model.addAttribute("pageNum", 3);
-            return "product/product_page";
+        if(mainImage != null ) {
+            saveImage(mainImage, productInDB, mainImageName);
         }
         productInDB.setName(product.getName());
         productInDB.setPrice(product.getPrice());
         productInDB.setStatus(product.getStatus());
         productInDB.setDescription(product.getDescription());
-        productInDB.setImage(product.getImage());
         productInDB.setCategory(categoryService.getCategoryById(product.getCategoryId()));
         productService.saveProduct(productInDB);
-        return "redirect:/admin/products";
+        return null;
     }
 
-    private void saveImage(MultipartFile image, ProductRequest product, String name){
+    private void saveImage(MultipartFile image, Product product, String name){
         File uploadDir = new File(uploadPath);
         if (!uploadDir.exists()){
             uploadDir.mkdir();

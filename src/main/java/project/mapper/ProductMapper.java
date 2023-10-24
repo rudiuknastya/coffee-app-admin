@@ -6,7 +6,7 @@ import org.mapstruct.factory.Mappers;
 import project.model.productModel.ProductDTO;
 import project.model.productModel.ProductNameDTO;
 import project.entity.Product;
-import project.model.productModel.ProductRequest;
+import project.model.productModel.ProductResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,19 +16,19 @@ public interface ProductMapper {
     ProductMapper PRODUCT_MAPPER = Mappers.getMapper(ProductMapper.class);
     List<ProductNameDTO> productListToProductNameDTOList(List<Product> products);
     ProductNameDTO productToProductNameDTO(Product product);
-    @Named("productToProductRequest")
-    static ProductRequest productToProductRequest(Product product){
+    @Named("productToProductResponse")
+    static ProductResponse productToProductResponse(Product product){
         if(product == null){
             return null;
         }
-        ProductRequest productRequest = new ProductRequest();
+        ProductResponse productRequest = new ProductResponse();
         productRequest.setId(product.getId());
         productRequest.setName(product.getName());
         productRequest.setPrice(product.getPrice());
         productRequest.setImage(product.getImage());
         productRequest.setDescription(product.getDescription());
         productRequest.setStatus(product.getStatus());
-        productRequest.setCategoryId(product.getCategory().getId());
+        productRequest.setCategory(product.getCategory());
         productRequest.setAdditiveTypes(product.getAdditiveTypes());
         return productRequest;
     }

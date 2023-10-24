@@ -14,27 +14,24 @@
       <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
           <div class="card py-5 px-5">
-            <form th:action = "@{/admin/products/{l} (l=${link})}" th:object = "${product}" method="post" enctype="multipart/form-data" class="row g-3" style="color:black;" id="productForm">
+            <form enctype="multipart/form-data" id="productForm" class="row g-3" style="color:black;">
               <div class="form-check form-switch d-flex justify-content-end">
-                <input class="form-check-input mx-1" type="checkbox" role="switch" id="flexSwitchCheckDefault" th:field = "*{status}">
-                <label class="form-check-label" for="flexSwitchCheckDefault"> Статус</label>
+                <input class="form-check-input mx-1" type="checkbox" role="switch" id="status">
+                <label class="form-check-label" for="status"> Статус</label>
               </div>
               <div class="col-md-6" >
                 <label for="inputName" class="form-label">Назва</label>
-                <input type="text" th:class="'form-control'+${#fields.hasErrors('name')? ' is-invalid' : ''}" id="inputName" maxlength="100" th:field = "*{name}">
-                <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                <input type="text" class="form-control" id="inputName" maxlength="100">
                 <div class="text-danger" id="nameValidation"></div>
               </div>
               <div class="col-md-6" >
                 <label for="inputPrice" class="form-label">Ціна</label>
-                <input type="number" th:class="'form-control'+${#fields.hasErrors('price')? ' is-invalid' : ''}" id="inputPrice"  th:field = "*{price}">
-                <div class="text-danger" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+                <input type="number" class="form-control" id="inputPrice">
                 <div class="text-danger" id="priceValidation"></div>
               </div>
               <div>
                 <label for="inputDescription" class="form-label">Опис</label>
-                <textarea th:class="'form-control'+${#fields.hasErrors('description')? ' is-invalid' : ''}" id="inputDescription" rows="3" maxlength="300" th:field = "*{description}"></textarea>
-                <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"> </div>
+                <textarea class="form-control" id="inputDescription" rows="3" maxlength="300"></textarea>
                 <div class="text-danger" id="descriptionValidation"></div>
               </div>
 
@@ -43,13 +40,13 @@
                   <label class="col-form-label" for="inputMainImage" style="color:black;">Зображення</label>
                 </div>
                 <div class="col-auto">
-                  <img th:src="*{image} != null? @{'/uploads/'+ *{image}}: @{'https://static.vecteezy.com/system/resources/previews/004/141/669/non_2x/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg'}" style="width:150px; height:150px;" id="main_image">
+                  <img  src="https://static.vecteezy.com/system/resources/previews/004/141/669/non_2x/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg" style="width:150px; height:150px;" id="main_image">
                   <input type="file" accept="image/jpeg, image/jpg, image/png" class="form-control d-none"  id="inputMainImage" name="mainImage">
                 </div>
                 <div class="col-auto">
                   <label class="input-group-text col-form-label" for="inputMainImage" style="color:black;">Завантажити</label>
-                  <div th:text="${mainWarning}" class="text-danger" id="imageValidation"></div>
-                  <input type="text" class="d-none"  th:value = "*{image}" id="mainImageName" name="mainImageName">
+                  <div class="text-danger" id="imageValidation"></div>
+                  <input type="text" class="d-none" id="mainImageName" name="mainImageName">
                 </div>
                 <div class="col-auto">
                   <button type="button" class="btn btn-outline-danger" onclick="main_image.src='https://static.vecteezy.com/system/resources/previews/004/141/669/non_2x/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg'; inputMainImage.value = ''; mainImageName.value = ''">Видалити</button>
@@ -58,9 +55,9 @@
 
               <div class="col-md-6" >
                 <label for="selectCategory" class="form-label">Категорія</label>
-                <select th:class="'form-select'+${#fields.hasErrors('categoryId')? ' is-invalid' : ''}" name="selectCategory" id="selectCategory" th:field = "*{categoryId}">
+                <select class="form-select" name="selectCategory" id="selectCategory">
                 </select>
-                <div class="text-danger" th:if="${#fields.hasErrors('categoryId')}" th:errors="*{categoryId}"> </div>
+                <div class="text-danger" id="categoryValidation"> </div>
               </div>
               <div class="col-md-6">
                 <label for="multipleSelect" class="form-label">Типи додатків</label>
@@ -68,7 +65,7 @@
                 </select>
               </div>
               <div class="col-md-12 mt-5 d-flex justify-content-end">
-                <button type="submit" class="btn btn-primary">Зберегти</button>
+                <button type="button" class="btn btn-primary" onclick="save()">Зберегти</button>
               </div>
             </form>
           </div>
@@ -85,12 +82,14 @@
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/i18n/uk.js"></script>
 <script th:inline="javascript">
-var categoryId = [[${product.categoryId}]];
-var additiveTypes = [[${product.additiveTypes}]];
+var link = [[${link}]];
+var id = '';
   $(document).ready(function(){
         $('#selectCategory').select2({
-        placeholder: "Оберіть категорію",
+            language: "uk",
+            placeholder: "Оберіть категорію",
             maximumInputLength: 100,
             ajax: {
                 type: "get",
@@ -117,25 +116,9 @@ var additiveTypes = [[${product.additiveTypes}]];
 
             }
         });
-        if(categoryId != null){
-          var categorySelect = $('#selectCategory');
-          $.ajax({
-              type: 'GET',
-              url: '/admin/getCategoryForProduct/'+categoryId
-          }).then(function (data) {
-              var option = new Option(data.name, data.id, true, true);
-              categorySelect.append(option).trigger('change');
-
-              categorySelect.trigger({
-                  type: 'select2:select',
-                  params: {
-                      data: data
-                  }
-              });
-          });
-        }
 
         $('#multipleSelect').select2({
+            language: "uk",
             placeholder: "Оберіть тип додатку",
             allowClear: true,
             maximumInputLength: 100,
@@ -164,26 +147,120 @@ var additiveTypes = [[${product.additiveTypes}]];
 
             }
         });
-        if(additiveTypes != null){
-        var additiveSelect = $('#multipleSelect');
-          for(let ad of additiveTypes){
-            var option = new Option(ad.name, ad.id, true, true);
-            additiveSelect.append(option).trigger('change');
-          }
-                additiveSelect.trigger({
-                    type: 'select2:select',
-                    params: {
-                        data: additiveTypes
-                    }
-                });
+
+        if(link.localeCompare('saveProduct') != 0){
+          var url = window.location.pathname;
+          id = url.substring(url.lastIndexOf('/') + 1);
+          $.ajax({
+					type : "GET",
+					url : "getProduct/"+id,
+					success : function(response) {
+					console.log(response.name);
+					    $('#inputName').val(response.name);
+					    $('#inputPrice').val(response.price);
+					    $('#inputDescription').val(response.description);
+                        if(response.image != null){
+                          $("#main_image").attr("src", '/uploads/'+response.image);
+                        }
+                        if(response.category != null){
+                          var option = new Option(response.category.name, response.category.id, true, true);
+                          $('#selectCategory').append(option).trigger('change');
+                        }
+                        if(response.additiveTypes != null){
+                          for(let ad of response.additiveTypes){
+                            var option = new Option(ad.name, ad.id, true, true);
+                            $('#multipleSelect').append(option).trigger('change');
+                          }
+                        }
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
 
         }
 
-    }); inputMainImage
+  });
+
+    function save(){
+      $("#nameValidation").text("");
+      $("#inputName").removeClass("is-invalid");
+      $("#priceValidation").text("");
+      $("#inputPrice").removeClass("is-invalid");
+      $("#descriptionValidation").text("");
+      $("#inputDescription").removeClass("is-invalid");
+      $("#categoryValidation").text("");
+      $("#selectCategory").removeClass("is-invalid");
+      var stat;
+      if($("#status").is(':checked')){
+          stat = true;
+      } else {
+          stat = false;
+      }
+      if($("#selectCategory").val() != null ){
+        var category = $("#selectCategory").val()
+      } else {
+        var category = ''
+      }
+      var formData = new FormData();
+      formData.append('id', id);
+      formData.append('name', $('#inputName').val());
+      formData.append('price', $('#inputPrice').val());
+      formData.append('description', $("#inputDescription").val());
+      formData.append('status', stat);
+      formData.append('categoryId', category);
+      formData.append('mainImage', $('#inputMainImage').prop('files')[0]);
+      formData.append('mainImageName', $('#mainImageName').val());
+      formData.append('adTypes', $('#multipleSelect').val());
+      $.ajax({
+					type : "POST",
+					url : link,
+					data: formData,
+					contentType: false,
+					processData: false,
+					success : function(response) {
+					console.log(typeof response)
+					  if(typeof response === "object"){
+                        for(er of response){
+                          if(er.field.localeCompare('name') == 0 ){
+                            $("#nameValidation").text(er.defaultMessage);
+                            $("#inputName").addClass("is-invalid");
+                          }
+                          if(er.field.localeCompare('price') == 0){
+                            $("#priceValidation").text(er.defaultMessage);
+                            $("#inputPrice").addClass("is-invalid");
+                          }
+                          if(er.field.localeCompare('description') == 0){
+                            $("#descriptionValidation").text(er.defaultMessage);
+                            $("#inputDescription").addClass("is-invalid");
+                          }
+                          if(er.field.localeCompare('categoryId') == 0){
+                            $("#categoryValidation").text(er.defaultMessage);
+                            $("#selectCategory").addClass("is-invalid");
+                          }
+                          if(er.field.localeCompare('image') == 0){
+                            $("#imageValidation").text(er.defaultMessage);
+                          }
+                        }
+                      } else {
+                        window.location.href = '/admin/products';
+                      }
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+
+    }
+
     $('#inputMainImage').on("change", function() {
         var myFile = $(this).prop('files');
         if(validateFile(myFile[0].name) != false){
           $("#main_image").attr("src", window.URL.createObjectURL(myFile[0]));
+        } else {
+          $("#imageValidation").text("Некоректий тип файлу");
+          $(this).val('');
         }
     });
     function validateFile(value){
@@ -195,43 +272,6 @@ var additiveTypes = [[${product.additiveTypes}]];
         }
     }
 </script>
-<!--<script>-->
-<!--  function save(){-->
-<!--  $("#inputName").removeClass("is-invalid");-->
-<!--  $("#nameValidation").text("");-->
-<!--  $("#inputPrice").removeClass("is-invalid");-->
-<!--  $("#priceValidation").text("");-->
-<!--  $("#inputDescription").removeClass("is-invalid");-->
-<!--  $("#descriptionValidation").text("");-->
-<!--    if($('#inputName').val() == "" || $('#inputPrice').val() == "" || $('#inputDescription').val() == "" || validateFile() == false){-->
-<!--        if($('#inputName').val() == ""){-->
-<!--          $("#nameValidation").text("Поле не може бути порожнім");-->
-<!--          $("#inputName").addClass("is-invalid");-->
-<!--        }-->
-<!--        if($('#inputPrice').val() == ""){-->
-<!--          $("#priceValidation").text("Поле не може бути порожнім");-->
-<!--          $("#inputPrice").addClass("is-invalid");-->
-<!--        }-->
-<!--        if($('#inputDescription').val() == ""){-->
-<!--          $("#descriptionValidation").text("Поле не може бути порожнім");-->
-<!--          $("#inputDescription").addClass("is-invalid");-->
-<!--        }-->
-<!--        if(validateFile() == false){-->
-<!--          $("#imageValidation").text("Некоректний тип файлу");-->
-<!--        }-->
-<!--    } else {-->
-<!--        $("#productForm").submit();-->
-<!--		}-->
-<!--  }-->
-<!--  function validateFile(){-->
-<!--    var value = $("#inputMainImage").val();-->
-<!--    var ext = value.substring(value.lastIndexOf('.') + 1).toLowerCase();-->
-<!--    if($.inArray(ext, ['png','jpg','jpeg']) == -1 && value != "") {-->
-<!--      return false;-->
-<!--    } else {-->
-<!--      return true;-->
-<!--    }-->
-<!--  }-->
-<!--</script>-->
+
 </body>
 </html>
