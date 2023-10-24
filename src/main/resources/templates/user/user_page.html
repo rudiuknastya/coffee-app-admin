@@ -149,7 +149,11 @@ var id = url.substring(url.lastIndexOf('/') + 1);
 	$("#inputPhone").removeClass("is-invalid");
 	$("#birthDateValidation").text("");
 	$("#birthdate").removeClass("is-invalid");
-	var d = moment($("#birthdate").val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
+	if($("#birthdate").val().localeCompare('') == 0){
+	  var d = null;
+	} else {
+	  var d = moment($("#birthdate").val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
+	}
       $.ajax({
 					type : "POST",
 					url : "editUser",

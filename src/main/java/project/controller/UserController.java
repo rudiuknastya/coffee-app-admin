@@ -87,7 +87,7 @@ public class UserController {
     public @ResponseBody List<FieldError> updateUser(@Valid @ModelAttribute("editUser") UserRequest user, BindingResult bindingResult, Model model){
         User user1 = userService.getUserByPhoneNumber(user.getPhoneNumber());
         if(bindingResult.hasErrors() ) {
-            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+            List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
             if(user1 != null && user1.getId() != user.getId()){
                 FieldError fieldError = new FieldError("Number exist","phoneNumber","Такий номер телефону вже існує");
                 fieldErrors.add(fieldError);

@@ -32,6 +32,7 @@ public interface UserMapper {
         }
         return userDTOS;
     }
+    @Named("userToUserRequest")
     static UserResponse userToUserRequest(User user){
         if(user == null){
             return null;
