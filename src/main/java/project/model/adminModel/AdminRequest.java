@@ -1,33 +1,26 @@
-package project.entity;
+package project.model.adminModel;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
+import project.entity.Role;
 
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "admin")
-public class Admin {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class AdminRequest {
     private Long id;
-    @Column(columnDefinition = "VARCHAR(100)",nullable = false)
+    @NotEmpty(message = "Поле не може бути порожнім")
     private String firstName;
-    @Column(columnDefinition = "VARCHAR(100)",nullable = false)
+    @NotEmpty(message = "Поле не може бути порожнім")
     private String lastName;
-    @Column(nullable = false, unique = true)
+    @NotEmpty(message = "Поле не може бути порожнім ")
+    @Email(regexp = "[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\\.[a-z]{2,3}", message = "Невірний формат email")
     private String email;
-    @Column(nullable = false, unique = true)
-    private String password;
-    @Column(name = "birth_date", columnDefinition="DATE")
+    @NotNull (message = "Поле не може бути порожнім")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
-    @Column(columnDefinition = "VARCHAR(100) NOT NULL")
     private String city;
-    @Enumerated(EnumType.STRING)
     private Role role;
 
     public Long getId() {
@@ -62,14 +55,6 @@ public class Admin {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public LocalDate getBirthDate() {
         return birthDate;
     }
@@ -78,19 +63,19 @@ public class Admin {
         this.birthDate = birthDate;
     }
 
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
     public String getCity() {
         return city;
     }
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

@@ -1,16 +1,18 @@
 package project.serviceImpl;
 
 import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import project.model.AdminDTO;
+import project.model.adminModel.AdminDTO;
 import project.entity.Admin;
 import project.entity.Role;
 import project.mapper.AdminMapper;
+import project.model.adminModel.AdminResponse;
 import project.repository.AdminRepository;
 import project.service.AdminService;
 
@@ -78,5 +80,22 @@ public class AdminServiceImpl implements AdminService {
         logger.info("deleteAdmin() - Deleting admin by id "+id);
         adminRepository.deleteById(id);
         logger.info("deleteAdmin() - Admin was deleted");
+    }
+
+    @Override
+    public AdminResponse getAdminResponseById(Long id) {
+        logger.info("getAdminResponseById() - Finding admin for admin response by id "+id);
+        Admin admin = adminRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        AdminResponse adminResponse = AdminMapper.adminToAdminResponse(admin);
+        logger.info("getAdminResponseById() - Admin was found");
+        return adminResponse;
+    }
+
+    @Override
+    public Admin getAdminByEmail(String email) {
+        logger.info("getAdminByEmail() - Finding admin by email "+email);
+        Admin admin = adminRepository.findByEmail(email);
+        logger.info("getAdminByEmail() - Admin was found");
+        return admin;
     }
 }
