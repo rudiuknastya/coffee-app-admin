@@ -125,6 +125,16 @@
     });
 
     function save(){
+      $("#addressValidation").text("");
+	  $("#inputAddress").removeClass("is-invalid");
+	  $("#cityValidation").text("");
+	  $("#selectCity").removeClass("is-invalid");
+	  $("#phoneValidation").text("");
+	  $("#inputPhone").removeClass("is-invalid");
+	  $("#workingValidation").text("");
+	  $("#inputWorkingHours").removeClass("is-invalid");
+	  $("#coordinatesValidation").text("");
+	  $("#inputCoordinates").removeClass("is-invalid");
       $.ajax({
 					type : "POST",
 					url : link,
