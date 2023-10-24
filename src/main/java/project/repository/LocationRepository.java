@@ -8,5 +8,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import project.entity.Location;
 
 public interface LocationRepository extends JpaRepository<Location, Long>, JpaSpecificationExecutor<Location> {
+    Location findByPhoneNumber(String number);
 
 }

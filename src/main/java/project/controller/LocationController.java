@@ -7,12 +7,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import project.entity.City;
 import project.entity.Location;
 import project.service.CityService;
 import project.service.LocationService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -59,48 +61,68 @@ public class LocationController {
 
     @GetMapping("/admin/locations/new")
     public String createLocation(Model model){
-        String l = "new";
-        model.addAttribute("location", new Location());
+        String l = "saveLocation";
         model.addAttribute("link", l);
         model.addAttribute("pageNum", 7);
         return "location/location_page";
     }
-    @PostMapping("/admin/locations/new")
-    public String saveLocation(@Valid @ModelAttribute("location") Location location, BindingResult bindingResult, Model model){
+    @PostMapping("/admin/locations/saveLocation")
+    public @ResponseBody List<FieldError> saveLocation(@Valid @ModelAttribute("location") Location location, BindingResult bindingResult, Model model){
+        Location location1 = locationService.getLocationByPhoneNumber(location.getPhoneNumber());
         if (bindingResult.hasErrors()) {
-            String l = "new";
-            model.addAttribute("link", l);
-            model.addAttribute("pageNum", 7);
-            return "location/location_page";
+            List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
+            if(location1 != null && location1.getId() != location.getId()){
+                FieldError fieldError = new FieldError("Number exist","phoneNumber","Такий номер телефону вже існує");
+                fieldErrors.add(fieldError);
+            }
+            return fieldErrors;
+        }
+        if(location1 != null && location1.getId() != location.getId()){
+            List<FieldError> fieldErrors = new ArrayList<>(1);
+            FieldError fieldError = new FieldError("Number exist","phoneNumber","Такий номер телефону вже існує");
+            fieldErrors.add(fieldError);
+            return fieldErrors;
         }
         location.setDeleted(false);
         locationService.saveLocation(location);
-        return "redirect:/admin/locations";
+        return null;
     }
 
     @GetMapping("/admin/locations/edit/{id}")
     public String editLocation(@PathVariable Long id, Model model){
-        String l = "edit/"+id;
-        model.addAttribute("location", locationService.getLocationById(id));
+        String l = "editLocation";
         model.addAttribute("link", l);
         model.addAttribute("pageNum", 7);
         return "location/location_page";
     }
-    @PostMapping("/admin/locations/edit/{id}")
-    public String updateLocation(@PathVariable Long id, @Valid @ModelAttribute("location") Location location, BindingResult bindingResult, Model model){
+    @GetMapping("/admin/locations/edit/getLocation/{id}")
+    public @ResponseBody Location getLocation(@PathVariable Long id){
+        return locationService.getLocationById(id);
+    }
+    @PostMapping("/admin/locations/edit/editLocation")
+    public @ResponseBody List<FieldError> updateLocation(@Valid @ModelAttribute("location") Location location, BindingResult bindingResult){
+        Location location1 = locationService.getLocationByPhoneNumber(location.getPhoneNumber());
         if (bindingResult.hasErrors()) {
-            String l = "edit/"+id;
-            model.addAttribute("link", l);
-            model.addAttribute("pageNum", 7);
-            return "location/location_page";
+            List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
+            if(location1 != null && location1.getId() != location.getId()){
+                FieldError fieldError = new FieldError("Number exist","phoneNumber","Такий номер телефону вже існує");
+                fieldErrors.add(fieldError);
+            }
+            return fieldErrors;
         }
-        Location locationInDB = locationService.getLocationById(id);
+        if(location1 != null && location1.getId() != location.getId()){
+            List<FieldError> fieldErrors = new ArrayList<>(1);
+            FieldError fieldError = new FieldError("Number exist","phoneNumber","Такий номер телефону вже існує");
+            fieldErrors.add(fieldError);
+            return fieldErrors;
+        }
+        Location locationInDB = locationService.getLocationById(location.getId());
         locationInDB.setCity(location.getCity());
         locationInDB.setAddress(location.getAddress());
         locationInDB.setCoordinates(location.getCoordinates());
         locationInDB.setPhoneNumber(location.getPhoneNumber());
         locationInDB.setWorkingHours(location.getWorkingHours());
         locationService.saveLocation(locationInDB);
-        return "redirect:/admin/locations";
+        return null;
     }
 }

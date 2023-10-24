@@ -63,4 +63,12 @@ public class LocationServiceImpl implements LocationService {
         logger.info("getLocationById() - Location was found");
         return location;
     }
+
+    @Override
+    public Location getLocationByPhoneNumber(String number) {
+        logger.info("getLocationByPhoneNumber() - Finding location by phone number "+number);
+        Location location = locationRepository.findByPhoneNumber(number);
+        logger.info("getLocationByPhoneNumber() - Location was found");
+        return location;
+    }
 }

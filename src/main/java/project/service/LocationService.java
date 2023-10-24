@@ -11,4 +11,5 @@ public interface LocationService {
     Page<Location> getLocationsByAddressAndCity(String address, String city, Pageable pageable);
     Location saveLocation(Location location);
     Location getLocationById(Long id);
+    Location getLocationByPhoneNumber(String number);
 }
