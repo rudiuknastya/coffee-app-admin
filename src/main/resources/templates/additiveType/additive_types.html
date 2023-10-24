@@ -328,10 +328,6 @@
     } else {
         stat = false;
     }
-    if($('#editName').val() === ""){
-        $("#editValidation").text("Поле не може бути порожнім");
-        $("#editName").addClass("is-invalid");
-    } else {
         $.ajax({
 					type : "POST",
 					url : "editAdditiveType",
@@ -341,15 +337,19 @@
                         id: additiveTypeId
                     },
 					success : function(response) {
-					    $('#editModal').modal('hide');
-					    getAdditiveTypes(0);
+					    if(typeof response === "object"){
+					        $("#editValidation").text(response[0].defaultMessage);
+                            $("#editName").addClass("is-invalid");
+					    } else {
+                            $('#editModal').modal('hide');
+                            getAdditiveTypes(0);
+					    }
 
 					},
 					error : function(err) {
 						alert("error is" + err)
 					}
 				});
-		}
     }
 
     $('#createButton').on("click", function(){
@@ -367,10 +367,6 @@
     } else {
         stat = false;
     }
-    if($('#inputName').val() === ""){
-        $("#saveValidation").text("Поле не може бути порожнім");
-        $("#inputName").addClass("is-invalid");
-    } else {
         $.ajax({
 					type : "POST",
 					url : "saveAdditiveType",
@@ -379,16 +375,20 @@
                         status: stat
                     },
 					success : function(response) {
-					    $('#saveForm')[0].reset();
-					    $('#formModal').modal('hide');
-					    getAdditiveTypes(0);
+					    if(typeof response === "object"){
+					        $("#saveValidation").text(response[0].defaultMessage);
+                            $("#inputName").addClass("is-invalid");
+					    } else {
+                            $('#saveForm')[0].reset();
+                            $('#formModal').modal('hide');
+                            getAdditiveTypes(0);
+					    }
 
 					},
 					error : function(err) {
 						alert("error is" + err)
 					}
 				});
-		}
 	}
     var searchValue;
 	$('#searchInput').on("change", function(){

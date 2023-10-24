@@ -1,10 +1,13 @@
 package project.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import project.model.additiveTypeModel.AdditiveTypeDTO;
 import project.entity.Additive;
@@ -51,22 +54,28 @@ public class AdditiveTypeController {
         return "deleted";
     }
     @PostMapping("/admin/saveAdditiveType")
-    public @ResponseBody String saveAdditiveType(@ModelAttribute("saveAdditiveType") AdditiveType additiveType){
+    public @ResponseBody List<FieldError> saveAdditiveType(@Valid @ModelAttribute("saveAdditiveType") AdditiveType additiveType, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return bindingResult.getFieldErrors();
+        }
         additiveType.setDeleted(false);
         additiveTypeService.saveAdditiveType(additiveType);
-        return "success";
+        return null;
     }
     @GetMapping("/admin/editAdditiveType/{id}")
     public @ResponseBody AdditiveType editAdditiveType(@PathVariable Long id){
         return additiveTypeService.getAdditiveTypeById(id);
     }
     @PostMapping("/admin/editAdditiveType")
-    public @ResponseBody String updateAdditiveType(@ModelAttribute("editAdditiveType") AdditiveType additiveType){
+    public @ResponseBody List<FieldError> updateAdditiveType(@Valid @ModelAttribute("editAdditiveType") AdditiveType additiveType, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return bindingResult.getFieldErrors();
+        }
         AdditiveType additiveTypeInDb = additiveTypeService.getAdditiveTypeById(additiveType.getId());
         additiveTypeInDb.setName(additiveType.getName());
         additiveTypeInDb.setStatus(additiveType.getStatus());
         additiveTypeService.saveAdditiveType(additiveTypeInDb);
-        return "success";
+        return null;
     }
 
     @GetMapping("/admin/searchAdditiveTypes")
