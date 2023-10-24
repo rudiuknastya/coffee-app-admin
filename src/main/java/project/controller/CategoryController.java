@@ -1,10 +1,13 @@
 package project.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import project.model.CategoryDTO;
 import project.entity.Category;
@@ -35,22 +38,28 @@ public class CategoryController {
         return categoryService.getAllCategories(pageable);
     }
     @PostMapping("/admin/saveCategory")
-    public @ResponseBody String saveCategory(@ModelAttribute("saveCategory") Category category){
+    public @ResponseBody List<FieldError> saveCategory(@Valid @ModelAttribute("saveCategory") Category category, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return bindingResult.getFieldErrors();
+        }
         category.setDeleted(false);
         categoryService.saveCategory(category);
-        return "success";
+        return null;
     }
     @GetMapping("/admin/editCategory/{id}")
     public @ResponseBody Category editCategory(@PathVariable Long id){
         return categoryService.getCategoryById(id);
     }
     @PostMapping("/admin/editCategory")
-    public @ResponseBody String updateCategory(@ModelAttribute("editCategory") Category category){
+    public @ResponseBody List<FieldError> updateCategory(@Valid @ModelAttribute("editCategory") Category category, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return bindingResult.getFieldErrors();
+        }
         Category categoryInDb = categoryService.getCategoryById(category.getId());
         categoryInDb.setName(category.getName());
         categoryInDb.setStatus(category.getStatus());
         categoryService.saveCategory(categoryInDb);
-        return "success";
+        return null;
     }
     @GetMapping("/admin/searchCategories")
     public @ResponseBody Page<CategoryDTO> searchCategories(@RequestParam("page")int page, @RequestParam("name")String name){
