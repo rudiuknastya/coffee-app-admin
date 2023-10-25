@@ -3,12 +3,15 @@ package project.model.additiveModel;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
+import java.math.BigDecimal;
+
 public class AdditiveRequest {
     private Long id;
     @NotEmpty(message = "Поле не може бути порожнім")
     private String name;
     @NotNull(message = "Поле не може бути порожнім")
-    private Long price;
+    private BigDecimal price;
+    @NotNull(message = "Поле не може бути порожнім")
     private Long additiveTypeId;
     private Boolean status;
 
@@ -28,11 +31,11 @@ public class AdditiveRequest {
         this.name = name;
     }
 
-    public Long getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Long price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

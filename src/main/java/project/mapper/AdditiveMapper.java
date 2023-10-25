@@ -13,11 +13,11 @@ import java.util.List;
 public interface AdditiveMapper {
     AdditiveMapper ADDITIVE_MAPPER = Mappers.getMapper(AdditiveMapper.class);
     @Mapping(target="additiveTypeName", source="additiveType.name")
-    List<AdditiveDTO> additiveListToDTO(List<Additive> additives);
+    List<AdditiveDTO> additiveListToDTOList(List<Additive> additives);
 
     @Mapping(target="additiveTypeName", source="additiveType.name")
-    AdditiveDTO additiveToDTO(Additive additive);
+    AdditiveDTO additiveToAdditiveDTO(Additive additive);
     @Mapping(target="additiveTypeId", source="additiveType.id")
-    AdditiveRequest additiveToAdditiveRequest(Additive additive);
+    AdditiveRequest additiveTOAdditiveRequest(Additive additive);
 
 }

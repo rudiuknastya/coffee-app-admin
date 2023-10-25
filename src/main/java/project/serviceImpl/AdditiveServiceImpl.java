@@ -30,7 +30,7 @@ public class AdditiveServiceImpl implements AdditiveService {
     public Page<AdditiveDTO> getAllAdditives(Pageable pageable) {
         logger.info("getAllAdditives() - Finding all additives for page "+ pageable.getPageNumber());
         Page<Additive> additives = additiveRepository.findAll(byDeleted(), pageable);
-        List<AdditiveDTO> additiveDTOS = AdditiveMapper.ADDITIVE_MAPPER.additiveListToDTO(additives.getContent());
+        List<AdditiveDTO> additiveDTOS = AdditiveMapper.ADDITIVE_MAPPER.additiveListToDTOList(additives.getContent());
         Page<AdditiveDTO> additiveDTOPage = new PageImpl<>(additiveDTOS,pageable,additives.getTotalElements());
         logger.info("getAllAdditives() - All additives were found");
         return additiveDTOPage;
@@ -56,7 +56,7 @@ public class AdditiveServiceImpl implements AdditiveService {
     public AdditiveRequest getAdditiveRequestById(Long id) {
         logger.info("getAdditiveRequestById() - Finding additive for additive request by id "+id);
         Additive additive = additiveRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        AdditiveRequest additiveRequest = AdditiveMapper.ADDITIVE_MAPPER.additiveToAdditiveRequest(additive);
+        AdditiveRequest additiveRequest = AdditiveMapper.ADDITIVE_MAPPER.additiveTOAdditiveRequest(additive);
         System.out.println(additiveRequest.getAdditiveTypeId());
         logger.info("getAdditiveRequestById() - Additive was found");
         return additiveRequest;
@@ -85,7 +85,7 @@ public class AdditiveServiceImpl implements AdditiveService {
         } else {
             additives = additiveRepository.findAll(byDeleted(),pageable);
         }
-        List<AdditiveDTO> additiveDTOS = AdditiveMapper.ADDITIVE_MAPPER.additiveListToDTO(additives.getContent());
+        List<AdditiveDTO> additiveDTOS = AdditiveMapper.ADDITIVE_MAPPER.additiveListToDTOList(additives.getContent());
         Page<AdditiveDTO> additiveDTOPage = new PageImpl<>(additiveDTOS,pageable,additives.getTotalElements());
         logger.info("searchAdditive() - Additives were found");
         return additiveDTOPage;

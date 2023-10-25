@@ -6,6 +6,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import project.model.additiveModel.AdditiveDTO;
 import project.model.additiveModel.AdditiveRequest;
@@ -14,6 +16,8 @@ import project.entity.Additive;
 import project.entity.AdditiveType;
 import project.service.AdditiveService;
 import project.service.AdditiveTypeService;
+
+import java.util.List;
 
 @Controller
 public class AdditiveController {
@@ -55,27 +59,37 @@ public class AdditiveController {
     }
 
     @PostMapping("/admin/saveAdditive")
-    public @ResponseBody String saveAdditive(@Valid @ModelAttribute("saveAdditive") Additive additive, @RequestParam("selectAdType") Long adTypeId){
-        AdditiveType additiveType = additiveTypeService.getAdditiveTypeById(adTypeId);
-        additive.setAdditiveType(additiveType);
-        additive.setDeleted(false);
-        additiveService.saveAdditive(additive);
-        return "success";
+    public @ResponseBody List<FieldError> saveAdditive(@Valid @ModelAttribute("saveAdditive") AdditiveRequest additive, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return bindingResult.getFieldErrors();
+        }
+        Additive additive1 = new Additive();
+        AdditiveType additiveType = additiveTypeService.getAdditiveTypeById(additive.getAdditiveTypeId());
+        additive1.setAdditiveType(additiveType);
+        additive1.setDeleted(false);
+        additive1.setName(additive.getName());
+        additive1.setPrice(additive.getPrice());
+        additive1.setStatus(additive.getStatus());
+        additiveService.saveAdditive(additive1);
+        return null;
     }
     @GetMapping("/admin/editAdditive/{id}")
-    public @ResponseBody AdditiveRequest editAdditive(@PathVariable Long id){
-        return additiveService.getAdditiveRequestById(id);
+    public @ResponseBody Additive editAdditive(@PathVariable Long id){
+        return additiveService.getAdditiveById(id);
     }
     @PostMapping("/admin/editAdditive")
-    public @ResponseBody String updateAdditive(@Valid @ModelAttribute("editAdditive") Additive additive, @RequestParam("editSelectAdType") Long adTypeId){
+    public @ResponseBody List<FieldError> updateAdditive(@Valid @ModelAttribute("editAdditive") AdditiveRequest additive, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return bindingResult.getFieldErrors();
+        }
         Additive additiveInDB = additiveService.getAdditiveById(additive.getId());
         additiveInDB.setName(additive.getName());
         additiveInDB.setPrice(additive.getPrice());
         additiveInDB.setStatus(additive.getStatus());
-        AdditiveType additiveType = additiveTypeService.getAdditiveTypeById(adTypeId);
+        AdditiveType additiveType = additiveTypeService.getAdditiveTypeById(additive.getAdditiveTypeId());
         additiveInDB.setAdditiveType(additiveType);
         additiveService.saveAdditive(additiveInDB);
-        return "success";
+        return null;
     }
     @GetMapping("/admin/searchAdditive")
     public @ResponseBody Page<AdditiveDTO> searchAdditive(@RequestParam("page")int page, @RequestParam(name="searchValue", required = false) String input, @RequestParam(name="additiveType", required = false) Long additiveType){
