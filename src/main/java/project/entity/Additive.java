@@ -1,9 +1,11 @@
 package project.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -12,23 +14,24 @@ public class Additive {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+    @Column(columnDefinition = "VARCHAR(100)",nullable = false)
     private String name;
     @Column(nullable = false)
-    private Integer price;
+    private BigDecimal price;
     private Boolean deleted;
     private Boolean status;
     @ManyToOne
     @JoinColumn(name = "additive_type_id", referencedColumnName = "id")
     private AdditiveType additiveType;
-    @ManyToMany(mappedBy = "additives")
-    private List<OrderItem> orderItems;
+    @OneToMany(mappedBy = "additive")
+    @JsonIgnore
+    private List<OrderItemAdditive> orderItems;
 
-    public List<OrderItem> getOrderItems() {
+    public List<OrderItemAdditive> getOrderItems() {
         return orderItems;
     }
 
-    public void setOrderItems(List<OrderItem> orderItems) {
+    public void setOrderItems(List<OrderItemAdditive> orderItems) {
         this.orderItems = orderItems;
     }
 
@@ -48,11 +51,11 @@ public class Additive {
         this.name = name;
     }
 
-    public Integer getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Integer price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

@@ -29,6 +29,7 @@ public class OrderController {
     }
 
     private int pageSize = 1;
+    private Long orderId;
     @GetMapping("/admin/orders")
     public String orders(Model model){
         model.addAttribute("pageNum", 6);
@@ -72,6 +73,8 @@ public class OrderController {
     }
     @GetMapping("/admin/orders/edit/{id}")
     public String editOrder(@PathVariable Long id, Model model){
+        orderId = id;
+        System.out.println(orderId);
         model.addAttribute("pageNum", 6);
         return "order/order_page";
     }
@@ -108,6 +111,12 @@ public class OrderController {
         orderInDb.setStatus(order.getStatus());
         orderService.saveOrder(orderInDb);
         return "success";
+    }
+    @GetMapping("/admin/orderItem/edit/{id}")
+    public String editOrderItem(@PathVariable Long id, Model model){
+        model.addAttribute("pageNum", 6);
+        model.addAttribute("orderId", orderId);
+        return "order/order_item";
     }
 
 }
