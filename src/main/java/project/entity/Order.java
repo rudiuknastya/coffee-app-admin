@@ -18,7 +18,7 @@ public class Order {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate orderDate;
     @Column(name="order_time", columnDefinition="TIME NOT NULl")
-    @DateTimeFormat(pattern = "hh:mm:ss")
+    @DateTimeFormat(pattern = "hh:mm")
     private LocalTime orderTime;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

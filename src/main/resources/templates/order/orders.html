@@ -19,11 +19,11 @@
                             <div class="col-5">
                                 <input class="form-control" type="search" id="searchInput" placeholder="Пошук за адресою філіалу" aria-label="Search" maxlength="100">
                             </div>
-                            <div class="col-4 row">
-                                <div class="col-10 pe-0">
-                                <input  id="orderDate" placeholder="Оберіть дату"  class="form-control" type="text">
-                                </div>
-                                <button type="button" id="clearButton" class="btn btn-outline-danger col-1"><i class="ti ti-x"></i></button>
+                            <div class="col-3">
+<!--                                <div class="col-10 pe-0">-->
+                                <input  id="orderDate" placeholder="Оберіть дату"  class="form-control" type="text" autocomplete="off">
+<!--                                </div>-->
+<!--                                <button type="button" id="clearButton" class="btn btn-outline-danger col-1"><i class="ti ti-x"></i></button>-->
                             </div>
                             <div class="col-3">
                                 <select class="form-select" id="statusSelect" aria-label="Default select example">
@@ -85,19 +85,23 @@
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
-<script th:src="@{/assets/vendor/libs/flatpickr/flatpickr.js}"></script>
+<script th:src="@{/assets/vendor/libs/bootstrap-datepicker/bootstrap-datepicker.js}"></script>
+<script th:src="@{/assets/vendor/libs/moment/moment.js}"></script>
+<!--<script th:src="@{/assets/vendor/libs/flatpickr/flatpickr.js}"></script>-->
 <script>
-const fp = flatpickr("#orderDate", {
-    maxDate: "today",
-    dateFormat: "d.m.Y"
-});
+<!--const fp = datepicker("#orderDate", {-->
+<!--&lt;!&ndash;    maxDate: "today",&ndash;&gt;-->
+<!--    format: "dd.mm.yyyy"-->
+<!--});-->
     $(document).ready(function(){
         $('#statusSelect').select2({
             minimumResultsForSearch: -1,
             placeholder: "Оберіть статус",
             allowClear: true
         });
-
+        $('#orderDate').datepicker({
+            format: "dd.mm.yyyy"
+        });
         getOrders(0);
     });
     var paginationType;
@@ -114,6 +118,8 @@ const fp = flatpickr("#orderDate", {
 						$('ul.pagination li').remove();
 						data = response.content
 						for (i = 0; i < data.length; i++) {
+                            var date = moment(data[i].orderDate).format('DD.MM.YYYY');
+                            var d = date.toString();
 							$("#myTable")
 									.append(
 											'<tr class="tr"> <td>'
@@ -121,12 +127,12 @@ const fp = flatpickr("#orderDate", {
 													+ '</td> <td>'
 													+ data[i].locationAddress
 													+ '</td> <td>'
-													+ data[i].orderDate
+													+ d
 													+ '</td> <td>'
 													+ data[i].orderTime
 													+ '</td> <td>'
 													+ data[i].status
-													+ '</td> <td><a href="/admin/orders/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
+													+ '</td> <td><a href="/admin/orders/edit/'+data[i].id+'" role="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></i></button></td> </tr>');
 
@@ -249,9 +255,9 @@ const fp = flatpickr("#orderDate", {
         }
 	});
 
-	$("#clearButton").on("click", function() {
-	    fp.clear();
-	});
+<!--	$("#clearButton").on("click", function() {-->
+<!--	    fp.clear();-->
+<!--	});-->
 
 	var orderId;
 	function openDeleteModal(id){
@@ -317,7 +323,7 @@ const fp = flatpickr("#orderDate", {
 													+ data[i].orderTime
 													+ '</td> <td>'
 													+ data[i].status
-													+ '</td> <td><a href="/admin/orders/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
+													+ '</td> <td><a href="/admin/orders/edit/'+data[i].id+'" role="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></i></button></td> </tr>');
 

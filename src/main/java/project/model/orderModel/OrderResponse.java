@@ -1,11 +1,10 @@
 package project.model.orderModel;
 
 import jakarta.validation.Valid;
-import project.entity.OrderStatus;
 
-public class OrderRequest {
+public class OrderResponse {
     private Long id;
-    private OrderStatus status;
+    private OrderStatusDTO status;
     private DeliveryResponse delivery;
 
     public Long getId() {
@@ -16,11 +15,11 @@ public class OrderRequest {
         this.id = id;
     }
 
-    public OrderStatus getStatus() {
+    public OrderStatusDTO getStatus() {
         return status;
     }
 
-    public void setStatus(OrderStatus status) {
+    public void setStatus(OrderStatusDTO status) {
         this.status = status;
     }
 

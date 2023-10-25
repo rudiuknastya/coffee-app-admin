@@ -2,11 +2,11 @@ package project.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
-import project.entity.Delivery;
-import project.model.orderModel.DeliveryRequest;
+import project.model.orderModel.DeliveryResponse;
 import project.model.orderModel.OrderDTO;
 import project.entity.Order;
-import project.model.orderModel.OrderRequest;
+import project.model.orderModel.OrderResponse;
+import project.model.orderModel.OrderStatusDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,15 +32,18 @@ public interface OrderMapper {
         return orderDTOS;
     }
     @Named("orderToOrderRequest")
-    static OrderRequest orderToOrderRequest(Order order){
+    static OrderResponse orderToOrderRequest(Order order){
         if(order == null){
             return null;
         }
-        OrderRequest orderRequest = new OrderRequest();
+        OrderResponse orderRequest = new OrderResponse();
         orderRequest.setId(order.getId());
-        orderRequest.setStatus(order.getStatus());
+        OrderStatusDTO orderStatusDTO = new OrderStatusDTO();
+        orderStatusDTO.setOrderStatus(order.getStatus());
+        orderStatusDTO.setName(order.getStatus().getStatusName());
+        orderRequest.setStatus(orderStatusDTO);
         if(order.getDelivery() != null){
-            DeliveryRequest deliveryRequest = new DeliveryRequest();
+            DeliveryResponse deliveryRequest = new DeliveryResponse();
             deliveryRequest.setName(order.getDelivery().getName());
             deliveryRequest.setPhoneNumber(order.getDelivery().getPhoneNumber());
             deliveryRequest.setCity(order.getDelivery().getCity());

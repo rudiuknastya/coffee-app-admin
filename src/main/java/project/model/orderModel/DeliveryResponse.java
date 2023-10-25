@@ -10,7 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class DeliveryRequest {
+public class DeliveryResponse {
     @NotEmpty(message = "Поле не може бути порожнім")
     private String name;
     @NotEmpty(message = "Поле не може бути порожнім")

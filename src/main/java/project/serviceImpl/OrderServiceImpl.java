@@ -11,7 +11,7 @@ import project.entity.OrderStatus;
 import project.model.orderModel.OrderDTO;
 import project.entity.Order;
 import project.mapper.OrderMapper;
-import project.model.orderModel.OrderRequest;
+import project.model.orderModel.OrderResponse;
 import project.repository.OrderRepository;
 import project.service.OrderService;
 
@@ -40,11 +40,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderRequest getOrderRequestById(Long id) {
-        logger.info("getOrderRequestById() - Finding order for order request by id "+id);
+    public OrderResponse getOrderResponseById(Long id) {
+        logger.info("getOrderResponseById() - Finding order for order response by id "+id);
         Order order = orderRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        OrderRequest orderRequest = OrderMapper.orderToOrderRequest(order);
-        logger.info("getOrderRequestById() - Order was found");
+        OrderResponse orderRequest = OrderMapper.orderToOrderRequest(order);
+        logger.info("getOrderResponseById() - Order was found");
         return orderRequest;
     }
 

@@ -1,33 +1,31 @@
 package project.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.*;
 import project.entity.Order;
+import project.entity.OrderItem;
 import project.entity.OrderStatus;
-import project.model.orderModel.OrderAdditive;
-import project.model.orderModel.OrderDTO;
-import project.model.orderModel.OrderItemDTO;
+import project.model.orderModel.*;
 import project.service.OrderItemService;
 import project.service.OrderService;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Controller
 public class OrderController {
     private final OrderService orderService;
-    private final OrderItemService orderItemService;
 
-    public OrderController(OrderService orderService, OrderItemService orderItemService) {
+    public OrderController(OrderService orderService) {
         this.orderService = orderService;
-        this.orderItemService = orderItemService;
     }
 
     private int pageSize = 1;
@@ -60,37 +58,56 @@ public class OrderController {
         orderService.saveOrder(order);
         return "success";
     }
+    @GetMapping("/admin/orders/edit/getOrderStatuses")
+    public @ResponseBody OrderStatusDTO[] getOrderStatuses(){
+        OrderStatus[] orderStatuses = OrderStatus.values();
+        OrderStatusDTO[] orderStatusDTOS = new OrderStatusDTO[orderStatuses.length];
+        for(int i = 0; i < orderStatuses.length; i++){
+            OrderStatusDTO orderStatusDTO = new OrderStatusDTO();
+            orderStatusDTO.setOrderStatus(orderStatuses[i]);
+            orderStatusDTO.setName(orderStatuses[i].getStatusName());
+            orderStatusDTOS[i] = orderStatusDTO;
+        }
+        return orderStatusDTOS;
+    }
     @GetMapping("/admin/orders/edit/{id}")
     public String editOrder(@PathVariable Long id, Model model){
         model.addAttribute("pageNum", 6);
-        model.addAttribute("order", orderService.getOrderRequestById(id));
-        model.addAttribute("status", OrderStatus.values());
         return "order/order_page";
     }
-    @GetMapping("/admin/getOrderItems")
-    public @ResponseBody Page<OrderItemDTO> getOrderItems(@RequestParam("page")int page){
-        Pageable pageable = PageRequest.of(page, pageSize);
-        return orderItemService.getOrderItemDTOs( pageable);// 1L
+    @GetMapping("/admin/orders/edit/getOrder/{id}")
+    public @ResponseBody OrderResponse getOrder(@PathVariable Long id){
+        return orderService.getOrderResponseById(id);
     }
-    @GetMapping("/admin/searchOrderItems")
-    public @ResponseBody Page<OrderItemDTO> searchOrderItems(@RequestParam("page")int page, @RequestParam(value = "name", required = false)String name){
-        Pageable pageable = PageRequest.of(page, pageSize);
-        return orderItemService.searchOrderItemDTOs(pageable, name);
+
+    @PostMapping("/admin/orders/edit/editOrderDelivery")
+    public @ResponseBody List<FieldError> updateOrderDelivery(@ModelAttribute("order") OrderRequest order,@Valid @ModelAttribute("delivery") DeliveryResponse deliveryResponse, BindingResult bindingResult){
+        if(bindingResult.hasErrors()) {
+            System.out.println(bindingResult.getFieldErrors());
+            return bindingResult.getFieldErrors();
+        }
+        Order orderInDb = orderService.gerOrderById(order.getId());
+        orderInDb.setStatus(order.getStatus());
+        if(deliveryResponse != null){
+            orderInDb.getDelivery().setName(deliveryResponse.getName());
+            orderInDb.getDelivery().setPhoneNumber(deliveryResponse.getPhoneNumber());
+            orderInDb.getDelivery().setCity(deliveryResponse.getCity());
+            orderInDb.getDelivery().setBuilding(deliveryResponse.getBuilding());
+            orderInDb.getDelivery().setStreet(deliveryResponse.getStreet());
+            orderInDb.getDelivery().setEntrance(deliveryResponse.getEntrance());
+            orderInDb.getDelivery().setApartment(deliveryResponse.getApartment());
+            orderInDb.getDelivery().setDeliveryDate(deliveryResponse.getDeliveryDate());
+            orderInDb.getDelivery().setDeliveryTime(deliveryResponse.getDeliveryTime());
+        }
+        orderService.saveOrder(orderInDb);
+        return null;
     }
-    @GetMapping("/admin/orderItem/edit/{id}")
-    public String editOrderItem(@PathVariable Long id, Model model){
-        model.addAttribute("pageNum", 6);
-        model.addAttribute("orderItem", orderItemService.getOrderItemRequestById(id));
-        return "order/order_item";
+    @PostMapping("/admin/orders/edit/editOrder")
+    public @ResponseBody String updateOrder(@ModelAttribute("order") OrderRequest order){
+        Order orderInDb = orderService.gerOrderById(order.getId());
+        orderInDb.setStatus(order.getStatus());
+        orderService.saveOrder(orderInDb);
+        return "success";
     }
-    @GetMapping("/admin/getOrderItemAdditives/{orderItemId}")
-    public @ResponseBody Page<OrderAdditive> getOrderItemAdditives(@PathVariable Long orderItemId, @RequestParam("page")int page){
-        Pageable pageable = PageRequest.of(page, pageSize);
-        return orderItemService.getOrderAdditives(orderItemId, pageable);
-    }
-    @GetMapping("/admin/searchOrderItemAdditives/{orderItemId}")
-    public @ResponseBody Page<OrderAdditive> searchOrderItemAdditives(@PathVariable Long orderItemId, @RequestParam("page")int page, @RequestParam(value = "name", required = false)String name){
-        Pageable pageable = PageRequest.of(page, pageSize);
-        return orderItemService.searchOrderAdditives(orderItemId, name, pageable);
-    }
+
 }
