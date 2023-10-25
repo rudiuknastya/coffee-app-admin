@@ -20,10 +20,7 @@
                                 <input class="form-control" type="search" id="searchInput" placeholder="Пошук за адресою філіалу" aria-label="Search" maxlength="100">
                             </div>
                             <div class="col-3">
-<!--                                <div class="col-10 pe-0">-->
                                 <input  id="orderDate" placeholder="Оберіть дату"  class="form-control" type="text" autocomplete="off">
-<!--                                </div>-->
-<!--                                <button type="button" id="clearButton" class="btn btn-outline-danger col-1"><i class="ti ti-x"></i></button>-->
                             </div>
                             <div class="col-3">
                                 <select class="form-select" id="statusSelect" aria-label="Default select example">
@@ -85,22 +82,21 @@
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
-<script th:src="@{/assets/vendor/libs/bootstrap-datepicker/bootstrap-datepicker.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/i18n/uk.js"></script>
 <script th:src="@{/assets/vendor/libs/moment/moment.js}"></script>
-<!--<script th:src="@{/assets/vendor/libs/flatpickr/flatpickr.js}"></script>-->
+<script th:src="@{/assets/vendor/libs/flatpickr/flatpickr.js}"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/uk.js"></script>
 <script>
-<!--const fp = datepicker("#orderDate", {-->
-<!--&lt;!&ndash;    maxDate: "today",&ndash;&gt;-->
-<!--    format: "dd.mm.yyyy"-->
-<!--});-->
     $(document).ready(function(){
         $('#statusSelect').select2({
+            language: "uk",
             minimumResultsForSearch: -1,
             placeholder: "Оберіть статус",
             allowClear: true
         });
-        $('#orderDate').datepicker({
-            format: "dd.mm.yyyy"
+        $("#orderDate").flatpickr({
+		    locale: "uk",
+			dateFormat: "d.m.Y"
         });
         getOrders(0);
     });
@@ -255,10 +251,6 @@
         }
 	});
 
-<!--	$("#clearButton").on("click", function() {-->
-<!--	    fp.clear();-->
-<!--	});-->
-
 	var orderId;
 	function openDeleteModal(id){
 	    orderId = id
@@ -292,7 +284,11 @@
     });
     var dateValue;
     $('#orderDate').on("change", function(){
-        dateValue = $(this).val();
+        if($(this).val().localeCompare('') == 0){
+          dateValue = null;
+        } else {
+          dateValue = moment($(this).val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
+        }
         searchAndFilter(0);
     });
 

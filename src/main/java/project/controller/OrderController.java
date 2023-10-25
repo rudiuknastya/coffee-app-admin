@@ -42,14 +42,9 @@ public class OrderController {
         return orderService.getOrders(pageable);
     }
     @GetMapping("/admin/searchOrders")
-    public @ResponseBody Page<OrderDTO> searchOrders(@RequestParam("page")int page, @RequestParam(value = "address", required = false)String address, @RequestParam(value = "status", required = false)OrderStatus status, @RequestParam(value = "date", required = false) String stringDate){
+    public @ResponseBody Page<OrderDTO> searchOrders(@RequestParam("page")int page, @RequestParam(value = "address", required = false)String address, @RequestParam(value = "status", required = false)OrderStatus status, @RequestParam(value = "date", required = false) LocalDate date){
         Pageable pageable = PageRequest.of(page, pageSize);
-        System.out.println(stringDate);
-        LocalDate date = null;
-        if(!stringDate.equals("")) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-            date = LocalDate.parse(stringDate, formatter);
-        }
+        System.out.println(date);
         return orderService.searchOrders(pageable, address,status, date);
     }
     @GetMapping("/admin/deleteOrder/{id}")
