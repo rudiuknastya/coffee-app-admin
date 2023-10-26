@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import project.model.additiveModel.AdditiveDTO;
 import project.entity.Additive;
 import project.mapper.AdditiveMapper;
+import project.model.additiveModel.AdditiveOrderResponse;
+import project.model.additiveModel.AdditiveOrderSelect;
 import project.model.additiveModel.AdditiveRequest;
 import project.repository.AdditiveRepository;
 import project.service.AdditiveService;
@@ -97,5 +99,23 @@ public class AdditiveServiceImpl implements AdditiveService {
         List<Additive> additives = additiveRepository.findAdditivesForAdditiveType(id);
         logger.info("getAdditivesForAdditiveType() - Additives were found");
         return additives;
+    }
+
+    @Override
+    public AdditiveOrderResponse getAdditiveOrderResponseById(Long id) {
+        logger.info("getAdditiveOrderResponseById() - Finding additive for additive order response by id "+id);
+        Additive additive = additiveRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        AdditiveOrderResponse additiveOrderResponse = AdditiveMapper.ADDITIVE_MAPPER.additiveToAdditiveOrderResponse(additive);
+        logger.info("getAdditiveOrderResponseById() - Additive was found");
+        return additiveOrderResponse;
+    }
+
+    @Override
+    public Page<AdditiveOrderSelect> getAdditivesForAdditiveTypeForOrder(Long id, Pageable pageable) {
+        logger.info("getAdditivesForAdditiveTypeForOrder() - Finding additives for order for additive type with id "+id);
+        Page<Additive> additives = additiveRepository.findAdditivesForAdditiveType(id,pageable);
+        List<AdditiveOrderSelect> additiveOrderSelects = AdditiveMapper.ADDITIVE_MAPPER.additiveListToAdditiveOrderSelectList(additives.getContent());
+        Page<AdditiveOrderSelect> additiveOrderSelectPage = new PageImpl<>(additiveOrderSelects,pageable,additives.getTotalElements());
+        return additiveOrderSelectPage;
     }
 }

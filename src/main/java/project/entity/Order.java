@@ -3,6 +3,7 @@ package project.entity;
 import jakarta.persistence.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -13,7 +14,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
-    private Long price;
+    private BigDecimal price;
     @Column(name = "order_date", columnDefinition="DATE NOT NULl")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate orderDate;
@@ -57,11 +58,11 @@ public class Order {
         this.id = id;
     }
 
-    public Long getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Long price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

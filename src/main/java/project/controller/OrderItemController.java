@@ -5,25 +5,36 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import project.entity.Additive;
+import project.entity.Order;
 import project.entity.OrderItem;
+import project.model.additiveModel.AdditiveOrderRequest;
+import project.model.additiveModel.AdditiveOrderResponse;
+import project.model.additiveModel.AdditiveOrderSelect;
 import project.model.orderItemModel.OrderItemResponse;
-import project.model.orderModel.DeliveryResponse;
 import project.model.orderModel.OrderAdditive;
 import project.model.orderItemModel.OrderItemDTO;
+import project.service.AdditiveService;
 import project.service.OrderItemService;
+import project.service.OrderService;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
 public class OrderItemController {
     private final OrderItemService orderItemService;
+    private final AdditiveService additiveService;
+    private final OrderService orderService;
     private int pageSize = 1;
-    public OrderItemController(OrderItemService orderItemService) {
+
+    public OrderItemController(OrderItemService orderItemService, AdditiveService additiveService, OrderService orderService) {
         this.orderItemService = orderItemService;
+        this.additiveService = additiveService;
+        this.orderService = orderService;
     }
 
     @GetMapping("/admin/getOrderItems/{id}")
@@ -43,11 +54,6 @@ public class OrderItemController {
         orderItemService.saveOrderItem(orderItem);
         return "success";
     }
-//    @GetMapping("/admin/orderItem/edit/{id}")
-//    public String editOrderItem(@PathVariable Long id, Model model){
-//        model.addAttribute("pageNum", 6);
-//        return "order/order_item";
-//    }
     @GetMapping("/admin/orderItem/edit/getOrderItem/{id}")
     public @ResponseBody OrderItemResponse getOrderItem(@PathVariable Long id){
         return orderItemService.getOrderItemResponseById(id);
@@ -68,7 +74,51 @@ public class OrderItemController {
             return bindingResult.getFieldErrors();
         }
         OrderItem orderItem = orderItemService.getOrderItemById(orderItemResponse.getId());
+        BigDecimal p = orderItem.getPrice();
+        p = p.divide(new BigDecimal(orderItem.getQuantity()));
+        p = p.multiply(new BigDecimal(orderItemResponse.getQuantity()));
+        BigDecimal op = orderItem.getOrder().getPrice();
+        op = op.subtract(orderItem.getPrice());
+        orderItem.setPrice(p);
         orderItem.setQuantity(orderItemResponse.getQuantity());
+        op = op.add(orderItem.getPrice());
+        orderItem.getOrder().setPrice(op);
+        orderItemService.saveOrderItem(orderItem);
+        return null;
+    }
+    @GetMapping("/admin/getOrderAdditive/{id}")
+    public @ResponseBody AdditiveOrderResponse getOrderAdditive(@PathVariable Long id){
+        return additiveService.getAdditiveOrderResponseById(id);
+    }
+
+    @GetMapping("/admin/getAdditivesForAdditiveTypeForOrder/{id}")
+    public @ResponseBody Page<AdditiveOrderSelect> getAdditivesForAdditiveTypeForOrder(@PathVariable Long id, @RequestParam("page")int page){
+        Pageable pageable = PageRequest.of(page-1, pageSize);
+        return additiveService.getAdditivesForAdditiveTypeForOrder(id, pageable);
+    }
+    @PostMapping("/admin/orderItem/edit/editOrderItemAdditive")
+    public @ResponseBody List<FieldError> editOrderItemAdditive(@Valid @ModelAttribute("orderItemAdditive") AdditiveOrderRequest additiveOrderRequest, BindingResult bindingResult, @RequestParam("oldAdditiveId")Long oldAdditiveId){
+        if(bindingResult.hasErrors()){
+            return bindingResult.getFieldErrors();
+        }
+        Additive newAdditive = additiveService.getAdditiveById(additiveOrderRequest.getAdditiveId());
+        OrderItem orderItem = orderItemService.getOrderItemWithAdditivesById(additiveOrderRequest.getOrderItemId());
+        int i = 0;
+        for(Additive additive: orderItem.getAdditives()){
+            if(additive.getId().equals(oldAdditiveId)){
+                orderItem.getAdditives().set(i,newAdditive);
+                BigDecimal p = orderItem.getPrice();
+                BigDecimal op = orderItem.getOrder().getPrice();
+                op = op.subtract(orderItem.getPrice());
+                p = p.subtract(additive.getPrice().multiply(new BigDecimal(orderItem.getQuantity())));
+                p = p.add(newAdditive.getPrice().multiply(new BigDecimal(orderItem.getQuantity())));
+                System.out.println(p);
+                orderItem.setPrice(p);
+                op = op.add(orderItem.getPrice());
+                orderItem.getOrder().setPrice(op);
+            }
+            i++;
+        }
         orderItemService.saveOrderItem(orderItem);
         return null;
     }

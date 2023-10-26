@@ -2,6 +2,7 @@ package project.entity;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -10,16 +11,24 @@ public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private Long quantity;
     private Boolean deleted;
+    @Column(nullable = false)
+    private BigDecimal price;
     @OneToOne
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
     @ManyToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id")
     private Order order;
-    @OneToMany(mappedBy = "orderItem")
-    private List<OrderItemAdditive> additives;
+    @ManyToMany
+    @JoinTable(
+            name = "order_item_additive",
+            joinColumns = { @JoinColumn(name = "order_item_id") },
+            inverseJoinColumns = { @JoinColumn(name = "additive_id") }
+    )
+    private List<Additive> additives;
 
     public Boolean getDeleted() {
         return deleted;
@@ -29,11 +38,11 @@ public class OrderItem {
         this.deleted = deleted;
     }
 
-    public List<OrderItemAdditive> getAdditives() {
+    public List<Additive> getAdditives() {
         return additives;
     }
 
-    public void setAdditives(List<OrderItemAdditive> additives) {
+    public void setAdditives(List<Additive> additives) {
         this.additives = additives;
     }
 
@@ -67,5 +76,13 @@ public class OrderItem {
 
     public void setOrder(Order order) {
         this.order = order;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 }

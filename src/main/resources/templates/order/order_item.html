@@ -47,6 +47,33 @@
                             <div class="col-md-12 mt-5 d-flex justify-content-end">
                                 <button type="button" onclick="save()" class="btn btn-primary">Зберегти</button>
                             </div>
+                        <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form class="row g-3">
+                                            <div class="col-md-6" >
+                                                <div id="adType"></div>
+                                            </div>
+                                            <div class="col-md-6" >
+                                                <label for="selectAdType" class="form-label">Тип додатку</label>
+                                                <select class="form-select" id="selectAdType" >
+                                                </select>
+                                            </div>
+
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+                                        <button type="button" class="btn btn-primary" id="updateButton" onclick="editAdditive()">Зберегти</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -124,9 +151,7 @@ $(document).ready(function(){
 													+ data[i].additiveName
 													+ '</td> <td><button type="button" class="btn btn-primary" onclick="openEditModal('
 													+ data[i].additiveId
-													+ ');"><i class="ti ti-pencil"></i></button> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
-													+ data[i].additiveId
-													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
+													+ ');"><i class="ti ti-pencil"></i></button></td> </tr>');
 
 						}
 
@@ -248,25 +273,73 @@ $(document).ready(function(){
         }
 	});
 
-	var categoryId;
-	function openDeleteModal(id){
-	    categoryId = id
-        $('#deleteModal').modal('show');
-	}
-	function deleteOrderAdditive(){
+	var additiveId;
+
+    function openEditModal(adId){
+    additiveId = adId;
         $.ajax({
 					type : "GET",
-					url : "deleteCategory/"+categoryId,
+					url : "/admin/getOrderAdditive/"+adId,
 					success : function(response) {
-					    $('#deleteModal').modal('hide');
-					    getCategories(0);
+					$("#adType").text(response.additiveTypeName);
+					    $('#selectAdType').select2({
+					        language: "uk",
+                            dropdownParent: $("#editModal"),
+                            maximumInputLength: 100,
+                            ajax: {
+                                type: "get",
+                                url: "/admin/getAdditivesForAdditiveTypeForOrder/"+response.additiveTypeId,
+                                data: function (params) {
+                                    return {
+                                        search: params.term,
+                                        page: params.page || 1
+                                    };
+                                },
+                                processResults: function (response) {
+                                    return {
+                                        results: $.map(response.content, function (item) {
+                                            return {
+                                                text: item.name,
+                                                id: item.id
+                                            }
+                                        }),
+                                        pagination: {
+                                            more: (response.pageable.pageNumber+1)  < response.totalPages
+                                        }
+                                    };
+                                }
 
+                            }
+                        });
+                        var option = new Option(response.name, response.id, true, true);
+                        $('#selectAdType').append(option).trigger('change');
+
+					    $('#editModal').modal('show');
 					},
 					error : function(err) {
 						alert("error is" + err)
 					}
 				});
-	}
+    }
+
+    function editAdditive(){
+        $.ajax({
+		    type : "POST",
+			url : "editOrderItemAdditive",
+			data: {
+                orderItemId: id,
+                additiveId: $('#selectAdType').val(),
+                oldAdditiveId: additiveId
+            },
+			success : function(response) {
+			    $('#editModal').modal('hide');
+			    getOrderItemAdditives(0);
+            },
+			error : function(err) {
+				alert("error is" + err)
+			}
+		});
+    }
 
 	var searchValue;
 	$('#searchInput').on("change", function(){
@@ -294,9 +367,7 @@ $(document).ready(function(){
 													+ data[i].additiveName
 													+ '</td> <td><button type="button" class="btn btn-primary" onclick="openEditModal('
 													+ data[i].additiveId
-													+ ');"><i class="ti ti-pencil"></i></button> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
-													+ data[i].additiveId
-													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
+													+ ');"><i class="ti ti-pencil"></i></button></td> </tr>');
 
 						}
 

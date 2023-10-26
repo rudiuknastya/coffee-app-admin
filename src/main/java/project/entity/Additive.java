@@ -23,15 +23,15 @@ public class Additive {
     @ManyToOne
     @JoinColumn(name = "additive_type_id", referencedColumnName = "id")
     private AdditiveType additiveType;
-    @OneToMany(mappedBy = "additive")
+    @ManyToMany(mappedBy = "additives")
     @JsonIgnore
-    private List<OrderItemAdditive> orderItems;
+    private List<OrderItem> orderItems;
 
-    public List<OrderItemAdditive> getOrderItems() {
+    public List<OrderItem> getOrderItems() {
         return orderItems;
     }
 
-    public void setOrderItems(List<OrderItemAdditive> orderItems) {
+    public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
     }
 
