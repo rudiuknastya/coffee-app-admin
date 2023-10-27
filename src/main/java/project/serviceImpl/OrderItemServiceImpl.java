@@ -94,4 +94,12 @@ public class OrderItemServiceImpl implements OrderItemService {
         logger.info("saveOrderItem() - Order item was saved");
         return orderItem1;
     }
+
+    @Override
+    public Long getOrderItemsCount(Long id) {
+        logger.info("getOrderItemsCount() - Finding order items count");
+        Long count = orderItemRepository.getOrderItemsCount(id);
+        logger.info("getOrderItemsCount() - Order items count was found");
+        return count;
+    }
 }

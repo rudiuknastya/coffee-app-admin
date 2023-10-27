@@ -14,31 +14,23 @@
             <div class="content-wrapper">
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <div class="card py-5 px-5">
-                        <h4>Замовлення</h4>
+                        <h4>Історія замовлень</h4>
                         <div class="row d-flex justify-content-between mb-4">
-                            <div class="col-5">
-                                <input class="form-control" type="search" id="searchInput" placeholder="Пошук за адресою філіалу" aria-label="Search" maxlength="100">
+                            <div class="col-9">
+                                <input class="form-control" type="search" id="searchInput" placeholder="Пошук за подією" aria-label="Search" maxlength="100">
                             </div>
                             <div class="col-3">
                                 <input  id="orderDate" placeholder="Оберіть дату"  class="form-control" type="text" autocomplete="off">
                             </div>
-                            <div class="col-3">
-                                <select class="form-select" id="statusSelect" aria-label="Default select example">
-                                    <option></option>
-                                    <option th:each="s : ${status}" th:value="${s}" th:text="${s.getStatusName()}"></option>
-                                </select>
-                            </div>
                         </div>
 
-                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <h4>Замовлення перейде у статус скасованого</h4>
-                                        <h4>Вкажіть у коментарі чому ви видаляєте це замовлення</h4>
                                         <form class="row g-3">
                                             <div class="col-md-12" >
                                                 <label for="inputComment" class="form-label">Коментар</label>
@@ -47,26 +39,25 @@
                                         </form>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-danger" onclick="deleteOrder()">Видалити</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+                                        <button type="button" class="btn btn-primary" id="updateButton" onclick="edit()">Зберегти</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-
                         <div class="table-responsive">
                             <table class="table table-bordered">
                                 <thead>
                                 <tr>
-                                    <th>Ім'я</th>
-                                    <th>Адреса філіалу</th>
-                                    <th>Дата замовлення</th>
-                                    <th>Час замовлення</th>
-                                    <th>Статус</th>
+                                    <th>Подія</th>
+                                    <th>Дата</th>
+                                    <th>Час</th>
+                                    <th>Коментар</th>
                                     <th></th>
                                 </tr>
                                 </thead>
-                                <tbody id = "myTable">
+                                <tbody id="myTable">
                                 </tbody>
                             </table>
                             <div class="d-flex justify-content-between">
@@ -87,61 +78,53 @@
 <script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
 <script th:src="@{/assets/vendor/libs/hammer/hammer.js}"></script>
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
-<script th:src="@{/assets/js/main.js}"></script>
-<script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/i18n/uk.js"></script>
 <script th:src="@{/assets/vendor/libs/moment/moment.js}"></script>
+<script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/vendor/libs/flatpickr/flatpickr.js}"></script>
 <script src="https://npmcdn.com/flatpickr/dist/l10n/uk.js"></script>
 <script>
+var url = window.location.pathname;
+var id = url.substring(url.lastIndexOf('/') + 1);
     $(document).ready(function(){
-        $('#statusSelect').select2({
-            language: "uk",
-            minimumResultsForSearch: -1,
-            placeholder: "Оберіть статус",
-            allowClear: true
-        });
         $("#orderDate").flatpickr({
 		    locale: "uk",
 			dateFormat: "d.m.Y"
         });
-        getOrders(0);
+        getOrderHistories(0);
     });
     var paginationType;
     var data = "";
-	function getOrders(currentPage) {
+	function getOrderHistories(currentPage) {
 		$.ajax({
 					type : "GET",
-					url : "getOrders",
+					url : "getOrderHistories/"+id,
 					data: {
                         page: currentPage
                     },
 					success : function(response) {
 						$('.tr').remove();
 						$('ul.pagination li').remove();
-						data = response.content
+						data = response.content;
 						for (i = 0; i < data.length; i++) {
-                            var date = moment(data[i].orderDate).format('DD.MM.YYYY');
-                            if(data[i].status.localeCompare('Відмінено') != 0){
-                                var canc = '<a href="/admin/orders/edit/'+data[i].id+'" role="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
-													+ data[i].id
-													+ ');" ><i class="ti ti-trash"></i></button>'
-                            } else {
-                                var canc = '';
-                            }
+						var date = moment(data[i].eventDate).format('DD.MM.YYYY');
+						if(data[i].comment == null){
+						    var comment = '';
+						} else {
+						    var comment = data[i].comment;
+						}
 							$("#myTable")
 									.append(
 											'<tr class="tr"> <td>'
-													+ data[i].name
-													+ '</td> <td>'
-													+ data[i].locationAddress
+													+ data[i].event
 													+ '</td> <td>'
 													+ date
 													+ '</td> <td>'
-													+ data[i].orderTime
+													+ data[i].eventTime
 													+ '</td> <td>'
-													+ data[i].status
-													+ '</td> <td>'+canc+'<a href="/admin/orders/orderHistory/'+data[i].id+'" role="button" class="btn btn-warning" title="Історія замовлень" style="color: white"><i class="ti ti-list"></i></a> </td> </tr>');
+													+ comment
+													+ '</td> <td><button type="button" class="btn btn-primary" title="Редагувати" onclick="openEditModal('
+													+ data[i].id
+													+ ');"><i class="ti ti-pencil"></i></button></td> </tr>');
 
 						}
 
@@ -224,21 +207,21 @@
 		pages = prev + pages + next;
         $("#paginationElements").text("Показано "+response.numberOfElements+" з "+response.size+" елементів");
 		$("ul.pagination").append(pages);
-		} else {
+		}else {
             $("#paginationElements").text("")
             if(response.numberOfElements == 0){
-                $("#myTable").append('<tr class="tr"><td colspan="6" class="text-center">Дані не знайдено</td>></tr>')
+                $("#myTable").append('<tr class="tr"><td colspan="5" class="text-center">Дані не знайдено</td>></tr>')
             }
 		}
 	}
-
 	$(document).on("click", "ul.pagination li a", function() {
 	    let val = $(this).text();
-	    let id = $(this).attr('id');
+	    let id = $(this).attr('id')
+	    console.log(paginationType);
         if(id === "prev"){
             let activeValue = parseInt($("ul.pagination li.active").text());
             if(paginationType === 1){
-                getOrders(activeValue-2);
+                getOrderHistories(activeValue-2);
             }
             if(paginationType === 2){
                 searchAndFilter(activeValue-2);
@@ -246,15 +229,16 @@
         } else if (id === "next"){
             let activeValue = parseInt($("ul.pagination li.active").text());
             if(paginationType === 1){
-                getOrders(activeValue);
+                getOrderHistories(activeValue);
             }
             if(paginationType === 2){
                 searchAndFilter(activeValue);
             }
         } else {
             let currentPage = parseInt(val - 1);
+            console.log(currentPage)
             if(paginationType === 1){
-                getOrders(currentPage);
+                getOrderHistories(currentPage);
             }
             if(paginationType === 2){
                 searchAndFilter(currentPage);
@@ -262,38 +246,9 @@
         }
 	});
 
-	var orderId;
-	function openDeleteModal(id){
-	    orderId = id
-        $('#deleteModal').modal('show');
-	}
-	function deleteOrder(){
-        $.ajax({
-					type : "POST",
-					url : "deleteOrder/"+orderId,
-					data: {
-                      comment: $('#inputComment').val()
-                    },
-					success : function(response) {
-					    $('#deleteModal').modal('hide');
-					    getOrders(0);
-
-					},
-					error : function(err) {
-						alert("error is" + err)
-					}
-				});
-	}
-
-
-    var searchValue;
+	var searchValue;
     $('#searchInput').on("change", function(){
         searchValue = $(this).val();
-        searchAndFilter(0);
-    });
-    var selectValue;
-    $('#statusSelect').on("change", function(){
-        selectValue = $(this).val();
         searchAndFilter(0);
     });
     var dateValue;
@@ -306,36 +261,40 @@
         searchAndFilter(0);
     });
 
-    function searchAndFilter(currentPage){
+	function searchAndFilter(currentPage){
         $.ajax({
 					type : "GET",
-					url : "searchOrders",
+					url : "searchOrderHistories",
 					data: {
 					    page: currentPage,
-                        address: searchValue,
-                        status: selectValue,
-                        date: dateValue
+                        event: searchValue,
+                        date: dateValue,
+                        id: id
                     },
 					success : function(response) {
 					    $('.tr').remove();
 						$('ul.pagination li').remove();
 						data = response.content
 						for (i = 0; i < data.length; i++) {
+						var date = moment(data[i].eventDate).format('DD.MM.YYYY');
+						if(data[i].comment == null){
+						    var comment = '';
+						} else {
+						    var comment = data[i].comment;
+						}
 							$("#myTable")
 									.append(
 											'<tr class="tr"> <td>'
-													+ data[i].name
+													+ data[i].event
 													+ '</td> <td>'
-													+ data[i].locationAddress
+													+ date
 													+ '</td> <td>'
-													+ data[i].orderDate
+													+ data[i].eventTime
 													+ '</td> <td>'
-													+ data[i].orderTime
-													+ '</td> <td>'
-													+ data[i].status
-													+ '</td> <td><a href="/admin/orders/edit/'+data[i].id+'" role="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
+													+ comment
+													+ '</td> <td><button type="button" class="btn btn-primary" title="Редагувати" onclick="openEditModal('
 													+ data[i].id
-													+ ');" ><i class="ti ti-trash"></i></button></td> </tr>');
+													+ ');"><i class="ti ti-pencil"></i></button></td> </tr>');
 
 						}
 
@@ -348,6 +307,41 @@
 						alert("error is" + err)
 					}
 				});
+    }
+
+    var orderHistoryId;
+	function openEditModal(ohId){
+    orderHistoryId = ohId;
+        $.ajax({
+					type : "GET",
+					url : "getOrderHistory/"+ohId,
+					success : function(response) {
+					    $('#inputComment').val(response.comment);
+
+					    $('#editModal').modal('show');
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+    }
+
+    function edit(){
+        $.ajax({
+					type : "POST",
+					url : "editOrderHistory",
+					data: {
+                        id: orderHistoryId,
+                        comment: $("#inputComment").val(),
+                    },
+					success : function(response) {
+                        $('#editModal').modal('hide');
+                        getOrderHistories(0);
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+		});
     }
 
 </script>

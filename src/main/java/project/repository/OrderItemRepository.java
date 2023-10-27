@@ -17,4 +17,6 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long>, Jpa
     Page<OrderAdditive> searchOrderAdditives(@Param("id")Long id, @Param("adName")String adName, Pageable pageable);
     @Query(value = "SELECT o FROM OrderItem o INNER JOIN FETCH o.additives a WHERE o.deleted=false AND o.id= :id")
     OrderItem findOrderItemWithAdditives(@Param("id")Long id);
+    @Query(value = "select count(id) from order_item where order_id = :id and deleted = 0", nativeQuery = true)
+    Long getOrderItemsCount(@Param("id")Long id);
 }

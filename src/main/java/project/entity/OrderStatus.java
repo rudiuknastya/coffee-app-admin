@@ -1,7 +1,7 @@
 package project.entity;
 
 public enum OrderStatus {
-    ORDERED("Замовлено"), CALL("Передзвонити"), READY("Готово"),DELIVERED("Доставлено");
+    ORDERED("Замовлено"), CALL("Передзвонити"), READY("Готово"),DELIVERED("Доставлено"), CANCELED("Відмінено");
 
     OrderStatus(String statusName) {
         this.statusName = statusName;

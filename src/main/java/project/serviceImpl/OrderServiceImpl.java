@@ -32,7 +32,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Page<OrderDTO> getOrders(Pageable pageable) {
         logger.info("getOrders() - Finding orders for page "+ pageable.getPageNumber());
-        Page<Order> orders = orderRepository.findAll(byDeleted(), pageable);
+        Page<Order> orders = orderRepository.findAll(pageable);
         List<OrderDTO> orderDTOS = OrderMapper.orderListToOrderDTOList(orders.getContent());
         Page<OrderDTO> orderDTOPage = new PageImpl<>(orderDTOS,pageable,orders.getTotalElements());
         logger.info("getOrders() - Orders were found");
@@ -53,21 +53,21 @@ public class OrderServiceImpl implements OrderService {
         logger.info("searchOrders() - Finding orders for page "+ pageable.getPageNumber() + " for status "+ status+" for address "+address+" for date "+date);
         Page<Order> orders;
         if(status != null  &&  (address == null || address.equals("")) && date == null) {
-            orders = orderRepository.findAll(where(byStatus(status).and(byDeleted())),pageable);
+            orders = orderRepository.findAll(byStatus(status),pageable);
         } else if((address != null && !address.equals(""))  && status == null && date == null) {
-            orders = orderRepository.findAll(where(byAddressLike(address).and(byDeleted())), pageable);
+            orders = orderRepository.findAll(byAddressLike(address), pageable);
         } else if(date != null  &&  (address == null || address.equals("")) && status == null) {
-            orders = orderRepository.findAll(where(byOrderDate(date).and(byDeleted())), pageable);
+            orders = orderRepository.findAll(byOrderDate(date), pageable);
         } else if(date != null  &&  (address != null || !address.equals("")) && status == null){
-            orders = orderRepository.findAll(where(byAddressLike(address).and(byOrderDate(date)).and(byDeleted())),pageable);
+            orders = orderRepository.findAll(where(byAddressLike(address).and(byOrderDate(date))),pageable);
         } else if(date != null  &&  (address == null || address.equals("")) && status != null) {
-            orders = orderRepository.findAll(where(byStatus(status).and(byOrderDate(date)).and(byDeleted())), pageable);
+            orders = orderRepository.findAll(where(byStatus(status).and(byOrderDate(date))), pageable);
         } else if(status != null  &&  (address != null || !address.equals("")) && date == null) {
-            orders = orderRepository.findAll(where(byStatus(status).and(byAddressLike(address)).and(byDeleted())),pageable);
+            orders = orderRepository.findAll(where(byStatus(status).and(byAddressLike(address))),pageable);
         } else if((address != null && !address.equals("")) && status != null && date != null) {
-            orders = orderRepository.findAll(where(byStatus(status).and(byAddressLike(address)).and(byOrderDate(date)).and(byDeleted())),pageable);
+            orders = orderRepository.findAll(where(byStatus(status).and(byAddressLike(address)).and(byOrderDate(date))),pageable);
         } else {
-            orders = orderRepository.findAll(byDeleted(),pageable);
+            orders = orderRepository.findAll(pageable);
         }
         List<OrderDTO> orderDTOS = OrderMapper.orderListToOrderDTOList(orders.getContent());
         Page<OrderDTO> orderDTOPage = new PageImpl<>(orderDTOS,pageable,orders.getTotalElements());

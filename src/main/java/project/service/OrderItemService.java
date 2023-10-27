@@ -16,4 +16,5 @@ public interface OrderItemService {
     OrderItem getOrderItemWithAdditivesById(Long id);
     OrderItem getOrderItemById(Long id);
     OrderItem saveOrderItem(OrderItem orderItem);
+    Long getOrderItemsCount(Long id);
 }

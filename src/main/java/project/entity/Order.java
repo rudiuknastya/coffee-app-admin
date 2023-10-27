@@ -24,7 +24,6 @@ public class Order {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
-    private Boolean deleted;
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
@@ -33,14 +32,6 @@ public class Order {
     private Location location;
     @OneToOne(mappedBy = "order")
     private Delivery delivery;
-
-    public Boolean getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
-    }
 
     public Delivery getDelivery() {
         return delivery;

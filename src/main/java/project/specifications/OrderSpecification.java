@@ -9,10 +9,6 @@ import project.entity.OrderStatus;
 import java.time.LocalDate;
 
 public interface OrderSpecification {
-    static Specification<Order> byDeleted(){
-        return (root, query, builder) ->
-                builder.equal(root.get("deleted"), false);
-    }
     static Specification<Order> byStatus(OrderStatus status){
         return (root, query, builder) ->
                 builder.equal(root.get("status"), status);
