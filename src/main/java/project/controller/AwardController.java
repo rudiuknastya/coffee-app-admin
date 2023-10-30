@@ -30,23 +30,23 @@ public class AwardController {
     }
 
     private int pageSize = 1;
-    @GetMapping("/admin/awards")
+    @GetMapping("/awards")
     public String showAwards(Model model){
         model.addAttribute("pageNum", 11);
         //model.addAttribute("products", productService.getProductNames());
         return "award/awards";
     }
-    @GetMapping("/admin/getAwards")
+    @GetMapping("/getAwards")
     public @ResponseBody Page<AwardDTO> getAwards(@RequestParam("page")int page){
         Pageable pageable = PageRequest.of(page, pageSize);
         return awardService.getAwards(pageable);
     }
-    @GetMapping("/admin/searchAwards")
+    @GetMapping("/searchAwards")
     public @ResponseBody Page<AwardDTO> searchAwards(@RequestParam("page")int page, @RequestParam("phone")String phone){
         Pageable pageable = PageRequest.of(page, pageSize);
         return awardService.searchAwards(phone, pageable);
     }
-    @GetMapping("/admin/deleteAward")
+    @GetMapping("/deleteAward")
     public @ResponseBody String deleteAward(@RequestParam("userId") Long userId, @RequestParam("productId") Long productId){
         User user = userService.getUserWithProducts(userId);
         int count = 0;
@@ -65,16 +65,16 @@ public class AwardController {
         return "success";
     }
 
-    @GetMapping("/admin/getProductForAward/{id}")
+    @GetMapping("/getProductForAward/{id}")
     public @ResponseBody ProductNameDTO editAward(@PathVariable Long id){
         return productService.getProductNameDTO(id);
     }
-    @GetMapping("/admin/getProductsForAward")
+    @GetMapping("/getProductsForAward")
     public @ResponseBody Page<ProductNameDTO> getProductsForAward(@RequestParam(value = "search", required = false)String name, @RequestParam("page")int page){
         Pageable pageable = PageRequest.of(page-1, pageSize);
         return productService.getProductNameDTOS(pageable, name);
     }
-    @PostMapping("/admin/editAward")
+    @PostMapping("/editAward")
     public @ResponseBody String updateAward(@RequestParam("userId") Long userId, @RequestParam("newProductId") Long newProductId, @RequestParam("oldProductId") Long oldProductId){
         User user = userService.getUserWithProducts(userId);
         int i = 0;

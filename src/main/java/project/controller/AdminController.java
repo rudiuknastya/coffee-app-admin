@@ -32,7 +32,7 @@ public class AdminController {
     }
 
     private int pageSize = 1;
-    @GetMapping("/admin/admins")
+    @GetMapping("/admins")
     public String admins(Model model){
         List<Role> roles = new ArrayList<Role>(Arrays.asList(Role.values()));
         roles.remove(0);
@@ -41,27 +41,27 @@ public class AdminController {
         model.addAttribute("roles", roles);
         return "admin/admins";
     }
-    @GetMapping("/admin/getAdmins")
+    @GetMapping("/getAdmins")
     public @ResponseBody Page<AdminDTO> getAdmins(@RequestParam("page")int page){
         Pageable pageable = PageRequest.of(page, pageSize);
         return adminService.getAdmins(pageable);
     }
-    @GetMapping("/admin/searchAdmins")
+    @GetMapping("/searchAdmins")
     public @ResponseBody Page<AdminDTO> searchAdmins(@RequestParam("page")int page, @RequestParam(value = "searchValue", required = false)String input, @RequestParam(value = "role", required = false)Role role){
         Pageable pageable = PageRequest.of(page, pageSize);
         return adminService.searchAdmins(input,role,pageable);
     }
-    @GetMapping("/admin/admins/edit/getCities")
+    @GetMapping("/admins/edit/getCities")
     public @ResponseBody Page<City> getCities(@RequestParam(value = "search", required = false)String name, @RequestParam("page")int page){
         Pageable pageable = PageRequest.of(page-1, 2);
         return cityService.getCities(pageable, name);
     }
-    @GetMapping("/admin/deleteAdmin/{id}")
+    @GetMapping("/deleteAdmin/{id}")
     public @ResponseBody String deleteAdmin(@PathVariable Long id){
         adminService.deleteAdmin(id);
         return "success";
     }
-    @GetMapping("/admin/admins/edit/getRoles")
+    @GetMapping("/admins/edit/getRoles")
     public @ResponseBody RoleDTO[] getRoles(){
         Role[] roles = Role.values();
         RoleDTO[] roleDTOS = new RoleDTO[roles.length-1];
@@ -73,16 +73,16 @@ public class AdminController {
         }
         return roleDTOS;
     }
-    @GetMapping("/admin/admins/edit/{id}")
+    @GetMapping("/admins/edit/{id}")
     public String editAdmin(@PathVariable Long id, Model model){
         model.addAttribute("pageNum", 9);
         return "admin/admin_page";
     }
-    @GetMapping("/admin/admins/edit/getAdmin/{id}")
+    @GetMapping("/admins/edit/getAdmin/{id}")
     public @ResponseBody AdminResponse getAdmin(@PathVariable Long id){
         return adminService.getAdminResponseById(id);
     }
-    @PostMapping("/admin/admins/edit/editAdmin")
+    @PostMapping("/admins/edit/editAdmin")
     public @ResponseBody List<FieldError> updateAdmin(@Valid @ModelAttribute("editAdmin") AdminRequest admin, BindingResult bindingResult){
         Admin admin1 = adminService.getAdminByEmail(admin.getEmail());
         System.out.println(admin.getBirthDate());

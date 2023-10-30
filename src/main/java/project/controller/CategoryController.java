@@ -27,17 +27,17 @@ public class CategoryController {
         this.productService = productService;
     }
 
-    @GetMapping("/admin/categories")
+    @GetMapping("/categories")
     public String categories(Model model){
         model.addAttribute("pageNum", 2);
         return "category/categories";
     }
-    @GetMapping("/admin/getCategories")
+    @GetMapping("/getCategories")
     public @ResponseBody Page<CategoryDTO> getCategories(@RequestParam("page")int page){
         Pageable pageable = PageRequest.of(page,1);
         return categoryService.getAllCategories(pageable);
     }
-    @PostMapping("/admin/saveCategory")
+    @PostMapping("/saveCategory")
     public @ResponseBody List<FieldError> saveCategory(@Valid @ModelAttribute("saveCategory") Category category, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             return bindingResult.getFieldErrors();
@@ -46,7 +46,7 @@ public class CategoryController {
         categoryService.saveCategory(category);
         return null;
     }
-    @GetMapping("/admin/editCategory/{id}")
+    @GetMapping("/editCategory/{id}")
     public @ResponseBody Category editCategory(@PathVariable Long id){
         return categoryService.getCategoryById(id);
     }
@@ -61,12 +61,12 @@ public class CategoryController {
         categoryService.saveCategory(categoryInDb);
         return null;
     }
-    @GetMapping("/admin/searchCategories")
+    @GetMapping("/searchCategories")
     public @ResponseBody Page<CategoryDTO> searchCategories(@RequestParam("page")int page, @RequestParam("name")String name){
         Pageable pageable = PageRequest.of(page,1);
         return categoryService.searchCategories(name, pageable);
     }
-    @GetMapping("/admin/deleteCategory/{id}")
+    @GetMapping("/deleteCategory/{id}")
     public @ResponseBody String deleteCategory(@PathVariable Long id){
         Category category = categoryService.getCategoryById(id);
         category.setDeleted(true);

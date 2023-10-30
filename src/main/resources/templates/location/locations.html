@@ -23,7 +23,7 @@
                                 <select class="form-select" id="selectCity" aria-label="Default select example">
                                 </select>
                             </div>
-                            <a th:href="@{/admin/locations/new}" type="button" class="btn btn-label-primary col-3 me-3"><i class="ti ti-plus"></i>Створити філіал</a>
+                            <a th:href="@{/locations/new}" type="button" class="btn btn-label-primary col-3 me-3"><i class="ti ti-plus"></i>Створити філіал</a>
                         </div>
 
                         <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -85,7 +85,7 @@
             maximumInputLength: 100,
             ajax: {
                 type: "get",
-                url: "/admin/getCitiesForLocations",
+                url: "/getCitiesForLocations",
                 data: function (params) {
                     return {
                         search: params.term,
@@ -132,7 +132,7 @@
 													+ data[i].address
 													+ '</td> <td>'
 													+ data[i].phoneNumber
-													+ '</td> <td><a href="/admin/locations/edit/'+data[i].id+'" type="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openModal('
+													+ '</td> <td><a href="/locations/edit/'+data[i].id+'" type="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 
@@ -309,7 +309,7 @@
 													+ data[i].address
 													+ '</td> <td>'
 													+ data[i].phoneNumber
-													+ '</td> <td><a href="/admin/locations/edit/'+data[i].id+'" role="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openModal('
+													+ '</td> <td><a href="/locations/edit/'+data[i].id+'" role="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 

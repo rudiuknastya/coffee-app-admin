@@ -7,7 +7,7 @@ import project.entity.OrderStatus;
 
 @Controller
 public class StatisticController {
-    @GetMapping("/admin/statistic")
+    @GetMapping("/statistic")
     public String statistic(Model model){
         model.addAttribute("pageNum", 1);
         return "statistic/statistic";

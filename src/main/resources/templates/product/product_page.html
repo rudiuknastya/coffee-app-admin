@@ -93,7 +93,7 @@ var id = '';
             maximumInputLength: 100,
             ajax: {
                 type: "get",
-                url: "/admin/getCategoriesForProducts",
+                url: "/getCategoriesForProducts",
                 data: function (params) {
                     return {
                         search: params.term,
@@ -124,7 +124,7 @@ var id = '';
             maximumInputLength: 100,
             ajax: {
                 type: "get",
-                url: "/admin/getAdTypesForAdditives",
+                url: "/getAdTypesForAdditives",
                 data: function (params) {
                     return {
                         search: params.term,
@@ -243,7 +243,7 @@ var id = '';
                           }
                         }
                       } else {
-                        window.location.href = '/admin/products';
+                        window.location.href = '/products';
                       }
 
 					},

@@ -192,7 +192,7 @@ $(document).ready(function(){
                           maximumInputLength: 100,
                               ajax: {
                                   type: "get",
-                                  url: "/admin/getCitiesForLocations",
+                                  url: "/getCitiesForLocations",
                                   data: function (params) {
                                       return {
                                           search: params.term,
@@ -254,7 +254,7 @@ $(document).ready(function(){
 	function getOrderItems(currentPage) {
 		$.ajax({
 					type : "GET",
-					url : "/admin/getOrderItems/"+id,
+					url : "/getOrderItems/"+id,
 					data: {
                         page: currentPage
                     },
@@ -398,7 +398,7 @@ $(document).ready(function(){
 	    orderItemId = id
 	    $.ajax({
 			type : "GET",
-			url : "/admin/checkOrderItem/"+orderItemId,
+			url : "/checkOrderItem/"+orderItemId,
 			success : function(response) {
 			  if(response.localeCompare('wrong') == 0){
                 $('#cancelModal').modal('show');
@@ -415,7 +415,7 @@ $(document).ready(function(){
 	function deleteOrderItem(){
         $.ajax({
 			type : "GET",
-			url : "/admin/deleteOrderItem/"+orderItemId,
+			url : "/deleteOrderItem/"+orderItemId,
 			success : function(response) {
 			  $('#deleteModal').modal('hide');
 			  getOrderItems(0);
@@ -430,12 +430,12 @@ $(document).ready(function(){
 	function cancelOrder(){
 	  $.ajax({
 			type : "POST",
-			url : "/admin/cancelOrder/"+orderItemId,
+			url : "/cancelOrder/"+orderItemId,
 			data: {
 			  comment: $('#inputComment').val()
 			},
 			success : function(response) {
-			  window.location.href = '/admin/orders';
+			  window.location.href = '/orders';
 			},
 			error : function(err) {
 			  alert("error is" + err)
@@ -453,7 +453,7 @@ $(document).ready(function(){
                         status: $('#selectStatus').val()
                     },
 					success : function(response){
-                      window.location.href = '/admin/orders';
+                      window.location.href = '/orders';
 					},
 					error : function(err) {
 						alert("error is" + err)
@@ -522,7 +522,7 @@ $(document).ready(function(){
                           }
                         }
                       } else {
-                        window.location.href = '/admin/orders';
+                        window.location.href = '/orders';
                       }
 
 					},
@@ -541,7 +541,7 @@ $(document).ready(function(){
     function search(currentPage){
         $.ajax({
 					type : "GET",
-					url : "/admin/searchOrderItems/"+orderId,
+					url : "/searchOrderItems/"+orderId,
 					data: {
 					    page: currentPage,
                         name: searchValue

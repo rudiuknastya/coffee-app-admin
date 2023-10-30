@@ -27,46 +27,46 @@ public class LocationController {
         this.cityService = cityService;
     }
     private int pageSize = 1;
-    @GetMapping("/admin/locations")
+    @GetMapping("/locations")
     public String locations(Model model){
         model.addAttribute("pageNum", 7);
         return "location/locations";
     }
-    @GetMapping("/admin/getLocations")
+    @GetMapping("/getLocations")
     public @ResponseBody Page<Location> getAllLocations(@RequestParam("page")int page){
         Pageable pageable = PageRequest.of(page,pageSize);
         return locationService.getLocationsByPage(pageable);
     }
-    @GetMapping("/admin/getCitiesForLocations")
+    @GetMapping("/getCitiesForLocations")
     public @ResponseBody Page<City> getCitiesForLocations(@RequestParam(value = "search", required = false)String city, @RequestParam("page")int page){
         Pageable pageable = PageRequest.of(page-1,pageSize);
         return cityService.getCities(pageable, city);
     }
-    @GetMapping("/admin/getCityForLocation")
+    @GetMapping("/getCityForLocation")
     public @ResponseBody City getCityForLocation(@RequestParam(value = "city", required = false)String city){
         return cityService.getCityByName(city);
     }
-    @GetMapping("/admin/deleteLocation")
+    @GetMapping("/deleteLocation")
     public @ResponseBody String deleteLocation(@RequestParam("id") Long id){
         Location location = locationService.getLocationById(id);
         location.setDeleted(true);
         locationService.saveLocation(location);
         return "success";
     }
-    @GetMapping("/admin/searchLocation")
+    @GetMapping("/searchLocation")
     public @ResponseBody Page<Location> searchLocation(@RequestParam("page")int page, @RequestParam(name="address", required = false) String address, @RequestParam(name="city", required = false) String city){
         Pageable pageable = PageRequest.of(page,pageSize);
         return locationService.getLocationsByAddressAndCity(address, city, pageable);
     }
 
-    @GetMapping("/admin/locations/new")
+    @GetMapping("/locations/new")
     public String createLocation(Model model){
         String l = "saveLocation";
         model.addAttribute("link", l);
         model.addAttribute("pageNum", 7);
         return "location/location_page";
     }
-    @PostMapping("/admin/locations/saveLocation")
+    @PostMapping("/locations/saveLocation")
     public @ResponseBody List<FieldError> saveLocation(@Valid @ModelAttribute("location") Location location, BindingResult bindingResult, Model model){
         Location location1 = locationService.getLocationByPhoneNumber(location.getPhoneNumber());
         if (bindingResult.hasErrors()) {
@@ -88,18 +88,18 @@ public class LocationController {
         return null;
     }
 
-    @GetMapping("/admin/locations/edit/{id}")
+    @GetMapping("/locations/edit/{id}")
     public String editLocation(@PathVariable Long id, Model model){
         String l = "editLocation";
         model.addAttribute("link", l);
         model.addAttribute("pageNum", 7);
         return "location/location_page";
     }
-    @GetMapping("/admin/locations/edit/getLocation/{id}")
+    @GetMapping("/locations/edit/getLocation/{id}")
     public @ResponseBody Location getLocation(@PathVariable Long id){
         return locationService.getLocationById(id);
     }
-    @PostMapping("/admin/locations/edit/editLocation")
+    @PostMapping("/locations/edit/editLocation")
     public @ResponseBody List<FieldError> updateLocation(@Valid @ModelAttribute("location") Location location, BindingResult bindingResult){
         Location location1 = locationService.getLocationByPhoneNumber(location.getPhoneNumber());
         if (bindingResult.hasErrors()) {
@@ -125,7 +125,7 @@ public class LocationController {
         locationService.saveLocation(locationInDB);
         return null;
     }
-    @GetMapping("/admin/getLocationCount")
+    @GetMapping("/getLocationCount")
     public @ResponseBody Long getLocationCount(){
         return locationService.getLocationCount();
     }

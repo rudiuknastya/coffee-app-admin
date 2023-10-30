@@ -29,19 +29,19 @@ public class AdditiveTypeController {
 
     private int pageSize = 1;
 
-    @GetMapping("/admin/additive_types")
+    @GetMapping("/additiveTypes")
     public String additiveTypes(Model model){
         model.addAttribute("pageNum", 4);
         return "additiveType/additive_types";
     }
 
-    @GetMapping("/admin/getAdditiveTypes")
+    @GetMapping("/getAdditiveTypes")
     public @ResponseBody Page<AdditiveTypeDTO> getAdditiveTypes(@RequestParam("page")int page){
         Pageable pageable = PageRequest.of(page,pageSize);
         return additiveTypeService.getAdditiveTypes(pageable);
     }
 
-    @GetMapping("/admin/deleteAdditiveType/{id}")
+    @GetMapping("/deleteAdditiveType/{id}")
     public @ResponseBody String deleteAdditiveType(@PathVariable Long id){
         AdditiveType additiveType = additiveTypeService.getAdditiveTypeById(id);
         additiveType.setDeleted(true);
@@ -53,7 +53,7 @@ public class AdditiveTypeController {
         additiveTypeService.saveAdditiveType(additiveType);
         return "deleted";
     }
-    @PostMapping("/admin/saveAdditiveType")
+    @PostMapping("/saveAdditiveType")
     public @ResponseBody List<FieldError> saveAdditiveType(@Valid @ModelAttribute("saveAdditiveType") AdditiveType additiveType, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             return bindingResult.getFieldErrors();
@@ -62,11 +62,11 @@ public class AdditiveTypeController {
         additiveTypeService.saveAdditiveType(additiveType);
         return null;
     }
-    @GetMapping("/admin/editAdditiveType/{id}")
+    @GetMapping("/editAdditiveType/{id}")
     public @ResponseBody AdditiveType editAdditiveType(@PathVariable Long id){
         return additiveTypeService.getAdditiveTypeById(id);
     }
-    @PostMapping("/admin/editAdditiveType")
+    @PostMapping("/editAdditiveType")
     public @ResponseBody List<FieldError> updateAdditiveType(@Valid @ModelAttribute("editAdditiveType") AdditiveType additiveType, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             return bindingResult.getFieldErrors();
@@ -78,7 +78,7 @@ public class AdditiveTypeController {
         return null;
     }
 
-    @GetMapping("/admin/searchAdditiveTypes")
+    @GetMapping("/searchAdditiveTypes")
     public @ResponseBody Page<AdditiveTypeDTO> searchAdditiveTypes(@RequestParam("page")int page, @RequestParam("name")String name){
         Pageable pageable = PageRequest.of(page,1);
         return additiveTypeService.searchAdditiveTypes(name, pageable);

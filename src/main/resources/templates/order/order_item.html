@@ -120,7 +120,7 @@ $(document).ready(function(){
                     $("#quantityValidation").text(response[0].defaultMessage);
                     $("#inputQuantity").addClass("is-invalid");
                 } else {
-                    window.location.href = '/admin/orders/edit/'+orderId;
+                    window.location.href = '/orders/edit/'+orderId;
                 }
             },
 			error : function(err) {
@@ -134,7 +134,7 @@ $(document).ready(function(){
 	function getOrderItemAdditives(currentPage) {
 		$.ajax({
 					type : "GET",
-					url : "/admin/getOrderItemAdditives/"+id,
+					url : "/getOrderItemAdditives/"+id,
 					data: {
                         page: currentPage
                     },
@@ -279,7 +279,7 @@ $(document).ready(function(){
     additiveId = adId;
         $.ajax({
 					type : "GET",
-					url : "/admin/getOrderAdditive/"+adId,
+					url : "/getOrderAdditive/"+adId,
 					success : function(response) {
 					$("#adType").text(response.additiveTypeName);
 					    $('#selectAdType').select2({
@@ -288,7 +288,7 @@ $(document).ready(function(){
                             maximumInputLength: 100,
                             ajax: {
                                 type: "get",
-                                url: "/admin/getAdditivesForAdditiveTypeForOrder/"+response.additiveTypeId,
+                                url: "/getAdditivesForAdditiveTypeForOrder/"+response.additiveTypeId,
                                 data: function (params) {
                                     return {
                                         search: params.term,
@@ -349,7 +349,7 @@ $(document).ready(function(){
     function search(currentPage){
         $.ajax({
 					type : "GET",
-					url : "/admin/searchOrderItemAdditives/"+id,
+					url : "/searchOrderItemAdditives/"+id,
 					data: {
 					    page: currentPage,
                         name: searchValue

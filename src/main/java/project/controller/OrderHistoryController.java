@@ -22,28 +22,28 @@ public class OrderHistoryController {
         this.orderHistoryService = orderHistoryService;
     }
     private int pageSize = 5;
-    @GetMapping("/admin/orders/orderHistory/{id}")
+    @GetMapping("/orders/orderHistory/{id}")
     public String orderHistories(Model model){
         model.addAttribute("pageNum", 6);
         return "orderHistory/order_histories";
     }
-    @GetMapping("/admin/orders/orderHistory/getOrderHistories/{id}")
+    @GetMapping("/orders/orderHistory/getOrderHistories/{id}")
     public @ResponseBody Page<OrderHistory> getOrderHistories(@PathVariable Long id, @RequestParam("page")int page){
         Pageable pageable = PageRequest.of(page, pageSize);
         return orderHistoryService.getOrderHistoriesByOrderId(id,pageable);
     }
-    @GetMapping("/admin/orders/orderHistory/getOrderHistory/{id}")
+    @GetMapping("/orders/orderHistory/getOrderHistory/{id}")
     public @ResponseBody OrderHistoryResponse getOrderHistory(@PathVariable Long id){
         return orderHistoryService.getOrderHistoryResponseById(id);
     }
-    @PostMapping("/admin/orders/orderHistory/editOrderHistory")
+    @PostMapping("/orders/orderHistory/editOrderHistory")
     public @ResponseBody String editOrderHistory(@ModelAttribute("orderHistory") OrderHistoryResponse orderHistoryResponse){
         OrderHistory orderHistory = orderHistoryService.getOrderHistoryById(orderHistoryResponse.getId());
         orderHistory.setComment(orderHistoryResponse.getComment());
         orderHistoryService.saveOrderHistory(orderHistory);
         return "success";
     }
-    @GetMapping("/admin/orders/orderHistory/searchOrderHistories")
+    @GetMapping("/orders/orderHistory/searchOrderHistories")
     public @ResponseBody Page<OrderHistory> searchOrderHistories(@RequestParam("page")int page, @RequestParam(value = "event", required = false)String event, @RequestParam(value = "date", required = false) LocalDate date, @RequestParam("id") Long id){
         Pageable pageable = PageRequest.of(page, pageSize);
         return orderHistoryService.searchOrderHistories(id,event,date, pageable);

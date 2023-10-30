@@ -24,7 +24,7 @@
                   <option></option>
                 </select>
               </div>
-              <a th:href="@{/admin/products/new}" type="button" class="btn btn-label-primary col-3 me-3"><i class="ti ti-plus"></i>Створити товар</a>
+              <a th:href="@{/products/new}" type="button" class="btn btn-label-primary col-3 me-3"><i class="ti ti-plus"></i>Створити товар</a>
             </div>
 
             <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -86,7 +86,7 @@ $(document).ready(function(){
             maximumInputLength: 100,
             ajax: {
                 type: "get",
-                url: "/admin/getCategoriesForProducts",
+                url: "/getCategoriesForProducts",
                 data: function (params) {
                     return {
                         search: params.term,
@@ -141,7 +141,7 @@ $(document).ready(function(){
 													+ data[i].categoryName
 													+ '</td> <td>'
 													+ st
-													+ '</td> <td><a href="/admin/products/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
+													+ '</td> <td><a href="/products/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 
@@ -324,7 +324,7 @@ $(document).ready(function(){
 													+ data[i].categoryName
 													+ '</td> <td>'
 													+ st
-													+ '</td> <td><a href="/admin/products/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
+													+ '</td> <td><a href="/products/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 

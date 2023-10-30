@@ -26,39 +26,39 @@ public class UserController {
         this.userService = userService;
     }
     private int pageSize = 1;
-    @GetMapping("/admin/users")
+    @GetMapping("/users")
     public String showUsers(Model model){
         model.addAttribute("pageNum", 10);
         model.addAttribute("status", UserStatus.values());
         return "user/users";
     }
-    @GetMapping("/admin/getUsers")
+    @GetMapping("/getUsers")
     public @ResponseBody Page<UserDTO> getUsers(@RequestParam("page")int page){
         Pageable pageable = PageRequest.of(page, pageSize);
         return userService.getUsers(pageable);
     }
-    @GetMapping("/admin/searchUsers")
+    @GetMapping("/searchUsers")
     public @ResponseBody Page<UserDTO> searchUsers(@RequestParam("page")int page, @RequestParam(name="searchValue", required = false) String phone, @RequestParam(name="status", required = false) UserStatus status){
         Pageable pageable = PageRequest.of(page, pageSize);
         return userService.searchUser(phone, status, pageable);
     }
-    @GetMapping("/admin/deleteUser/{id}")
+    @GetMapping("/deleteUser/{id}")
     public @ResponseBody String deleteUser(@PathVariable Long id){
         User user = userService.getUserById(id);
         user.setDeleted(true);
         userService.saveUser(user);
         return "success";
     }
-    @GetMapping("/admin/users/edit/{id}")
+    @GetMapping("/users/edit/{id}")
     public String editUser(@PathVariable Long id, Model model){
         model.addAttribute("pageNum", 10);
         return "user/user_page";
     }
-    @GetMapping("/admin/users/edit/getUser/{id}")
+    @GetMapping("/users/edit/getUser/{id}")
     public @ResponseBody UserResponse getUser(@PathVariable Long id){
         return userService.getUserResponseById(id);
     }
-    @GetMapping("/admin/users/getUserStatuses")
+    @GetMapping("/users/getUserStatuses")
     public @ResponseBody UserStatusDTO[] getUserStatuses(){
         UserStatus[] userStatuses = UserStatus.values();
         UserStatusDTO[] userStatusDTOs = new UserStatusDTO[userStatuses.length];
@@ -71,7 +71,7 @@ public class UserController {
         return userStatusDTOs;
     }
 
-    @GetMapping("/admin/users/getUserLanguages")
+    @GetMapping("/users/getUserLanguages")
     public @ResponseBody LanguageDTO[] getUserLanguages(){
         Language[] languages = Language.values();
         LanguageDTO[] languageDTOS = new LanguageDTO[languages.length];
@@ -83,7 +83,7 @@ public class UserController {
         }
         return languageDTOS;
     }
-    @PostMapping("/admin/users/edit/editUser")
+    @PostMapping("/users/edit/editUser")
     public @ResponseBody List<FieldError> updateUser(@Valid @ModelAttribute("editUser") UserRequest user, BindingResult bindingResult, Model model){
         User user1 = userService.getUserByPhoneNumber(user.getPhoneNumber());
         if(bindingResult.hasErrors() ) {
@@ -109,11 +109,11 @@ public class UserController {
         userService.saveUser(userInDB);
         return null;
     }
-    @GetMapping("/admin/getUserLanguagePercentages")
+    @GetMapping("/getUserLanguagePercentages")
     public @ResponseBody List<Long> getUserLanguagePercentages(){
         return userService.getLanguagePercentages();
     }
-    @GetMapping("/admin/getUsersCount")
+    @GetMapping("/getUsersCount")
     public @ResponseBody Long getUsersCount(){
         return userService.getUsersCount();
     }

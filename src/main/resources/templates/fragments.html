@@ -59,7 +59,7 @@
     <ul class="menu-inner py-1">
 
         <li th:class="'menu-item'+${number == 1 ? ' active' : ''}">
-            <a th:href="@{/admin/statistic}" class="menu-link">
+            <a th:href="@{/statistic}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-chart-pie"></i>
                 <div data-i18n="Email">Статистика</div>
             </a>
@@ -71,12 +71,12 @@
             </a>
             <ul class="menu-sub">
                 <li th:class="'menu-item'+${number == 2 ? ' active' : ''}">
-                    <a th:href="@{/admin/categories}" class="menu-link">
+                    <a th:href="@{/categories}" class="menu-link">
                         <div data-i18n="Roles">Категорії</div>
                     </a>
                 </li>
                 <li th:class="'menu-item'+${number == 3 ? ' active' : ''}">
-                    <a th:href="@{/admin/products}"  class="menu-link">
+                    <a th:href="@{/products}"  class="menu-link">
                         <div data-i18n="Permission">Товари</div>
                     </a>
                 </li>
@@ -89,43 +89,43 @@
             </a>
             <ul class="menu-sub">
                 <li th:class="'menu-item'+${number == 4 ? ' active' : ''}">
-                    <a th:href="@{/admin/additive_types}" class="menu-link">
+                    <a th:href="@{/additiveTypes}" class="menu-link">
                         <div data-i18n="Roles">Типи додатків</div>
                     </a>
                 </li>
                 <li th:class="'menu-item'+${number == 5 ? ' active' : ''}">
-                    <a th:href="@{/admin/additives}" class="menu-link">
+                    <a th:href="@{/additives}" class="menu-link">
                         <div data-i18n="Permission">Додатки</div>
                     </a>
                 </li>
             </ul>
         </li>
         <li th:class="'menu-item'+${number == 6 ? ' active' : ''}">
-            <a th:href="@{/admin/orders}" class="menu-link">
+            <a th:href="@{/orders}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-shopping-cart"></i>
                 <div data-i18n="Kanban">Замовлення</div>
             </a>
         </li>
         <li th:class="'menu-item'+${number == 7 ? ' active' : ''}">
-            <a th:href="@{/admin/locations}" class="menu-link">
+            <a th:href="@{/locations}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-map-pin"></i>
                 <div data-i18n="Kanban">Філіали</div>
             </a>
         </li>
         <li th:class="'menu-item'+${number == 11 ? ' active' : ''}">
-            <a th:href="@{/admin/awards}" class="menu-link">
+            <a th:href="@{/awards}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-star"></i>
                 <div data-i18n="Kanban">Нагороди</div>
             </a>
         </li>
         <li th:class="'menu-item'+${number == 9 ? ' active' : ''}">
-            <a th:href="@{/admin/admins}" class="menu-link">
+            <a th:href="@{/admins}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-user"></i>
                 <div data-i18n="Users">Адміни</div>
             </a>
         </li>
         <li th:class="'menu-item'+${number == 10 ? ' active' : ''}">
-            <a th:href="@{/admin/users}" class="menu-link">
+            <a th:href="@{/users}" class="menu-link">
                 <i class="menu-icon tf-icons ti ti-users"></i>
                 <div data-i18n="Users">Користувачі</div>
             </a>

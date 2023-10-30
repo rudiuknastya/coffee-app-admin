@@ -38,17 +38,17 @@ public class OrderItemController {
         this.orderHistoryService = orderHistoryService;
     }
 
-    @GetMapping("/admin/getOrderItems/{id}")
+    @GetMapping("/getOrderItems/{id}")
     public @ResponseBody Page<OrderItemDTO> getOrderItems(@PathVariable Long id, @RequestParam("page")int page){
         Pageable pageable = PageRequest.of(page, pageSize);
         return orderItemService.getOrderItemDTOs(pageable, id);
     }
-    @GetMapping("/admin/searchOrderItems/{id}")
+    @GetMapping("/searchOrderItems/{id}")
     public @ResponseBody Page<OrderItemDTO> searchOrderItems(@PathVariable Long id, @RequestParam("page")int page, @RequestParam(value = "name", required = false)String name){
         Pageable pageable = PageRequest.of(page, pageSize);
         return orderItemService.searchOrderItemDTOs(pageable, id, name);
     }
-    @PostMapping("/admin/cancelOrder/{id}")
+    @PostMapping("/cancelOrder/{id}")
     public @ResponseBody String cancelOrder(@PathVariable Long id, @RequestParam("comment")String comment){
         OrderItem orderItem = orderItemService.getOrderItemById(id);
         String s = "Замовлення скасовано";
@@ -60,7 +60,7 @@ public class OrderItemController {
         orderItemService.saveOrderItem(orderItem);
         return "success";
     }
-    @GetMapping("/admin/deleteOrderItem/{id}")
+    @GetMapping("/deleteOrderItem/{id}")
     public @ResponseBody String deleteOrderItem(@PathVariable Long id){
         OrderItem orderItem = orderItemService.getOrderItemById(id);
         String s = "Видалено товар "+orderItem.getProduct().getName()+" із замовлення";
@@ -71,7 +71,7 @@ public class OrderItemController {
         return "success";
     }
 
-    @GetMapping("/admin/checkOrderItem/{id}")
+    @GetMapping("/checkOrderItem/{id}")
     public @ResponseBody String checkOrderItem(@PathVariable Long id){
         OrderItem orderItem = orderItemService.getOrderItemById(id);
         if(orderItemService.getOrderItemsCount(orderItem.getOrder().getId()).equals(1L)){
@@ -79,21 +79,21 @@ public class OrderItemController {
         }
         return "success";
     }
-    @GetMapping("/admin/orderItem/edit/getOrderItem/{id}")
+    @GetMapping("/orderItem/edit/getOrderItem/{id}")
     public @ResponseBody OrderItemResponse getOrderItem(@PathVariable Long id){
         return orderItemService.getOrderItemResponseById(id);
     }
-    @GetMapping("/admin/getOrderItemAdditives/{orderItemId}")
+    @GetMapping("/getOrderItemAdditives/{orderItemId}")
     public @ResponseBody Page<OrderAdditive> getOrderItemAdditives(@PathVariable Long orderItemId, @RequestParam("page")int page){
         Pageable pageable = PageRequest.of(page, pageSize);
         return orderItemService.getOrderAdditives(orderItemId, pageable);
     }
-    @GetMapping("/admin/searchOrderItemAdditives/{orderItemId}")
+    @GetMapping("/searchOrderItemAdditives/{orderItemId}")
     public @ResponseBody Page<OrderAdditive> searchOrderItemAdditives(@PathVariable Long orderItemId, @RequestParam("page")int page, @RequestParam(value = "name", required = false)String name){
         Pageable pageable = PageRequest.of(page, pageSize);
         return orderItemService.searchOrderAdditives(orderItemId, name, pageable);
     }
-    @PostMapping("/admin/orderItem/edit/editOrderItem")
+    @PostMapping("/orderItem/edit/editOrderItem")
     public @ResponseBody List<FieldError> editOrderItem(@Valid @ModelAttribute("orderItem") OrderItemResponse orderItemResponse, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             return bindingResult.getFieldErrors();
@@ -116,17 +116,17 @@ public class OrderItemController {
         orderItemService.saveOrderItem(orderItem);
         return null;
     }
-    @GetMapping("/admin/getOrderAdditive/{id}")
+    @GetMapping("/getOrderAdditive/{id}")
     public @ResponseBody AdditiveOrderResponse getOrderAdditive(@PathVariable Long id){
         return additiveService.getAdditiveOrderResponseById(id);
     }
 
-    @GetMapping("/admin/getAdditivesForAdditiveTypeForOrder/{id}")
+    @GetMapping("/getAdditivesForAdditiveTypeForOrder/{id}")
     public @ResponseBody Page<AdditiveOrderSelect> getAdditivesForAdditiveTypeForOrder(@PathVariable Long id, @RequestParam("page")int page){
         Pageable pageable = PageRequest.of(page-1, pageSize);
         return additiveService.getAdditivesForAdditiveTypeForOrder(id, pageable);
     }
-    @PostMapping("/admin/orderItem/edit/editOrderItemAdditive")
+    @PostMapping("/orderItem/edit/editOrderItemAdditive")
     public @ResponseBody List<FieldError> editOrderItemAdditive(@Valid @ModelAttribute("orderItemAdditive") AdditiveOrderRequest additiveOrderRequest, BindingResult bindingResult, @RequestParam("oldAdditiveId")Long oldAdditiveId){
         if(bindingResult.hasErrors()){
             return bindingResult.getFieldErrors();

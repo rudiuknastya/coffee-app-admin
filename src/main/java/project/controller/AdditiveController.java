@@ -30,27 +30,27 @@ public class AdditiveController {
     }
 
     private int pageSize = 2;
-    @GetMapping("/admin/additives")
+    @GetMapping("/additives")
     public String additives(Model model){
         model.addAttribute("pageNum", 5);
         return "additive/additives";
     }
 
-    @GetMapping("/admin/getAdditives")
+    @GetMapping("/getAdditives")
     public @ResponseBody Page<AdditiveDTO> getAdditives(@RequestParam("page")int page){
         Pageable pageable = PageRequest.of(page, pageSize);
         return additiveService.getAllAdditives(pageable);
     }
-    @GetMapping("/admin/getAdTypesForAdditives")
+    @GetMapping("/getAdTypesForAdditives")
     public @ResponseBody Page<AdditiveTypeNameDTO> getAdTypesForAdditives(@RequestParam(value = "search", required = false)String name,@RequestParam("page")int page){
         Pageable pageable = PageRequest.of(page-1, pageSize);
         return additiveTypeService.getAdditiveTypeNames(pageable, name);
     }
-    @GetMapping("/admin/getAdTypeForAdditive/{id}")
+    @GetMapping("/getAdTypeForAdditive/{id}")
     public @ResponseBody AdditiveTypeNameDTO getAdTypeForAdditive(@PathVariable Long id){
         return additiveTypeService.getAdditiveTypeNameDTOById(id);
     }
-    @GetMapping("/admin/deleteAdditive/{id}")
+    @GetMapping("/deleteAdditive/{id}")
     public @ResponseBody String deleteAdditive(@PathVariable Long id){
         Additive additive = additiveService.getAdditiveById(id);
         additive.setDeleted(true);
@@ -58,7 +58,7 @@ public class AdditiveController {
         return "deleted";
     }
 
-    @PostMapping("/admin/saveAdditive")
+    @PostMapping("/saveAdditive")
     public @ResponseBody List<FieldError> saveAdditive(@Valid @ModelAttribute("saveAdditive") AdditiveRequest additive, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             return bindingResult.getFieldErrors();
@@ -73,11 +73,11 @@ public class AdditiveController {
         additiveService.saveAdditive(additive1);
         return null;
     }
-    @GetMapping("/admin/editAdditive/{id}")
+    @GetMapping("/editAdditive/{id}")
     public @ResponseBody Additive editAdditive(@PathVariable Long id){
         return additiveService.getAdditiveById(id);
     }
-    @PostMapping("/admin/editAdditive")
+    @PostMapping("/editAdditive")
     public @ResponseBody List<FieldError> updateAdditive(@Valid @ModelAttribute("editAdditive") AdditiveRequest additive, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             return bindingResult.getFieldErrors();
@@ -91,7 +91,7 @@ public class AdditiveController {
         additiveService.saveAdditive(additiveInDB);
         return null;
     }
-    @GetMapping("/admin/searchAdditive")
+    @GetMapping("/searchAdditive")
     public @ResponseBody Page<AdditiveDTO> searchAdditive(@RequestParam("page")int page, @RequestParam(name="searchValue", required = false) String input, @RequestParam(name="additiveType", required = false) Long additiveType){
         Pageable pageable = PageRequest.of(page,pageSize);
         return additiveService.searchAdditive(input, additiveType, pageable);

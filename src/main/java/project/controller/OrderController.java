@@ -36,24 +36,24 @@ public class OrderController {
 
     private int pageSize = 1;
     private Long orderId;
-    @GetMapping("/admin/orders")
+    @GetMapping("/orders")
     public String orders(Model model){
         model.addAttribute("pageNum", 6);
         model.addAttribute("status", OrderStatus.values());
         return "order/orders";
     }
-    @GetMapping("/admin/getOrders")
+    @GetMapping("/getOrders")
     public @ResponseBody Page<OrderDTO> getOrders(@RequestParam("page")int page){
         Pageable pageable = PageRequest.of(page, pageSize);
         return orderService.getOrders(pageable);
     }
-    @GetMapping("/admin/searchOrders")
+    @GetMapping("/searchOrders")
     public @ResponseBody Page<OrderDTO> searchOrders(@RequestParam("page")int page, @RequestParam(value = "address", required = false)String address, @RequestParam(value = "status", required = false)OrderStatus status, @RequestParam(value = "date", required = false) LocalDate date){
         Pageable pageable = PageRequest.of(page, pageSize);
         System.out.println(date);
         return orderService.searchOrders(pageable, address,status, date);
     }
-    @PostMapping("/admin/deleteOrder/{id}")
+    @PostMapping("/deleteOrder/{id}")
     public @ResponseBody String deleteOrder(@PathVariable Long id, @RequestParam("comment")String comment){
         Order order = orderService.gerOrderById(id);
         order.setStatus(OrderStatus.CANCELED);
@@ -64,7 +64,7 @@ public class OrderController {
         orderService.saveOrder(order);
         return "success";
     }
-    @GetMapping("/admin/orders/edit/getOrderStatuses")
+    @GetMapping("/orders/edit/getOrderStatuses")
     public @ResponseBody OrderStatusDTO[] getOrderStatuses(){
         OrderStatus[] orderStatuses = OrderStatus.values();
         OrderStatusDTO[] orderStatusDTOS = new OrderStatusDTO[orderStatuses.length-1];
@@ -76,18 +76,18 @@ public class OrderController {
         }
         return orderStatusDTOS;
     }
-    @GetMapping("/admin/orders/edit/{id}")
+    @GetMapping("/orders/edit/{id}")
     public String editOrder(@PathVariable Long id, Model model){
         orderId = id;
         model.addAttribute("pageNum", 6);
         return "order/order_page";
     }
-    @GetMapping("/admin/orders/edit/getOrder/{id}")
+    @GetMapping("/orders/edit/getOrder/{id}")
     public @ResponseBody OrderResponse getOrder(@PathVariable Long id){
         return orderService.getOrderResponseById(id);
     }
 
-    @PostMapping("/admin/orders/edit/editOrderDelivery")
+    @PostMapping("/orders/edit/editOrderDelivery")
     public @ResponseBody List<FieldError> updateOrderDelivery(@ModelAttribute("order") OrderRequest order,@Valid @ModelAttribute("delivery") DeliveryResponse deliveryResponse, BindingResult bindingResult){
         if(bindingResult.hasErrors()) {
             System.out.println(bindingResult.getFieldErrors());
@@ -159,7 +159,7 @@ public class OrderController {
         orderService.saveOrder(orderInDb);
         return null;
     }
-    @PostMapping("/admin/orders/edit/editOrder")
+    @PostMapping("/orders/edit/editOrder")
     public @ResponseBody String updateOrder(@ModelAttribute("order") OrderRequest order){
         Order orderInDb = orderService.gerOrderById(order.getId());
         if(!orderInDb.getStatus().equals(order.getStatus())){
@@ -171,22 +171,22 @@ public class OrderController {
         orderService.saveOrder(orderInDb);
         return "success";
     }
-    @GetMapping("/admin/orderItem/edit/{id}")
+    @GetMapping("/orderItem/edit/{id}")
     public String editOrderItem(@PathVariable Long id, Model model){
         model.addAttribute("pageNum", 6);
         model.addAttribute("orderId", orderId);
         return "order/order_item";
     }
 
-    @GetMapping("/admin/getOrderArgPriceForMonth")
+    @GetMapping("/getOrderArgPriceForMonth")
     public @ResponseBody List<BigDecimal> getOrderArgPriceForMonth(){
         return orderService.getOrderAvrgPricesInMonth();
     }
-    @GetMapping("/admin/getOrdersCount")
+    @GetMapping("/getOrdersCount")
     public @ResponseBody Long getOrdersCount(){
         return orderService.getOrdersCount();
     }
-    @GetMapping("/admin/getOrdersCountInMonth")
+    @GetMapping("/getOrdersCountInMonth")
     public @ResponseBody List<Long> getOrdersCountInMonth(){
         return orderService.getOrdersCountInMonth();
     }

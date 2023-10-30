@@ -42,43 +42,43 @@ public class ProductController {
     }
     String uploadPath = "C:\\Users\\Anastassia\\IdeaProjects\\Coffee-app-admin\\uploads";
     private int pageSize = 1;
-    @GetMapping("/admin/products")
+    @GetMapping("/products")
     public String products(Model model){
         model.addAttribute("pageNum", 3);
         return "product/products";
     }
-    @GetMapping("/admin/getProducts")
+    @GetMapping("/getProducts")
     public @ResponseBody Page<ProductDTO> getProducts(@RequestParam("page")int page){
         Pageable pageable = PageRequest.of(page, pageSize);
         return productService.getProducts(pageable);
     }
-    @GetMapping("/admin/getCategoriesForProducts")
+    @GetMapping("/getCategoriesForProducts")
     public @ResponseBody Page<CategoryNameDTO> getCategoriesForProducts(@RequestParam(value = "search", required = false)String name, @RequestParam("page")int page){
         Pageable pageable = PageRequest.of(page-1, pageSize);
         return categoryService.getCategoriesName(pageable, name);
     }
-    @GetMapping("/admin/getCategoryForProduct/{id}")
+    @GetMapping("/getCategoryForProduct/{id}")
     public @ResponseBody CategoryNameDTO getCategoryForProduct(@PathVariable Long id){
         return categoryService.getCategoryNameDTOById(id);
     }
-    @GetMapping("/admin/searchProduct")
+    @GetMapping("/searchProduct")
     public @ResponseBody Page<ProductDTO> searchProduct(@RequestParam("page")int page, @RequestParam(name="searchValue", required = false)String input, @RequestParam(name="categoryId", required = false)Long categoryId){
         Pageable pageable = PageRequest.of(page, pageSize);
         return productService.searchProducts(input, categoryId, pageable);
     }
 
-    @GetMapping("/admin/deleteProduct/{id}")
+    @GetMapping("/deleteProduct/{id}")
     public @ResponseBody String deleteProduct(@PathVariable Long id){
         Product product = productService.getProductById(id);
         product.setDeleted(true);
         productService.saveProduct(product);
         return "success";
     }
-    @GetMapping("/admin/getProductsCount")
+    @GetMapping("/getProductsCount")
     public @ResponseBody Long getProductsCount(){
         return productService.getProductsCount();
     }
-    @GetMapping("/admin/products/new")
+    @GetMapping("/products/new")
     public String createProduct(Model model){
         String l = "saveProduct";
         model.addAttribute("link", l);
@@ -86,7 +86,7 @@ public class ProductController {
         return "product/product_page";
     }
 
-    @PostMapping("/admin/products/saveProduct")
+    @PostMapping("/products/saveProduct")
     public @ResponseBody List<FieldError> saveProduct(@Valid @ModelAttribute("product") ProductRequest product, BindingResult bindingResult,
                                                       @RequestParam(name = "mainImage", required = false) MultipartFile mainImage, @RequestParam("mainImageName") String mainImageName,
                                                       @RequestParam(name = "adTypes", required = false) Long [] adTypes){
@@ -134,18 +134,18 @@ public class ProductController {
         return null;
     }
 
-    @GetMapping("/admin/products/edit/{id}")
+    @GetMapping("/products/edit/{id}")
     public String editProduct(@PathVariable Long id, Model model){
         String l = "editProduct";
         model.addAttribute("link", l);
         model.addAttribute("pageNum", 3);
         return "product/product_page";
     }
-    @GetMapping("/admin/products/edit/getProduct/{id}")
+    @GetMapping("/products/edit/getProduct/{id}")
     public @ResponseBody ProductResponse editProduct(@PathVariable Long id){
         return productService.getProductResponseById(id);
     }
-    @PostMapping("/admin/products/edit/editProduct")
+    @PostMapping("/products/edit/editProduct")
     public @ResponseBody List<FieldError> updateProduct(@Valid @ModelAttribute("product") ProductRequest product, BindingResult bindingResult,
                                 @RequestParam(name = "adTypes", required = false) Long [] adTypes,
                                 @RequestParam(name = "mainImage", required = false) MultipartFile mainImage, @RequestParam("mainImageName") String mainImageName) {

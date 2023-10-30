@@ -81,7 +81,7 @@ var id = url.substring(url.lastIndexOf('/') + 1);
             minimumResultsForSearch: -1,
             ajax: {
                 type: "GET",
-                url: "/admin/users/getUserStatuses",
+                url: "/users/getUserStatuses",
                 processResults: function (response) {
                     return {
                         results: $.map(response, function (item) {
@@ -101,7 +101,7 @@ var id = url.substring(url.lastIndexOf('/') + 1);
             minimumResultsForSearch: -1,
             ajax: {
                 type: "GET",
-                url: "/admin/users/getUserLanguages",
+                url: "/users/getUserLanguages",
                 processResults: function (response) {
                     return {
                         results: $.map(response, function (item) {
@@ -183,7 +183,7 @@ var id = url.substring(url.lastIndexOf('/') + 1);
                           }
                         }
                       } else {
-                        window.location.href = '/admin/users';
+                        window.location.href = '/users';
                       }
 
 					},

@@ -76,7 +76,7 @@
         maximumInputLength: 100,
             ajax: {
                 type: "GET",
-                url: "/admin/getCitiesForLocations",
+                url: "/getCitiesForLocations",
                 data: function (params) {
                     return {
                         search: params.term,
@@ -172,7 +172,7 @@
                           }
                         }
                       } else {
-                        window.location.href = '/admin/locations';
+                        window.location.href = '/locations';
                       }
 
 					},
