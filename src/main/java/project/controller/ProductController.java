@@ -74,6 +74,10 @@ public class ProductController {
         productService.saveProduct(product);
         return "success";
     }
+    @GetMapping("/admin/getProductsCount")
+    public @ResponseBody Long getProductsCount(){
+        return productService.getProductsCount();
+    }
     @GetMapping("/admin/products/new")
     public String createProduct(Model model){
         String l = "saveProduct";

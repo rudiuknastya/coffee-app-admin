@@ -125,4 +125,8 @@ public class LocationController {
         locationService.saveLocation(locationInDB);
         return null;
     }
+    @GetMapping("/admin/getLocationCount")
+    public @ResponseBody Long getLocationCount(){
+        return locationService.getLocationCount();
+    }
 }

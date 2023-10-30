@@ -12,4 +12,5 @@ public interface LocationService {
     Location saveLocation(Location location);
     Location getLocationById(Long id);
     Location getLocationByPhoneNumber(String number);
+    Long getLocationCount();
 }

@@ -19,4 +19,5 @@ public interface ProductService {
     List<Product> getProductsForCategory(Long id);
     Page<ProductNameDTO> getProductNameDTOS(Pageable pageable, String name);
     ProductNameDTO getProductNameDTO(Long id);
+    Long getProductsCount();
 }

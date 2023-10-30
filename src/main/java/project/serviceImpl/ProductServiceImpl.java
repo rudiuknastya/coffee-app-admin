@@ -124,10 +124,18 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductNameDTO getProductNameDTO(Long id) {
-        logger.info("getProductNameDTO() - Finding product name");
+        logger.info("getProductNameDTO() - Finding product for product name dto by id "+id);
         Product product = productRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         ProductNameDTO productNameDTO = ProductMapper.PRODUCT_MAPPER.productToProductNameDTO(product);
         logger.info("getProductNameDTO() - Product name was found");
         return productNameDTO;
+    }
+
+    @Override
+    public Long getProductsCount() {
+        logger.info("getProductsCount() - Finding products count");
+        Long count = productRepository.findProductsCount();
+        logger.info("getProductsCount() - Products count was found");
+        return count;
     }
 }

@@ -18,6 +18,7 @@ import project.service.OrderHistoryService;
 import project.service.OrderItemService;
 import project.service.OrderService;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -177,4 +178,16 @@ public class OrderController {
         return "order/order_item";
     }
 
+    @GetMapping("/admin/getOrderArgPriceForMonth")
+    public @ResponseBody List<BigDecimal> getOrderArgPriceForMonth(){
+        return orderService.getOrderAvrgPricesInMonth();
+    }
+    @GetMapping("/admin/getOrdersCount")
+    public @ResponseBody Long getOrdersCount(){
+        return orderService.getOrdersCount();
+    }
+    @GetMapping("/admin/getOrdersCountInMonth")
+    public @ResponseBody List<Long> getOrdersCountInMonth(){
+        return orderService.getOrdersCountInMonth();
+    }
 }

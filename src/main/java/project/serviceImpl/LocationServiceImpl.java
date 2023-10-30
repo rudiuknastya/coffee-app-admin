@@ -71,4 +71,12 @@ public class LocationServiceImpl implements LocationService {
         logger.info("getLocationByPhoneNumber() - Location was found");
         return location;
     }
+
+    @Override
+    public Long getLocationCount() {
+        logger.info("getLocationCount() - Finding locations count");
+        Long count = locationRepository.findLocationCount();
+        logger.info("getLocationCount() - Locations count was found");
+        return count;
+    }
 }

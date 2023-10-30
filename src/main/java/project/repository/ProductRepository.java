@@ -13,5 +13,7 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     Product findProductWithAdditiveTypesById(@Param("id")Long id);
     @Query(value = "SELECT product.id, product.name, product.price, product.description, product.image, product.deleted, product.status, product.category_id  FROM product INNER JOIN category ON product.category_id = category.id  WHERE product.category_id= :id AND product.deleted=false", nativeQuery = true)
     List<Product> findProductsForCategory(@Param("id")Long id);
+    @Query(value = "select count(id) from product where deleted = 0", nativeQuery = true)
+    Long findProductsCount();
 
 }

@@ -7,7 +7,9 @@ import project.entity.OrderStatus;
 import project.model.orderModel.OrderDTO;
 import project.model.orderModel.OrderResponse;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 public interface OrderService {
     Page<OrderDTO> getOrders(Pageable pageable);
@@ -15,5 +17,8 @@ public interface OrderService {
     Page<OrderDTO> searchOrders(Pageable pageable, String address, OrderStatus status, LocalDate date);
     Order gerOrderById(Long id);
     Order saveOrder(Order order);
+    List<BigDecimal> getOrderAvrgPricesInMonth();
+    Long getOrdersCount();
+    List<Long> getOrdersCountInMonth();
 
 }

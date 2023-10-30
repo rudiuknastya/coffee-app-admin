@@ -109,5 +109,13 @@ public class UserController {
         userService.saveUser(userInDB);
         return null;
     }
+    @GetMapping("/admin/getUserLanguagePercentages")
+    public @ResponseBody List<Long> getUserLanguagePercentages(){
+        return userService.getLanguagePercentages();
+    }
+    @GetMapping("/admin/getUsersCount")
+    public @ResponseBody Long getUsersCount(){
+        return userService.getUsersCount();
+    }
 
 }

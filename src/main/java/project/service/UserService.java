@@ -7,6 +7,8 @@ import project.entity.User;
 import project.entity.UserStatus;
 import project.model.userModel.UserResponse;
 
+import java.util.List;
+
 public interface UserService {
     Page<UserDTO> getUsers(Pageable pageable);
     User getUserById(Long id);
@@ -15,4 +17,6 @@ public interface UserService {
     User getUserWithProducts(Long id);
     UserResponse getUserResponseById(Long id);
     User getUserByPhoneNumber(String phoneNumber);
+    List<Long> getLanguagePercentages();
+    Long getUsersCount();
 }

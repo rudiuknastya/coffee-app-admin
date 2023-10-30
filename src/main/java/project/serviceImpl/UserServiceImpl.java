@@ -15,6 +15,7 @@ import project.model.userModel.UserResponse;
 import project.repository.UserRepository;
 import project.service.UserService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.data.jpa.domain.Specification.where;
@@ -96,5 +97,24 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByPhoneNumber(phoneNumber);
         logger.info("getUserByPhoneNumber() - User was found");
         return user;
+    }
+
+    @Override
+    public List<Long> getLanguagePercentages() {
+        logger.info("getLanguagePercentages() - Finding percentages of user languages");
+        List<Long> percentages = new ArrayList<>(3);
+        percentages.add(userRepository.findPercentageOfUkr());
+        percentages.add(userRepository.findPercentageOfEng());
+        percentages.add(userRepository.findPercentageOfSpa());
+        logger.info("getLanguagePercentages() - Percentages of user languages were found");
+        return percentages;
+    }
+
+    @Override
+    public Long getUsersCount() {
+        logger.info("getUsersCount() - Finding users count");
+        Long count = userRepository.findUsersCount();
+        logger.info("getUsersCount() - Users count was found");
+        return count;
     }
 }

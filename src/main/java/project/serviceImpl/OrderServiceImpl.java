@@ -18,6 +18,7 @@ import project.service.OrderService;
 import static org.springframework.data.jpa.domain.Specification.where;
 import static project.specifications.OrderSpecification.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -88,6 +89,30 @@ public class OrderServiceImpl implements OrderService {
         logger.info("saveOrder() - Saving order");
         Order order1 = orderRepository.save(order);
         logger.info("saveOrder() - Order was saved");
-        return null;
+        return order1;
+    }
+
+    @Override
+    public List<BigDecimal> getOrderAvrgPricesInMonth() {
+        logger.info("getOrderAvrgPricesInMonth() - Finding order average prices in month");
+        List<BigDecimal> prices = orderRepository.findAvrgPricesInMonth();
+        logger.info("getOrderAvrgPricesInMonth() - Order average prices in month were found");
+        return prices;
+    }
+
+    @Override
+    public Long getOrdersCount() {
+        logger.info("getOrdersCount() - Finding orders count");
+        Long count = orderRepository.findOrdersCount();
+        logger.info("getOrdersCount() - Orders count was found");
+        return count;
+    }
+
+    @Override
+    public List<Long> getOrdersCountInMonth() {
+        logger.info("getOrdersCountInMonth() - Finding orders count in month");
+        List<Long> counts = orderRepository.findOrdersCountInMonth();
+        logger.info("getOrdersCount() - Orders count was found");
+        return counts;
     }
 }
