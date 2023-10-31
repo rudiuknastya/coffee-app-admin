@@ -33,7 +33,6 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/statistic")
-                        .failureUrl("/login-error")
                         .permitAll()
                 )
                 .authenticationProvider(authenticationProvider())

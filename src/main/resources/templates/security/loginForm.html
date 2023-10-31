@@ -24,6 +24,9 @@
                     </div>
                     <!-- /Logo -->
                     <form id="formAuthentication" class="mb-3" th:action = "@{/login}" method="post">
+                        <div th:if="${param.error}" class="text-danger text-center">
+                            Невірний email або пароль
+                        </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
                             <input
