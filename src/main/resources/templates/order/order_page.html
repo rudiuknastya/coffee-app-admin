@@ -77,8 +77,8 @@
                     <h4>Вкажіть у коментарі чому ви видаляєте даний товар</h4>
                     <form class="row g-3">
                       <div class="col-md-12" >
-                        <label for="inputComment" class="form-label">Коментар</label>
-                        <textarea type="text" class="form-control" rows="2" id="inputComment" maxlength="300"></textarea>
+                        <label for="autosize-demo" class="form-label">Коментар</label>
+                        <textarea id="autosize-demo" rows="3" class="form-control" maxlength="300"></textarea>
                       </div>
                     </form>
                   </div>
@@ -102,6 +102,8 @@
 <script th:src="@{/assets/vendor/libs/hammer/hammer.js}"></script>
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
+<script th:src="@{/assets/vendor/libs/autosize/autosize.js}"></script>
+<script th:src="@{/assets/js/forms-extras.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/i18n/uk.js"></script>
 <script th:src="@{/assets/vendor/libs/flatpickr/flatpickr.js}"></script>
@@ -269,7 +271,7 @@ $(document).ready(function(){
 													+ data[i].productName
 													+ '</td> <td>'
 													+ data[i].quantity
-													+ '</td> <td><a href="/admin/orderItem/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
+													+ '</td> <td><a href="/orderItem/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 
@@ -432,7 +434,7 @@ $(document).ready(function(){
 			type : "POST",
 			url : "/cancelOrder/"+orderItemId,
 			data: {
-			  comment: $('#inputComment').val()
+			  comment: $('#autosize-demo').val()
 			},
 			success : function(response) {
 			  window.location.href = '/orders';
@@ -557,7 +559,7 @@ $(document).ready(function(){
 													+ data[i].productName
 													+ '</td> <td>'
 													+ data[i].quantity
-													+ '</td> <td><a href="/admin/orders/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
+													+ '</td> <td><a href="/orders/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 

@@ -41,8 +41,8 @@
                                         <h4>Вкажіть у коментарі чому ви видаляєте це замовлення</h4>
                                         <form class="row g-3">
                                             <div class="col-md-12" >
-                                                <label for="inputComment" class="form-label">Коментар</label>
-                                                <textarea type="text" class="form-control" rows="2" id="inputComment" maxlength="300"></textarea>
+                                                <label for="autosize-demo" class="form-label">Коментар</label>
+                                                <textarea id="autosize-demo" rows="3" class="form-control" maxlength="300"></textarea>
                                             </div>
                                         </form>
                                     </div>
@@ -91,6 +91,8 @@
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/i18n/uk.js"></script>
 <script th:src="@{/assets/vendor/libs/moment/moment.js}"></script>
+<script th:src="@{/assets/vendor/libs/autosize/autosize.js}"></script>
+<script th:src="@{/assets/js/forms-extras.js}"></script>
 <script th:src="@{/assets/vendor/libs/flatpickr/flatpickr.js}"></script>
 <script src="https://npmcdn.com/flatpickr/dist/l10n/uk.js"></script>
 <script>
@@ -272,7 +274,7 @@
 					type : "POST",
 					url : "deleteOrder/"+orderId,
 					data: {
-                      comment: $('#inputComment').val()
+                      comment: $('#autosize-demo').val()
                     },
 					success : function(response) {
 					    $('#deleteModal').modal('hide');
