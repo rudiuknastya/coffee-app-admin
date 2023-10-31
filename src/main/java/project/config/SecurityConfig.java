@@ -25,9 +25,8 @@ public class SecurityConfig {
                 .csrf((c)-> c.disable())
                 .securityMatcher("/**")
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/assets/**").permitAll()
+                        .requestMatchers("/assets/**", "/forgotPassword", "/confirmation", "/resetPassword", "/changePassword", "/success").permitAll()
                         .requestMatchers("/**").hasAnyRole("ADMIN","MANAGER")
-//                        .requestMatchers("/assets/").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin((form) -> form
@@ -41,8 +40,6 @@ public class SecurityConfig {
                 .logout((logout) -> logout
                         .logoutUrl("/logout")
                         .permitAll());
-
-        //.sessionManagement((sm)->sm.sessionCreationPolicy(SessionCreationPolicy.ALWAYS));
 
         return http.build();
     }

@@ -29,6 +29,16 @@ public class Admin {
     private String city;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @OneToOne(mappedBy = "admin")
+    private PasswordResetToken passwordResetToken;
+
+    public PasswordResetToken getPasswordResetToken() {
+        return passwordResetToken;
+    }
+
+    public void setPasswordResetToken(PasswordResetToken passwordResetToken) {
+        this.passwordResetToken = passwordResetToken;
+    }
 
     public Long getId() {
         return id;

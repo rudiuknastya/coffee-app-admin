@@ -23,9 +23,6 @@
                         </div>
                     </div>
                     <!-- /Logo -->
-                    <h4 class="mb-1 pt-2">Welcome to Vuexy! 👋</h4>
-                    <p class="mb-4">Please sign-in to your account and start the adventure</p>
-
                     <form id="formAuthentication" class="mb-3" th:action = "@{/login}" method="post">
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
@@ -41,7 +38,7 @@
                         <div class="mb-3 form-password-toggle">
                             <div class="d-flex justify-content-between">
                                 <label class="form-label" for="password">Пароль</label>
-                                <a href="auth-forgot-password-basic.html">
+                                <a href="/forgotPassword">
                                     <small>Забули Пароль?</small>
                                 </a>
                             </div>
@@ -54,7 +51,6 @@
                                         placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
                                         aria-describedby="password"
                                 >
-<!--                                <span class="input-group-text cursor-pointer"><i class="ti ti-eye-off"></i></span>-->
                             </div>
                         </div>
                         <div class="mb-3">
@@ -71,7 +67,6 @@
 <script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
 <script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
 <script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
-<!--<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>-->
 <script th:src="@{/assets/vendor/libs/hammer/hammer.js}"></script>
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
