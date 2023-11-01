@@ -24,6 +24,8 @@ public class User {
     private LocalDate birthDate;
     @Column(nullable = false, unique = true)
     private String password;
+    @Column(nullable = false, unique = true)
+    private String email;
     @Enumerated(EnumType.STRING)
     private Language language;
     @Column(name = "registration_date", columnDefinition="DATE")
@@ -128,5 +130,13 @@ public class User {
 
     public void setRegistrationDate(LocalDate registrationDate) {
         this.registrationDate = registrationDate;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

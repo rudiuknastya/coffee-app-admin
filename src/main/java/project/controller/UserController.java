@@ -101,6 +101,7 @@ public class UserController {
             return fieldErrors;
         }
         User userInDB = userService.getUserById(user.getId());
+        userInDB.setEmail(user.getEmail());
         userInDB.setName(user.getName());
         userInDB.setPhoneNumber(user.getPhoneNumber());
         userInDB.setLanguage(user.getLanguage());

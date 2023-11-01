@@ -1,9 +1,6 @@
 package project.model.userModel;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import project.entity.Language;
 import project.entity.UserStatus;
@@ -21,6 +18,9 @@ public class UserRequest {
     @NotNull(message = "Поле не може бути порожнім")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
+    @NotEmpty(message = "Поле не може бути порожнім ")
+    @Email(regexp = "[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\\.[a-z]{2,3}", message = "Невірний формат email")
+    private String email;
 
     private Language language;
 
@@ -72,5 +72,13 @@ public class UserRequest {
 
     public void setStatus(UserStatus status) {
         this.status = status;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

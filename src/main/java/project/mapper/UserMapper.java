@@ -50,6 +50,7 @@ public interface UserMapper {
         userStatusDTO.setUserStatus(user.getStatus());
         userStatusDTO.setName(user.getStatus().getStatusName());
         userResponse.setStatus(userStatusDTO);
+        userResponse.setEmail(user.getEmail());
         return userResponse;
     }
 }

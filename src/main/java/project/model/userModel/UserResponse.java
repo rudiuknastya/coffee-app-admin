@@ -19,6 +19,7 @@ public class UserResponse {
     private LocalDate birthDate;
 
     private LanguageDTO language;
+    private String email;
 
     private UserStatusDTO status;
 
@@ -70,4 +71,11 @@ public class UserResponse {
         this.status = status;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }
