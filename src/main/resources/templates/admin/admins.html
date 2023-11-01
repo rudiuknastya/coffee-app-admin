@@ -77,7 +77,8 @@
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
-<script>
+<script th:inline="javascript">
+var email = [[${#authentication.name}]];
 $(document).ready(function(){
         $('#roleSelect').select2({
             minimumResultsForSearch: -1,
@@ -93,7 +94,8 @@ $(document).ready(function(){
 					type : "GET",
 					url : "getAdmins",
 					data: {
-                        page: currentPage
+                        page: currentPage,
+                        email: email
                     },
 					success : function(response) {
 						$('.tr').remove();

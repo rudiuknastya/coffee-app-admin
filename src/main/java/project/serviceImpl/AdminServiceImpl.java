@@ -13,6 +13,7 @@ import project.entity.Admin;
 import project.entity.Role;
 import project.mapper.AdminMapper;
 import project.model.adminModel.AdminResponse;
+import project.model.adminModel.ProfileResponse;
 import project.repository.AdminRepository;
 import project.service.AdminService;
 
@@ -31,9 +32,9 @@ public class AdminServiceImpl implements AdminService {
     }
     private Logger logger = LogManager.getLogger("serviceLogger");
     @Override
-    public Page<AdminDTO> getAdmins(Pageable pageable) {
+    public Page<AdminDTO> getAdmins(Pageable pageable, String email) {
         logger.info("getAdmins() - Finding admins for page "+ pageable.getPageNumber());
-        Page<Admin> admins = adminRepository.findAll(pageable);
+        Page<Admin> admins = adminRepository.findAll(byEmailNot(email),pageable);
         List<AdminDTO> adminDTOS = AdminMapper.adminListToAdminDTOList(admins.getContent());
         Page<AdminDTO> adminDTOPage = new PageImpl<>(adminDTOS, pageable, admins.getTotalElements());
         logger.info("getAdmins() - Admins were found");
@@ -96,6 +97,23 @@ public class AdminServiceImpl implements AdminService {
         logger.info("getAdminByEmail() - Finding admin by email "+email);
         Admin admin = adminRepository.findByEmail(email);
         logger.info("getAdminByEmail() - Admin was found");
+        return admin;
+    }
+
+    @Override
+    public ProfileResponse getProfileResponseByEmail(String email) {
+        logger.info("getAdminByEmail() - Finding admin for profile response by email "+email);
+        Admin admin = adminRepository.findByEmail(email);
+        ProfileResponse profileResponse = AdminMapper.ADMIN_MAPPER.adminToProfileResponse(admin);
+        logger.info("getAdminByEmail() - Admin was found");
+        return profileResponse;
+    }
+
+    @Override
+    public Admin getAdminByPassword(String password) {
+        logger.info("getAdminByPassword() - Finding admin by password");
+        Admin admin = adminRepository.findByPassword(password);
+        logger.info("getAdminByPassword() - Admin was found");
         return admin;
     }
 }

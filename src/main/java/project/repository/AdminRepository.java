@@ -6,4 +6,5 @@ import project.entity.Admin;
 
 public interface AdminRepository extends JpaRepository<Admin, Long>, JpaSpecificationExecutor<Admin> {
     Admin findByEmail(String email);
+    Admin findByPassword(String password);
 }

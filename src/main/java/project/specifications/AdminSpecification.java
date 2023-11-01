@@ -17,4 +17,8 @@ public interface AdminSpecification {
         return (root, query, builder) ->
                 builder.like(builder.upper(root.get("email")), "%"+email.toUpperCase()+"%");
     }
+    static Specification<Admin> byEmailNot(String email){
+        return (root, query, builder) ->
+                builder.notEqual(root.get("email"),email);
+    }
 }
