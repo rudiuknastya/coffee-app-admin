@@ -50,7 +50,7 @@ public class CategoryController {
     public @ResponseBody Category editCategory(@PathVariable Long id){
         return categoryService.getCategoryById(id);
     }
-    @PostMapping("/admin/editCategory")
+    @PostMapping("/editCategory")
     public @ResponseBody List<FieldError> updateCategory(@Valid @ModelAttribute("editCategory") Category category, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             return bindingResult.getFieldErrors();

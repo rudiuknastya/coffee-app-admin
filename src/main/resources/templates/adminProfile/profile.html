@@ -194,6 +194,10 @@ var id;
                             $("#birthDateValidation").text(er.defaultMessage);
                             $("#birthdate").addClass("is-invalid");
                           }
+                          if(er.field.localeCompare('email') == 0){
+                            $("#emailValidation").text(er.defaultMessage);
+                            $("#inputEmail").addClass("is-invalid");
+                          }
                           if(er.field.localeCompare('oldPassword') == 0){
                             $("#oldPasswordValidation").text(er.defaultMessage);
                             $("#oldPassword").addClass("is-invalid");
