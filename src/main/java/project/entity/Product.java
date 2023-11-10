@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -16,7 +17,7 @@ public class Product {
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
-    private Integer price;
+    private BigDecimal price;
     @Column(columnDefinition="TEXT NOT NULL")
     private String description;
     private String image;
@@ -67,11 +68,11 @@ public class Product {
         this.name = name;
     }
 
-    public Integer getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Integer price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

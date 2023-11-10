@@ -16,8 +16,6 @@ public class Delivery {
     private Long id;
     @Column(nullable = false)
     private String name;
-    @NotEmpty(message = "Поле не може бути порожнім")
-    @Size(max=15, message = "Розмір поля має бути не більше 15 символів")
     @Column(name = "phone_number", columnDefinition="VARCHAR(20) NOT NULL UNIQUE")
     private String phoneNumber;
     @Column(nullable = false)

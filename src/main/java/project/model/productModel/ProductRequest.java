@@ -3,12 +3,14 @@ package project.model.productModel;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
+import java.math.BigDecimal;
+
 public class ProductRequest {
     private Long id;
     @NotEmpty(message = "Поле не може бути порожнім")
     private String name;
     @NotNull(message = "Поле не може бути порожнім")
-    private Integer price;
+    private BigDecimal price;
     @NotEmpty(message = "Поле не може бути порожнім")
     private String description;
     private Boolean status;
@@ -31,11 +33,11 @@ public class ProductRequest {
         this.name = name;
     }
 
-    public Integer getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Integer price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

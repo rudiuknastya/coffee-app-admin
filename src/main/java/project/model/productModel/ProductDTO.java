@@ -1,9 +1,11 @@
 package project.model.productModel;
 
+import java.math.BigDecimal;
+
 public class ProductDTO {
     private Long id;
     private String name;
-    private Integer price;
+    private BigDecimal price;
     private String categoryName;
     private Boolean status;
 
@@ -23,11 +25,11 @@ public class ProductDTO {
         this.name = name;
     }
 
-    public Integer getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Integer price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

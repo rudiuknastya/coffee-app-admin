@@ -16,7 +16,7 @@ public class OrderItem {
     private Boolean deleted;
     @Column(nullable = false)
     private BigDecimal price;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
     @ManyToOne

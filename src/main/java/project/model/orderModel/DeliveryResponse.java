@@ -16,7 +16,6 @@ public class DeliveryResponse {
     @NotEmpty(message = "Поле не може бути порожнім")
     @Size(min=4, max=15, message = "Розмір поля має бути не менше 4 та не більше 15 символів")
     @Pattern(regexp = "^\\+?[1-9][0-9]{4,15}$", message = "Невірний формат номеру")
-    @Column(name = "phone_number", columnDefinition="VARCHAR(20) NOT NULL UNIQUE")
     private String phoneNumber;
     @NotEmpty(message = "Поле не може бути порожнім")
     private String city;

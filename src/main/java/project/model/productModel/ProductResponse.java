@@ -5,12 +5,13 @@ import jakarta.validation.constraints.NotNull;
 import project.entity.AdditiveType;
 import project.entity.Category;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class ProductResponse {
     private Long id;
     private String name;
-    private Integer price;
+    private BigDecimal price;
     private String description;
     private String image;
     private Boolean status;
@@ -33,11 +34,11 @@ public class ProductResponse {
         this.name = name;
     }
 
-    public Integer getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Integer price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
