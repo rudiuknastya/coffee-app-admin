@@ -5,6 +5,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -68,11 +70,11 @@ public class ProductController {
     }
 
     @GetMapping("/deleteProduct/{id}")
-    public @ResponseBody String deleteProduct(@PathVariable Long id){
+    public @ResponseBody ResponseEntity deleteProduct(@PathVariable Long id){
         Product product = productService.getProductById(id);
         product.setDeleted(true);
         productService.saveProduct(product);
-        return "success";
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/getProductsCount")
     public @ResponseBody Long getProductsCount(){
@@ -89,14 +91,11 @@ public class ProductController {
     @PostMapping("/products/saveProduct")
     public @ResponseBody List<FieldError> saveProduct(@Valid @ModelAttribute("product") ProductRequest product, BindingResult bindingResult,
                                                       @RequestParam(name = "mainImage", required = false) MultipartFile mainImage, @RequestParam("mainImageName") String mainImageName,
-                                                      @RequestParam(name = "adTypes", required = false) Long [] adTypes){
+                                                      @RequestParam(name = "adTypes", required = false) Long [] adTypes) throws IOException {
         if (bindingResult.hasErrors()) {
-            System.out.println("1 if");
             List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
-            System.out.println(bindingResult.getFieldErrors());
             if(mainImage != null && !mainImage.getOriginalFilename().equals("") && !isSupportedExtension(FilenameUtils.getExtension(
                     mainImage.getOriginalFilename()))) {
-                System.out.println("2 if");
                 FieldError fieldError = new FieldError("Image format wrong","image","Некоректний тип файлу");
                 fieldErrors.add(fieldError);
             }
@@ -105,7 +104,6 @@ public class ProductController {
 
         if(mainImage != null && !mainImage.getOriginalFilename().equals("") && !isSupportedExtension(FilenameUtils.getExtension(
                 mainImage.getOriginalFilename()))){
-            System.out.println("3 if");
             List<FieldError> fieldErrors = new ArrayList<>(1);
             FieldError fieldError = new FieldError("Image format wrong","image","Некоректний тип файлу");
             fieldErrors.add(fieldError);
@@ -142,13 +140,13 @@ public class ProductController {
         return "product/product_page";
     }
     @GetMapping("/products/edit/getProduct/{id}")
-    public @ResponseBody ProductResponse editProduct(@PathVariable Long id){
+    public @ResponseBody ProductResponse getProduct(@PathVariable Long id){
         return productService.getProductResponseById(id);
     }
     @PostMapping("/products/edit/editProduct")
-    public @ResponseBody List<FieldError> updateProduct(@Valid @ModelAttribute("product") ProductRequest product, BindingResult bindingResult,
+    public @ResponseBody List<FieldError> updateProduct(@Valid @ModelAttribute("product") ProductRequest product,BindingResult bindingResult,
                                 @RequestParam(name = "adTypes", required = false) Long [] adTypes,
-                                @RequestParam(name = "mainImage", required = false) MultipartFile mainImage, @RequestParam("mainImageName") String mainImageName) {
+                                @RequestParam(name = "mainImage", required = false) MultipartFile mainImage, @RequestParam("mainImageName") String mainImageName) throws IOException {
         if (bindingResult.hasErrors()) {
             List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
             if(mainImage != null && !mainImage.getOriginalFilename().equals("") && !isSupportedExtension(FilenameUtils.getExtension(
@@ -167,27 +165,13 @@ public class ProductController {
             return fieldErrors;
         }
         Product productInDB = productService.getProductWithAdditiveTypesById(product.getId());
-        if(adTypes != null) {
-            for (int i = 0; i < productInDB.getAdditiveTypes().size(); i++) {
-                if (i < adTypes.length && productInDB.getAdditiveTypes().get(i).getId() != adTypes[i]) {
-                    if (productInDB.getAdditiveTypes().get(i).getId() < adTypes[i]) {
-                        productInDB.getAdditiveTypes().remove(i);
-                    }
-                }
-            }
-            if (adTypes.length < productInDB.getAdditiveTypes().size()) {
-                for (int l = adTypes.length; l < productInDB.getAdditiveTypes().size(); l++) {
-                    productInDB.getAdditiveTypes().remove(l);
-                }
-            }
-            if (adTypes.length > productInDB.getAdditiveTypes().size()) {
-                for (int l = productInDB.getAdditiveTypes().size(); l < adTypes.length; l++) {
-                    AdditiveType additiveType = additiveTypeService.getAdditiveTypeById(adTypes[l]);
-                    productInDB.getAdditiveTypes().add(additiveType);
-                }
-            }
+        productInDB.getAdditiveTypes().clear();
+        productService.saveProduct(productInDB);
+        if(adTypes.length > 0) {
+            List<AdditiveType> additiveTypes = additiveTypeService.getAdditiveTypesByIds(adTypes);
+            productInDB.setAdditiveTypes(additiveTypes);
         }
-        if(mainImage != null ) {
+        if(mainImage != null) {
             saveImage(mainImage, productInDB, mainImageName);
         }
         productInDB.setName(product.getName());
@@ -199,20 +183,14 @@ public class ProductController {
         return null;
     }
 
-    private void saveImage(MultipartFile image, Product product, String name){
-        File uploadDir = new File(uploadPath);
-        if (!uploadDir.exists()){
-            uploadDir.mkdir();
-        }
+    private void saveImage(MultipartFile image, Product product, String name) throws IOException {
         if (!image.getOriginalFilename().equals("") && name.equals("")) {
             String uuidFile = UUID.randomUUID().toString();
             String uniqueName = uuidFile + "." + image.getOriginalFilename();
             product.setImage(uniqueName);
             Path path = Paths.get(uploadPath + "/" + uniqueName);
-            try {
                 image.transferTo(new File(path.toUri()));
-            } catch (IOException e) {
-            }
+
         } else if (image.getOriginalFilename().equals("") && name.equals("")) {
             File file = new File(uploadPath + "/" + product.getImage());
             file.delete();
@@ -222,10 +200,7 @@ public class ProductController {
             String uniqueName = uuidFile+"."+image.getOriginalFilename();
             product.setImage(uniqueName);
             Path path = Paths.get(uploadPath+"/"+uniqueName);
-            try {
-                image.transferTo(new File(path.toUri()));
-            } catch (IOException e) {
-            }
+            image.transferTo(new File(path.toUri()));
             File file = new File(uploadPath+"/"+name);
             file.delete();
         } else if (!name.equals("")){

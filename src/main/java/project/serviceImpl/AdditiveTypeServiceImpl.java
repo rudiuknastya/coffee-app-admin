@@ -81,4 +81,12 @@ public class AdditiveTypeServiceImpl implements AdditiveTypeService {
         logger.info("getAdditiveTypeNames() - Additive type name was found");
         return additiveTypeNameDTO;
     }
+
+    @Override
+    public List<AdditiveType> getAdditiveTypesByIds(Long[] adTypes) {
+        logger.info("getAdditiveTypesByIds() - Finding additive types by ids");
+        List<AdditiveType> additiveTypes = additiveTypeRepository.findAllById(List.of(adTypes));
+        logger.info("getAdditiveTypesByIds() - Additive types by ids were found");
+        return additiveTypes;
+    }
 }
