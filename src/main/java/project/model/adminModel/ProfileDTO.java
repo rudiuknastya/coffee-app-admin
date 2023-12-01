@@ -7,7 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
-public class ProfileResponse {
+public class ProfileDTO {
     private Long id;
     @NotEmpty(message = "Поле не може бути порожнім")
     private String firstName;

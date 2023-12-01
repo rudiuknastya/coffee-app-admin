@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import project.entity.Order;
 import project.entity.OrderHistory;
 import project.mapper.OrderHistoryMapper;
 import project.model.orderHistoryModel.OrderHistoryResponse;
@@ -13,6 +14,7 @@ import project.repository.OrderHistoryRepository;
 import project.service.OrderHistoryService;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import static org.springframework.data.jpa.domain.Specification.where;
 import static project.specifications.OrderHistorySpecification.*;
@@ -62,19 +64,32 @@ public class OrderHistoryServiceImpl implements OrderHistoryService {
         logger.info("searchOrderHistories() - Searching order history by order id "+id+" and search "+event+" and date "+date);
         Page<OrderHistory> orderHistories;
         if(date != null &&  (event == null || event.equals(""))) {
-            System.out.println("if 1");
             orderHistories = orderHistoryRepository.findAll(where(byOrderId(id).and(byDate(date))),pageable);
         } else if((event != null && !event.equals(""))  && date == null){
-            System.out.println("if 2");
             orderHistories = orderHistoryRepository.findAll(where(byEventLike(event).and(byOrderId(id))),pageable);
         } else if((event != null && !event.equals("")) && date != null) {
-            System.out.println("if 3");
             orderHistories = orderHistoryRepository.findAll(where(byDate(date).and(byEventLike(event).and(byOrderId(id)))),pageable);
         } else {
-            System.out.println("if 4");
             orderHistories = orderHistoryRepository.findAll(byOrderId(id),pageable);
         }
         logger.info("searchOrderHistories() - Order histories were found");
         return orderHistories;
+    }
+
+    @Override
+    public void createAndSaveOrderHistory(String event, Order order) {
+        logger.info("createAndSaveOrderHistory() - Creating and saving order history");
+        OrderHistory orderHistory = new OrderHistory(event,LocalDate.now(), LocalTime.now(),order);
+        orderHistoryRepository.save(orderHistory);
+        logger.info("createAndSaveOrderHistory() - Order history was created and saved");
+    }
+
+    @Override
+    public void createAndSaveOrderHistory(String event, Order order, String comment) {
+        logger.info("createAndSaveOrderHistory() - Creating and saving order history with comment");
+        OrderHistory orderHistory = new OrderHistory(event,LocalDate.now(), LocalTime.now(),order);
+        orderHistory.setComment(comment);
+        orderHistoryRepository.save(orderHistory);
+        logger.info("createAndSaveOrderHistory() - Order history was created and saved");
     }
 }

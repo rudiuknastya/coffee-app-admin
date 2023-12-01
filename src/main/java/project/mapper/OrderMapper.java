@@ -2,7 +2,7 @@ package project.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
-import project.model.orderModel.DeliveryResponse;
+import project.model.orderModel.DeliveryDTO;
 import project.model.orderModel.OrderDTO;
 import project.entity.Order;
 import project.model.orderModel.OrderResponse;
@@ -43,7 +43,7 @@ public interface OrderMapper {
         orderStatusDTO.setName(order.getStatus().getStatusName());
         orderRequest.setStatus(orderStatusDTO);
         if(order.getDelivery() != null){
-            DeliveryResponse deliveryRequest = new DeliveryResponse();
+            DeliveryDTO deliveryRequest = new DeliveryDTO();
             deliveryRequest.setName(order.getDelivery().getName());
             deliveryRequest.setPhoneNumber(order.getDelivery().getPhoneNumber());
             deliveryRequest.setCity(order.getDelivery().getCity());

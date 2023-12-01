@@ -1,6 +1,7 @@
 package project.model.additiveModel;
 
 public class AdditiveOrderRequest {
+
     private Long orderItemId;
     private Long additiveId;
 

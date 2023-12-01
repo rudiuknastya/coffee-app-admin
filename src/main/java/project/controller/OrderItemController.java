@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -49,26 +51,23 @@ public class OrderItemController {
         return orderItemService.searchOrderItemDTOs(pageable, id, name);
     }
     @PostMapping("/cancelOrder/{id}")
-    public @ResponseBody String cancelOrder(@PathVariable Long id, @RequestParam("comment")String comment){
+    public @ResponseBody ResponseEntity cancelOrder(@PathVariable Long id, @RequestParam("comment")String comment){
         OrderItem orderItem = orderItemService.getOrderItemById(id);
         String s = "Замовлення скасовано";
-        OrderHistory orderHistory = new OrderHistory(s, LocalDate.now(), LocalTime.now(),orderItem.getOrder());
-        orderHistory.setComment(comment);
-        orderHistoryService.saveOrderHistory(orderHistory);
+        orderHistoryService.createAndSaveOrderHistory(s,orderItem.getOrder(),comment);
         orderItem.setDeleted(true);
         orderItem.getOrder().setStatus(OrderStatus.CANCELED);
         orderItemService.saveOrderItem(orderItem);
-        return "success";
+        return new ResponseEntity(HttpStatus.OK);
     }
     @GetMapping("/deleteOrderItem/{id}")
-    public @ResponseBody String deleteOrderItem(@PathVariable Long id){
+    public @ResponseBody ResponseEntity deleteOrderItem(@PathVariable Long id){
         OrderItem orderItem = orderItemService.getOrderItemById(id);
         String s = "Видалено товар "+orderItem.getProduct().getName()+" із замовлення";
-        OrderHistory orderHistory = new OrderHistory(s, LocalDate.now(), LocalTime.now(),orderItem.getOrder());
-        orderHistoryService.saveOrderHistory(orderHistory);
+        orderHistoryService.createAndSaveOrderHistory(s,orderItem.getOrder());
         orderItem.setDeleted(true);
         orderItemService.saveOrderItem(orderItem);
-        return "success";
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @GetMapping("/checkOrderItem/{id}")
@@ -101,8 +100,7 @@ public class OrderItemController {
         OrderItem orderItem = orderItemService.getOrderItemById(orderItemResponse.getId());
         if(!orderItem.getQuantity().equals(orderItemResponse.getQuantity())){
             String s = "Змінено кількість товарів у замовленні з "+orderItem.getQuantity()+" на "+orderItemResponse.getQuantity();
-            OrderHistory orderHistory = new OrderHistory(s, LocalDate.now(), LocalTime.now(),orderItem.getOrder());
-            orderHistoryService.saveOrderHistory(orderHistory);
+            orderHistoryService.createAndSaveOrderHistory(s,orderItem.getOrder());
         }
         BigDecimal p = orderItem.getPrice();
         p = p.divide(new BigDecimal(orderItem.getQuantity()));
@@ -127,10 +125,7 @@ public class OrderItemController {
         return additiveService.getAdditivesForAdditiveTypeForOrder(id, pageable);
     }
     @PostMapping("/orderItem/edit/editOrderItemAdditive")
-    public @ResponseBody List<FieldError> editOrderItemAdditive(@Valid @ModelAttribute("orderItemAdditive") AdditiveOrderRequest additiveOrderRequest, BindingResult bindingResult, @RequestParam("oldAdditiveId")Long oldAdditiveId){
-        if(bindingResult.hasErrors()){
-            return bindingResult.getFieldErrors();
-        }
+    public @ResponseBody List<FieldError> editOrderItemAdditive(@ModelAttribute("orderItemAdditive") AdditiveOrderRequest additiveOrderRequest, BindingResult bindingResult, @RequestParam("oldAdditiveId")Long oldAdditiveId){
         Additive newAdditive = additiveService.getAdditiveById(additiveOrderRequest.getAdditiveId());
         OrderItem orderItem = orderItemService.getOrderItemWithAdditivesById(additiveOrderRequest.getOrderItemId());
         int i = 0;
@@ -147,8 +142,7 @@ public class OrderItemController {
                 orderItem.getOrder().setPrice(op);
                 if(!additive.getName().equals(newAdditive.getName()) ) {
                     String s = "Змінено додаток для товару " + orderItem.getProduct().getName() + " з " + additive.getName() + " на " + newAdditive.getName();
-                    OrderHistory orderHistory = new OrderHistory(s, LocalDate.now(), LocalTime.now(), orderItem.getOrder());
-                    orderHistoryService.saveOrderHistory(orderHistory);
+                    orderHistoryService.createAndSaveOrderHistory(s,orderItem.getOrder());
                 }
             }
             i++;

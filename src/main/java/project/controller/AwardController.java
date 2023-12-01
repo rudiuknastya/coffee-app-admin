@@ -3,6 +3,8 @@ package project.controller;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -33,7 +35,6 @@ public class AwardController {
     @GetMapping("/awards")
     public String showAwards(Model model){
         model.addAttribute("pageNum", 11);
-        //model.addAttribute("products", productService.getProductNames());
         return "award/awards";
     }
     @GetMapping("/getAwards")
@@ -47,14 +48,13 @@ public class AwardController {
         return awardService.searchAwards(phone, pageable);
     }
     @GetMapping("/deleteAward")
-    public @ResponseBody String deleteAward(@RequestParam("userId") Long userId, @RequestParam("productId") Long productId){
+    public @ResponseBody ResponseEntity deleteAward(@RequestParam("userId") Long userId, @RequestParam("productId") Long productId){
         User user = userService.getUserWithProducts(userId);
         int count = 0;
-        System.out.println(user.getProducts());
         int productToRemove = 0;
         int i = 0;
         for(Product product: user.getProducts()){
-            if(product.getId() == productId && count <= 0){
+            if(product.getId().equals(productId) && count <= 0){
                 productToRemove = i;
                 count++;
             }
@@ -62,7 +62,7 @@ public class AwardController {
         }
         user.getProducts().remove(productToRemove);
         userService.saveUser(user);
-        return "success";
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/getProductForAward/{id}")
@@ -75,17 +75,17 @@ public class AwardController {
         return productService.getProductNameDTOS(pageable, name);
     }
     @PostMapping("/editAward")
-    public @ResponseBody String updateAward(@RequestParam("userId") Long userId, @RequestParam("newProductId") Long newProductId, @RequestParam("oldProductId") Long oldProductId){
+    public @ResponseBody ResponseEntity updateAward(@RequestParam("userId") Long userId, @RequestParam("newProductId") Long newProductId, @RequestParam("oldProductId") Long oldProductId){
         User user = userService.getUserWithProducts(userId);
         int i = 0;
         for(Product product: user.getProducts()){
-            if(product.getId() == oldProductId){
+            if(product.getId().equals(oldProductId)){
                 Product product1 = productService.getProductById(newProductId);
                 user.getProducts().set(i, product1);
             }
             i++;
         }
         userService.saveUser(user);
-        return "success";
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

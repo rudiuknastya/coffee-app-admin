@@ -1,6 +1,5 @@
 package project.model.orderModel;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -10,7 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class DeliveryResponse {
+public class DeliveryDTO {
     @NotEmpty(message = "Поле не може бути порожнім")
     private String name;
     @NotEmpty(message = "Поле не може бути порожнім")

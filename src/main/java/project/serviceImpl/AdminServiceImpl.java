@@ -1,6 +1,5 @@
 package project.serviceImpl;
 
-import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,7 +12,7 @@ import project.entity.Admin;
 import project.entity.Role;
 import project.mapper.AdminMapper;
 import project.model.adminModel.AdminResponse;
-import project.model.adminModel.ProfileResponse;
+import project.model.adminModel.ProfileDTO;
 import project.repository.AdminRepository;
 import project.service.AdminService;
 
@@ -44,7 +43,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Admin getAdminById(Long id) {
         logger.info("getAdminById() - Finding admin by id "+id);
-        Admin admin = adminRepository.findById(id).orElseThrow(EntityExistsException::new);
+        Admin admin = adminRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         logger.info("getAdminById() - Admin was found");
         return admin;
     }
@@ -58,15 +57,15 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public Page<AdminDTO> searchAdmins(String input, Role role, Pageable pageable) {
+    public Page<AdminDTO> searchAdmins(String input, Role role,String email, Pageable pageable) {
         logger.info("searchAdmins() - Finding admins for input "+ input + "and role "+role);
         Page<Admin> admins;
         if(role != null  &&  (input == null || input.equals(""))) {
-            admins = adminRepository.findAll(where(byRole(role)),pageable);
+            admins = adminRepository.findAll(where(byRole(role).and(byEmailNot(email))),pageable);
         } else if((input != null && !input.equals(""))  && role == null){
-            admins = adminRepository.findAll(where(byEmailLike(input).or(byLastNameLike(input))),pageable);
+            admins = adminRepository.findAll(where(byEmailNot(email).and(byEmailLike(input).or(byLastNameLike(input)))),pageable);
         } else if((input != null && !input.equals("")) && role != null) {
-            admins = adminRepository.findAll(where(byRole(role).and(byLastNameLike(input).or(byEmailLike(input)))),pageable);
+            admins = adminRepository.findAll(where(byRole(role).and(byEmailNot(email)).and(byLastNameLike(input).or(byEmailLike(input)))),pageable);
         } else {
             admins = adminRepository.findAll(pageable);
         }
@@ -95,18 +94,18 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Admin getAdminByEmail(String email) {
         logger.info("getAdminByEmail() - Finding admin by email "+email);
-        Admin admin = adminRepository.findByEmail(email);
+        Admin admin = adminRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
         logger.info("getAdminByEmail() - Admin was found");
         return admin;
     }
 
     @Override
-    public ProfileResponse getProfileResponseByEmail(String email) {
+    public ProfileDTO getProfileResponseByEmail(String email) {
         logger.info("getAdminByEmail() - Finding admin for profile response by email "+email);
-        Admin admin = adminRepository.findByEmail(email);
-        ProfileResponse profileResponse = AdminMapper.ADMIN_MAPPER.adminToProfileResponse(admin);
+        Admin admin = adminRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
+        ProfileDTO profileDTO = AdminMapper.ADMIN_MAPPER.adminToProfileResponse(admin);
         logger.info("getAdminByEmail() - Admin was found");
-        return profileResponse;
+        return profileDTO;
     }
 
     @Override

@@ -78,7 +78,7 @@
 <script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
 <script th:inline="javascript">
-var email = [[${#authentication.name}]];
+var email = [[${#authentication?.name}]];
 $(document).ready(function(){
         $('#roleSelect').select2({
             minimumResultsForSearch: -1,
@@ -277,7 +277,8 @@ $(document).ready(function(){
 					data: {
 					    page: currentPage,
                         searchValue: searchValue,
-                        role: selectValue
+                        role: selectValue,
+                        email: email
                     },
 					success : function(response) {
 					    $('.tr').remove();

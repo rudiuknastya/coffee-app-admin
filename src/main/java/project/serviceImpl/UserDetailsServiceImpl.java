@@ -15,8 +15,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Admin admin = adminRepository.findByEmail(username);
+    public UserDetails loadUserByUsername(String username){
+        Admin admin = adminRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not exists by email"));
         UserDetails userInDetails = org.springframework.security.core.userdetails.User.withUsername(admin.getEmail())
                 .password(admin.getPassword())
                 .roles(admin.getRole().toString())

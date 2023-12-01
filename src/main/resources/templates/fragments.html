@@ -159,9 +159,9 @@
                 </a>
             </li>
             <li class="nav-item">
-                <div th:each="authority : ${#authentication.getAuthorities()}"
-                     th:if="${authority.getAuthority().startsWith('ROLE_')}"
-                     th:text="${authority.getAuthority().replaceFirst('ROLE_', '')}"></div>
+                <div th:each="authority : ${#authentication?.getAuthorities()}"
+                     th:if="${authority?.getAuthority().startsWith('ROLE_')}"
+                     th:text="${authority?.getAuthority().replaceFirst('ROLE_', '')}"></div>
                 <div sec:authentication="name"></div>
 
             </li>

@@ -2,6 +2,7 @@ package project.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import project.entity.AdditiveType;
 import project.model.additiveModel.AdditiveDTO;
 import project.entity.Additive;
 import project.model.additiveModel.AdditiveOrderResponse;
@@ -16,7 +17,7 @@ public interface AdditiveService {
     Additive getAdditiveById(Long id);
     Page<AdditiveDTO> searchAdditive(String input, Long additiveType, Pageable pageable);
     List<Additive> getAdditivesForAdditiveType(Long id);
-    AdditiveRequest getAdditiveRequestById(Long id);
+    AdditiveRequest getAdditiveResponseById(Long id);
     AdditiveOrderResponse getAdditiveOrderResponseById(Long id);
     Page<AdditiveOrderSelect> getAdditivesForAdditiveTypeForOrder(Long id, Pageable pageable);
 }

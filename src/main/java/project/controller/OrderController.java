@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -11,17 +13,14 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import project.entity.Order;
 import project.entity.OrderHistory;
-import project.entity.OrderItem;
 import project.entity.OrderStatus;
 import project.model.orderModel.*;
 import project.service.OrderHistoryService;
-import project.service.OrderItemService;
 import project.service.OrderService;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Controller
@@ -50,19 +49,16 @@ public class OrderController {
     @GetMapping("/searchOrders")
     public @ResponseBody Page<OrderDTO> searchOrders(@RequestParam("page")int page, @RequestParam(value = "address", required = false)String address, @RequestParam(value = "status", required = false)OrderStatus status, @RequestParam(value = "date", required = false) LocalDate date){
         Pageable pageable = PageRequest.of(page, pageSize);
-        System.out.println(date);
         return orderService.searchOrders(pageable, address,status, date);
     }
     @PostMapping("/deleteOrder/{id}")
-    public @ResponseBody String deleteOrder(@PathVariable Long id, @RequestParam("comment")String comment){
+    public @ResponseBody ResponseEntity deleteOrder(@PathVariable Long id, @RequestParam("comment")String comment){
         Order order = orderService.gerOrderById(id);
         order.setStatus(OrderStatus.CANCELED);
         String s = "Замовлення скасовано";
-        OrderHistory orderHistory = new OrderHistory(s, LocalDate.now(), LocalTime.now(),order);
-        orderHistory.setComment(comment);
-        orderHistoryService.saveOrderHistory(orderHistory);
+        orderHistoryService.createAndSaveOrderHistory(s,order,comment);
         orderService.saveOrder(order);
-        return "success";
+        return new ResponseEntity(HttpStatus.OK);
     }
     @GetMapping("/orders/edit/getOrderStatuses")
     public @ResponseBody OrderStatusDTO[] getOrderStatuses(){
@@ -88,88 +84,76 @@ public class OrderController {
     }
 
     @PostMapping("/orders/edit/editOrderDelivery")
-    public @ResponseBody List<FieldError> updateOrderDelivery(@ModelAttribute("order") OrderRequest order,@Valid @ModelAttribute("delivery") DeliveryResponse deliveryResponse, BindingResult bindingResult){
+    public @ResponseBody List<FieldError> updateOrderDelivery(@ModelAttribute("order") OrderRequest order, @Valid @ModelAttribute("delivery") DeliveryDTO deliveryDTO, BindingResult bindingResult){
         if(bindingResult.hasErrors()) {
-            System.out.println(bindingResult.getFieldErrors());
             return bindingResult.getFieldErrors();
         }
         Order orderInDb = orderService.gerOrderById(order.getId());
-        orderInDb.setStatus(order.getStatus());
         if(!orderInDb.getStatus().equals(order.getStatus())){
             String s = "Змінено статус "+orderInDb.getStatus().getStatusName()+" на "+order.getStatus().getStatusName();
-            OrderHistory orderHistory = new OrderHistory(s,LocalDate.now(), LocalTime.now(),orderInDb);
-            orderHistoryService.saveOrderHistory(orderHistory);
+            orderHistoryService.createAndSaveOrderHistory(s,orderInDb);
         }
-        if(deliveryResponse != null){
-            if(!orderInDb.getDelivery().getName().equals(deliveryResponse.getName())){
-                String s = "Змінено імя для доставки з "+orderInDb.getDelivery().getName()+" на "+deliveryResponse.getName();
-                OrderHistory orderHistory = new OrderHistory(s,LocalDate.now(), LocalTime.now(),orderInDb);
-                orderHistoryService.saveOrderHistory(orderHistory);
+        orderInDb.setStatus(order.getStatus());
+        if(deliveryDTO != null){
+            if(!orderInDb.getDelivery().getName().equals(deliveryDTO.getName())){
+                String s = "Змінено імя для доставки з "+orderInDb.getDelivery().getName()+" на "+ deliveryDTO.getName();
+                orderHistoryService.createAndSaveOrderHistory(s,orderInDb);
             }
-            orderInDb.getDelivery().setName(deliveryResponse.getName());
-            if(!orderInDb.getDelivery().getPhoneNumber().equals(deliveryResponse.getPhoneNumber())){
-                String s = "Змінено номер телефону для доставки з "+orderInDb.getDelivery().getPhoneNumber()+" на "+deliveryResponse.getPhoneNumber();
-                OrderHistory orderHistory = new OrderHistory(s,LocalDate.now(), LocalTime.now(),orderInDb);
-                orderHistoryService.saveOrderHistory(orderHistory);
+            orderInDb.getDelivery().setName(deliveryDTO.getName());
+            if(!orderInDb.getDelivery().getPhoneNumber().equals(deliveryDTO.getPhoneNumber())){
+                String s = "Змінено номер телефону для доставки з "+orderInDb.getDelivery().getPhoneNumber()+" на "+ deliveryDTO.getPhoneNumber();
+                orderHistoryService.createAndSaveOrderHistory(s,orderInDb);
             }
-            orderInDb.getDelivery().setPhoneNumber(deliveryResponse.getPhoneNumber());
-            if(!orderInDb.getDelivery().getCity().equals(deliveryResponse.getCity())){
-                String s = "Змінено місто для доставки з "+orderInDb.getDelivery().getCity()+" на "+deliveryResponse.getCity();
-                OrderHistory orderHistory = new OrderHistory(s,LocalDate.now(), LocalTime.now(),orderInDb);
-                orderHistoryService.saveOrderHistory(orderHistory);
+            orderInDb.getDelivery().setPhoneNumber(deliveryDTO.getPhoneNumber());
+            if(!orderInDb.getDelivery().getCity().equals(deliveryDTO.getCity())){
+                String s = "Змінено місто для доставки з "+orderInDb.getDelivery().getCity()+" на "+ deliveryDTO.getCity();
+                orderHistoryService.createAndSaveOrderHistory(s,orderInDb);
             }
-            orderInDb.getDelivery().setCity(deliveryResponse.getCity());
-            if(!orderInDb.getDelivery().getBuilding().equals(deliveryResponse.getBuilding())){
-                String s = "Змінено будинок для доставки з "+orderInDb.getDelivery().getBuilding()+" на "+deliveryResponse.getBuilding();
-                OrderHistory orderHistory = new OrderHistory(s,LocalDate.now(), LocalTime.now(),orderInDb);
-                orderHistoryService.saveOrderHistory(orderHistory);
+            orderInDb.getDelivery().setCity(deliveryDTO.getCity());
+            if(!orderInDb.getDelivery().getBuilding().equals(deliveryDTO.getBuilding())){
+                String s = "Змінено будинок для доставки з "+orderInDb.getDelivery().getBuilding()+" на "+ deliveryDTO.getBuilding();
+                orderHistoryService.createAndSaveOrderHistory(s,orderInDb);
             }
-            orderInDb.getDelivery().setBuilding(deliveryResponse.getBuilding());
-            if(!orderInDb.getDelivery().getStreet().equals(deliveryResponse.getStreet())){
-                String s = "Змінено вулицю для доставки з "+orderInDb.getDelivery().getStreet()+" на "+deliveryResponse.getStreet();
-                OrderHistory orderHistory = new OrderHistory(s,LocalDate.now(), LocalTime.now(),orderInDb);
-                orderHistoryService.saveOrderHistory(orderHistory);
+            orderInDb.getDelivery().setBuilding(deliveryDTO.getBuilding());
+            if(!orderInDb.getDelivery().getStreet().equals(deliveryDTO.getStreet())){
+                String s = "Змінено вулицю для доставки з "+orderInDb.getDelivery().getStreet()+" на "+ deliveryDTO.getStreet();
+                orderHistoryService.createAndSaveOrderHistory(s,orderInDb);
             }
-            orderInDb.getDelivery().setStreet(deliveryResponse.getStreet());
-            if(!orderInDb.getDelivery().getEntrance().equals(deliveryResponse.getEntrance())){
-                String s = "Змінено під'їзд для доставки з "+orderInDb.getDelivery().getEntrance()+" на "+deliveryResponse.getEntrance();
-                OrderHistory orderHistory = new OrderHistory(s,LocalDate.now(), LocalTime.now(),orderInDb);
-                orderHistoryService.saveOrderHistory(orderHistory);
+            orderInDb.getDelivery().setStreet(deliveryDTO.getStreet());
+            if(!orderInDb.getDelivery().getEntrance().equals(deliveryDTO.getEntrance())){
+                String s = "Змінено під'їзд для доставки з "+orderInDb.getDelivery().getEntrance()+" на "+ deliveryDTO.getEntrance();
+                orderHistoryService.createAndSaveOrderHistory(s,orderInDb);
             }
-            orderInDb.getDelivery().setEntrance(deliveryResponse.getEntrance());
-            if(!orderInDb.getDelivery().getApartment().equals(deliveryResponse.getApartment())){
-                String s = "Змінено квартиру для доставки з "+orderInDb.getDelivery().getApartment()+" на "+deliveryResponse.getApartment();
-                OrderHistory orderHistory = new OrderHistory(s,LocalDate.now(), LocalTime.now(),orderInDb);
-                orderHistoryService.saveOrderHistory(orderHistory);
+            orderInDb.getDelivery().setEntrance(deliveryDTO.getEntrance());
+            if(!orderInDb.getDelivery().getApartment().equals(deliveryDTO.getApartment())){
+                String s = "Змінено квартиру для доставки з "+orderInDb.getDelivery().getApartment()+" на "+ deliveryDTO.getApartment();
+                orderHistoryService.createAndSaveOrderHistory(s,orderInDb);
             }
-            orderInDb.getDelivery().setApartment(deliveryResponse.getApartment());
-            if(!orderInDb.getDelivery().getDeliveryDate().equals(deliveryResponse.getDeliveryDate())){
-                String s = "Змінено дату для доставки з "+orderInDb.getDelivery().getDeliveryDate()+" на "+deliveryResponse.getDeliveryDate();
-                OrderHistory orderHistory = new OrderHistory(s,LocalDate.now(), LocalTime.now(),orderInDb);
-                orderHistoryService.saveOrderHistory(orderHistory);
+            orderInDb.getDelivery().setApartment(deliveryDTO.getApartment());
+            if(!orderInDb.getDelivery().getDeliveryDate().equals(deliveryDTO.getDeliveryDate())){
+                String s = "Змінено дату для доставки з "+orderInDb.getDelivery().getDeliveryDate()+" на "+ deliveryDTO.getDeliveryDate();
+                orderHistoryService.createAndSaveOrderHistory(s,orderInDb);
             }
-            orderInDb.getDelivery().setDeliveryDate(deliveryResponse.getDeliveryDate());
-            if(!orderInDb.getDelivery().getDeliveryTime().equals(deliveryResponse.getDeliveryTime())){
-                String s = "Змінено час для доставки з "+orderInDb.getDelivery().getDeliveryTime()+" на "+deliveryResponse.getDeliveryTime();
-                OrderHistory orderHistory = new OrderHistory(s,LocalDate.now(), LocalTime.now(),orderInDb);
-                orderHistoryService.saveOrderHistory(orderHistory);
+            orderInDb.getDelivery().setDeliveryDate(deliveryDTO.getDeliveryDate());
+            if(!orderInDb.getDelivery().getDeliveryTime().equals(deliveryDTO.getDeliveryTime())){
+                String s = "Змінено час для доставки з "+orderInDb.getDelivery().getDeliveryTime()+" на "+ deliveryDTO.getDeliveryTime();
+                orderHistoryService.createAndSaveOrderHistory(s,orderInDb);
             }
-            orderInDb.getDelivery().setDeliveryTime(deliveryResponse.getDeliveryTime());
+            orderInDb.getDelivery().setDeliveryTime(deliveryDTO.getDeliveryTime());
         }
         orderService.saveOrder(orderInDb);
         return null;
     }
     @PostMapping("/orders/edit/editOrder")
-    public @ResponseBody String updateOrder(@ModelAttribute("order") OrderRequest order){
+    public @ResponseBody ResponseEntity updateOrder(@ModelAttribute("order") OrderRequest order){
         Order orderInDb = orderService.gerOrderById(order.getId());
         if(!orderInDb.getStatus().equals(order.getStatus())){
             String s = "Змінено статус "+orderInDb.getStatus().getStatusName()+" на "+order.getStatus().getStatusName();
-            OrderHistory orderHistory = new OrderHistory(s,LocalDate.now(), LocalTime.now(),orderInDb);
-            orderHistoryService.saveOrderHistory(orderHistory);
+            orderHistoryService.createAndSaveOrderHistory(s,orderInDb);
         }
         orderInDb.setStatus(order.getStatus());
         orderService.saveOrder(orderInDb);
-        return "success";
+        return new ResponseEntity(HttpStatus.OK);
     }
     @GetMapping("/orderItem/edit/{id}")
     public String editOrderItem(@PathVariable Long id, Model model){

@@ -1,9 +1,11 @@
 package project.model.additiveModel;
 
+import java.math.BigDecimal;
+
 public class AdditiveDTO {
     private Long id;
     private String name;
-    private Long price;
+    private BigDecimal price;
     private String additiveTypeName;
     private Boolean status;
 
@@ -23,11 +25,11 @@ public class AdditiveDTO {
         this.name = name;
     }
 
-    public Long getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Long price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

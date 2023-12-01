@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import project.entity.Location;
 import project.repository.LocationRepository;
 import project.service.LocationService;
+import project.specifications.LocationSpecification;
 
 import java.util.List;
 
@@ -18,7 +19,6 @@ import static project.specifications.LocationSpecification.*;
 @Service
 public class LocationServiceImpl implements LocationService {
     private final LocationRepository locationRepository;
-
     public LocationServiceImpl(LocationRepository locationRepository) {
         this.locationRepository = locationRepository;
     }
@@ -67,7 +67,7 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public Location getLocationByPhoneNumber(String number) {
         logger.info("getLocationByPhoneNumber() - Finding location by phone number "+number);
-        Location location = locationRepository.findByPhoneNumber(number);
+        Location location = locationRepository.findByPhoneNumber(number).orElseThrow(EntityNotFoundException::new);
         logger.info("getLocationByPhoneNumber() - Location was found");
         return location;
     }

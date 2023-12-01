@@ -44,9 +44,9 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponse getOrderResponseById(Long id) {
         logger.info("getOrderResponseById() - Finding order for order response by id "+id);
         Order order = orderRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        OrderResponse orderRequest = OrderMapper.orderToOrderRequest(order);
+        OrderResponse orderResponse = OrderMapper.orderToOrderRequest(order);
         logger.info("getOrderResponseById() - Order was found");
-        return orderRequest;
+        return orderResponse;
     }
 
     @Override

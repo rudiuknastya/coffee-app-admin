@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -47,11 +49,11 @@ public class LocationController {
         return cityService.getCityByName(city);
     }
     @GetMapping("/deleteLocation")
-    public @ResponseBody String deleteLocation(@RequestParam("id") Long id){
+    public @ResponseBody ResponseEntity deleteLocation(@RequestParam("id") Long id){
         Location location = locationService.getLocationById(id);
         location.setDeleted(true);
         locationService.saveLocation(location);
-        return "success";
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/searchLocation")
     public @ResponseBody Page<Location> searchLocation(@RequestParam("page")int page, @RequestParam(name="address", required = false) String address, @RequestParam(name="city", required = false) String city){

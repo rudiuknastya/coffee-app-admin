@@ -8,8 +8,10 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import project.entity.Location;
 
+import java.util.Optional;
+
 public interface LocationRepository extends JpaRepository<Location, Long>, JpaSpecificationExecutor<Location> {
-    Location findByPhoneNumber(String number);
+    Optional<Location> findByPhoneNumber(String number);
     @Query(value = "select count(id) from location where deleted = 0", nativeQuery = true)
     Long findLocationCount();
 

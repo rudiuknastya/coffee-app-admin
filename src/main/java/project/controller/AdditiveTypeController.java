@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -42,7 +44,7 @@ public class AdditiveTypeController {
     }
 
     @GetMapping("/deleteAdditiveType/{id}")
-    public @ResponseBody String deleteAdditiveType(@PathVariable Long id){
+    public @ResponseBody ResponseEntity deleteAdditiveType(@PathVariable Long id){
         AdditiveType additiveType = additiveTypeService.getAdditiveTypeById(id);
         additiveType.setDeleted(true);
         List<Additive> additives = additiveService.getAdditivesForAdditiveType(id);
@@ -51,7 +53,7 @@ public class AdditiveTypeController {
             additiveService.saveAdditive(additive);
         }
         additiveTypeService.saveAdditiveType(additiveType);
-        return "deleted";
+        return new ResponseEntity(HttpStatus.OK);
     }
     @PostMapping("/saveAdditiveType")
     public @ResponseBody List<FieldError> saveAdditiveType(@Valid @ModelAttribute("saveAdditiveType") AdditiveType additiveType, BindingResult bindingResult){

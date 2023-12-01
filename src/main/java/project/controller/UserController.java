@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -43,11 +45,11 @@ public class UserController {
         return userService.searchUser(phone, status, pageable);
     }
     @GetMapping("/deleteUser/{id}")
-    public @ResponseBody String deleteUser(@PathVariable Long id){
+    public @ResponseBody ResponseEntity deleteUser(@PathVariable Long id){
         User user = userService.getUserById(id);
         user.setDeleted(true);
         userService.saveUser(user);
-        return "success";
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/users/edit/{id}")
     public String editUser(@PathVariable Long id, Model model){
@@ -84,7 +86,7 @@ public class UserController {
         return languageDTOS;
     }
     @PostMapping("/users/edit/editUser")
-    public @ResponseBody List<FieldError> updateUser(@Valid @ModelAttribute("editUser") UserRequest user, BindingResult bindingResult, Model model){
+    public @ResponseBody List<FieldError> updateUser(@Valid @ModelAttribute("editUser") UserRequest user, BindingResult bindingResult){
         User user1 = userService.getUserByPhoneNumber(user.getPhoneNumber());
         if(bindingResult.hasErrors() ) {
             List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());

@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,9 +50,9 @@ public class AdminController {
         return adminService.getAdmins(pageable, email);
     }
     @GetMapping("/searchAdmins")
-    public @ResponseBody Page<AdminDTO> searchAdmins(@RequestParam("page")int page, @RequestParam(value = "searchValue", required = false)String input, @RequestParam(value = "role", required = false)Role role){
+    public @ResponseBody Page<AdminDTO> searchAdmins(@RequestParam("page")int page, @RequestParam(value = "searchValue", required = false)String input, @RequestParam(value = "role", required = false)Role role, @RequestParam("email")String email){
         Pageable pageable = PageRequest.of(page, pageSize);
-        return adminService.searchAdmins(input,role,pageable);
+        return adminService.searchAdmins(input,role,email,pageable);
     }
     @GetMapping("/admins/edit/getCities")
     public @ResponseBody Page<City> getCities(@RequestParam(value = "search", required = false)String name, @RequestParam("page")int page){
@@ -58,9 +60,9 @@ public class AdminController {
         return cityService.getCities(pageable, name);
     }
     @GetMapping("/deleteAdmin/{id}")
-    public @ResponseBody String deleteAdmin(@PathVariable Long id){
+    public @ResponseBody ResponseEntity deleteAdmin(@PathVariable Long id){
         adminService.deleteAdmin(id);
-        return "success";
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/admins/edit/getRoles")
     public @ResponseBody RoleDTO[] getRoles(){
@@ -86,7 +88,6 @@ public class AdminController {
     @PostMapping("/admins/edit/editAdmin")
     public @ResponseBody List<FieldError> updateAdmin(@Valid @ModelAttribute("editAdmin") AdminRequest admin, BindingResult bindingResult){
         Admin admin1 = adminService.getAdminByEmail(admin.getEmail());
-        System.out.println(admin.getBirthDate());
         if(bindingResult.hasErrors()) {
             List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
             if(admin1 != null && admin1.getId() != admin.getId()){
@@ -116,18 +117,15 @@ public class AdminController {
         return "adminProfile/profile";
     }
     @GetMapping("/getProfile")
-    public @ResponseBody ProfileResponse getProfile(@RequestParam("email")String email){
+    public @ResponseBody ProfileDTO getProfile(@RequestParam("email")String email){
         return adminService.getProfileResponseByEmail(email);
     }
     @PostMapping("/editProfile")
-    public @ResponseBody List<FieldError> editProfile(@Valid @ModelAttribute("profile") ProfileResponse profileResponse, BindingResult bindingResult, @RequestParam("oldPassword")String oldPassword, @RequestParam("newPassword")String newPassword, @RequestParam("confirmNewPassword")String confirmNewPassword){
-        System.out.println(oldPassword);
-        System.out.println(newPassword);
-        System.out.println(confirmNewPassword);
+    public @ResponseBody List<FieldError> editProfile(@Valid @ModelAttribute("profile") ProfileDTO profileDTO, BindingResult bindingResult, @RequestParam("oldPassword")String oldPassword, @RequestParam("newPassword")String newPassword, @RequestParam("confirmNewPassword")String confirmNewPassword){
         if(bindingResult.hasErrors()) {
             List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
             if(!oldPassword.equals("") && !newPassword.equals("") && !confirmNewPassword.equals("")){
-                Admin admin = adminService.getAdminById(profileResponse.getId());
+                Admin admin = adminService.getAdminById(profileDTO.getId());
                 if(!bCryptPasswordEncoder.matches(oldPassword, admin.getPassword())){
                     FieldError fieldError = new FieldError("Old password wrong","oldPassword","Невірний пароль");
                     fieldErrors.add(fieldError);
@@ -168,7 +166,7 @@ public class AdminController {
         }
         List<FieldError> fieldErrors = new ArrayList<>();
         if(!oldPassword.equals("") && !newPassword.equals("") && !confirmNewPassword.equals("")){
-            Admin admin = adminService.getAdminById(profileResponse.getId());
+            Admin admin = adminService.getAdminById(profileDTO.getId());
             if(!bCryptPasswordEncoder.matches(oldPassword, admin.getPassword())){
                 FieldError fieldError = new FieldError("Old password wrong","oldPassword","Невірний пароль");
                 fieldErrors.add(fieldError);
@@ -208,12 +206,12 @@ public class AdminController {
         if(fieldErrors.size() != 0){
             return fieldErrors;
         }
-        Admin admin = adminService.getAdminById(profileResponse.getId());
-        admin.setFirstName(profileResponse.getFirstName());
-        admin.setLastName(profileResponse.getLastName());
-        admin.setEmail(profileResponse.getEmail());
-        admin.setBirthDate(profileResponse.getBirthDate());
-        admin.setCity(profileResponse.getCity());
+        Admin admin = adminService.getAdminById(profileDTO.getId());
+        admin.setFirstName(profileDTO.getFirstName());
+        admin.setLastName(profileDTO.getLastName());
+        admin.setEmail(profileDTO.getEmail());
+        admin.setBirthDate(profileDTO.getBirthDate());
+        admin.setCity(profileDTO.getCity());
         if(!newPassword.equals("") && !confirmNewPassword.equals("") && !oldPassword.equals("") && newPassword.equals(confirmNewPassword)){
             admin.setPassword(bCryptPasswordEncoder.encode(newPassword));
         }

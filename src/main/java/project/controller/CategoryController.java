@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -67,7 +69,7 @@ public class CategoryController {
         return categoryService.searchCategories(name, pageable);
     }
     @GetMapping("/deleteCategory/{id}")
-    public @ResponseBody String deleteCategory(@PathVariable Long id){
+    public @ResponseBody ResponseEntity deleteCategory(@PathVariable Long id){
         Category category = categoryService.getCategoryById(id);
         category.setDeleted(true);
         List<Product> products = productService.getProductsForCategory(id);
@@ -76,6 +78,6 @@ public class CategoryController {
             productService.saveProduct(product);
         }
         categoryService.saveCategory(category);
-        return "deleted";
+        return new ResponseEntity(HttpStatus.OK);
     }
 }
