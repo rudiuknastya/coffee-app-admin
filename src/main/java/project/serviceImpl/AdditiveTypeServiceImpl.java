@@ -12,6 +12,7 @@ import project.model.additiveTypeModel.AdditiveTypeDTO;
 import project.model.additiveTypeModel.AdditiveTypeNameDTO;
 import project.entity.AdditiveType;
 import project.mapper.AdditiveTypeMapper;
+import project.repository.AdditiveRepository;
 import project.repository.AdditiveTypeRepository;
 import project.service.AdditiveTypeService;
 import static project.specifications.AdditiveTypeSpecification.*;
@@ -20,10 +21,13 @@ import java.util.List;
 @Service
 public class AdditiveTypeServiceImpl implements AdditiveTypeService {
     private final AdditiveTypeRepository additiveTypeRepository;
+    private final AdditiveRepository additiveRepository;
 
-    public AdditiveTypeServiceImpl(AdditiveTypeRepository additiveTypeRepository) {
+    public AdditiveTypeServiceImpl(AdditiveTypeRepository additiveTypeRepository, AdditiveRepository additiveRepository) {
         this.additiveTypeRepository = additiveTypeRepository;
+        this.additiveRepository = additiveRepository;
     }
+
     private Logger logger = LogManager.getLogger("serviceLogger");
     @Override
     public Page<AdditiveTypeDTO> getAdditiveTypes(Pageable pageable) {
@@ -88,5 +92,29 @@ public class AdditiveTypeServiceImpl implements AdditiveTypeService {
         List<AdditiveType> additiveTypes = additiveTypeRepository.findAllById(List.of(adTypes));
         logger.info("getAdditiveTypesByIds() - Additive types by ids were found");
         return additiveTypes;
+    }
+
+    @Override
+    public void updateAdditiveType(AdditiveType additiveType) {
+        logger.info("updateAdditiveType() - Updating additive type");
+        AdditiveType additiveTypeInDb = additiveTypeRepository.findById(additiveType.getId()).orElseThrow(EntityNotFoundException::new);
+        additiveTypeInDb.setName(additiveType.getName());
+        additiveTypeInDb.setStatus(additiveType.getStatus());
+        additiveTypeRepository.save(additiveTypeInDb);
+        logger.info("updateAdditiveType() - Additive type was updated");
+    }
+
+    @Override
+    public void deleteAdditiveType(Long id) {
+        logger.info("deleteAdditiveType() - Deleting additive type");
+        AdditiveType additiveType = additiveTypeRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        additiveType.setDeleted(true);
+        List<Additive> additives = additiveRepository.findAdditivesForAdditiveType(id);
+        for(Additive additive: additives){
+            additive.setDeleted(true);
+            additiveRepository.save(additive);
+        }
+        additiveTypeRepository.save(additiveType);
+        logger.info("deleteAdditiveType() - Additive type was deleted");
     }
 }

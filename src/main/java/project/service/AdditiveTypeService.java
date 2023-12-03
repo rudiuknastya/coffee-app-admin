@@ -16,4 +16,6 @@ public interface AdditiveTypeService {
     Page<AdditiveTypeNameDTO> getAdditiveTypeNames(Pageable pageable, String name);
     AdditiveTypeNameDTO getAdditiveTypeNameDTOById(Long id);
     List<AdditiveType> getAdditiveTypesByIds(Long[] adTypes);
+    void updateAdditiveType(AdditiveType additiveType);
+    void deleteAdditiveType(Long id);
 }

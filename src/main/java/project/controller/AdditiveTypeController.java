@@ -45,14 +45,7 @@ public class AdditiveTypeController {
 
     @GetMapping("/deleteAdditiveType/{id}")
     public @ResponseBody ResponseEntity deleteAdditiveType(@PathVariable Long id){
-        AdditiveType additiveType = additiveTypeService.getAdditiveTypeById(id);
-        additiveType.setDeleted(true);
-        List<Additive> additives = additiveService.getAdditivesForAdditiveType(id);
-        for(Additive additive: additives){
-            additive.setDeleted(true);
-            additiveService.saveAdditive(additive);
-        }
-        additiveTypeService.saveAdditiveType(additiveType);
+        additiveTypeService.deleteAdditiveType(id);
         return new ResponseEntity(HttpStatus.OK);
     }
     @PostMapping("/saveAdditiveType")
@@ -73,10 +66,7 @@ public class AdditiveTypeController {
         if(bindingResult.hasErrors()){
             return bindingResult.getFieldErrors();
         }
-        AdditiveType additiveTypeInDb = additiveTypeService.getAdditiveTypeById(additiveType.getId());
-        additiveTypeInDb.setName(additiveType.getName());
-        additiveTypeInDb.setStatus(additiveType.getStatus());
-        additiveTypeService.saveAdditiveType(additiveTypeInDb);
+        additiveTypeService.updateAdditiveType(additiveType);
         return null;
     }
 
