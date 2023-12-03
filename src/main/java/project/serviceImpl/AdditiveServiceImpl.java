@@ -15,6 +15,7 @@ import project.model.additiveModel.AdditiveOrderResponse;
 import project.model.additiveModel.AdditiveOrderSelect;
 import project.model.additiveModel.AdditiveRequest;
 import project.repository.AdditiveRepository;
+import project.repository.AdditiveTypeRepository;
 import project.service.AdditiveService;
 
 import java.util.List;
@@ -24,10 +25,13 @@ import static project.specifications.AdditiveSpecification.*;
 @Service
 public class AdditiveServiceImpl implements AdditiveService {
     private final AdditiveRepository additiveRepository;
+    private final AdditiveTypeRepository additiveTypeRepository;
 
-    public AdditiveServiceImpl(AdditiveRepository additiveRepository) {
+    public AdditiveServiceImpl(AdditiveRepository additiveRepository, AdditiveTypeRepository additiveTypeRepository) {
         this.additiveRepository = additiveRepository;
+        this.additiveTypeRepository = additiveTypeRepository;
     }
+
     private Logger logger = LogManager.getLogger("serviceLogger");
     @Override
     public Page<AdditiveDTO> getAllAdditives(Pageable pageable) {
@@ -45,6 +49,29 @@ public class AdditiveServiceImpl implements AdditiveService {
         Additive additive1 = additiveRepository.save(additive);
         logger.info("saveAdditive() - Additive was saved");
         return additive1;
+    }
+
+    @Override
+    public void createAdditive(AdditiveRequest additiveRequest) {
+        logger.info("createAdditive() - Creating additive");
+        Additive additive = AdditiveMapper.additiveRequestToAdditive(additiveRequest);
+        AdditiveType additiveType = additiveTypeRepository.findById(additiveRequest.getAdditiveTypeId()).orElseThrow(EntityNotFoundException::new);
+        additive.setAdditiveType(additiveType);
+        additiveRepository.save(additive);
+        logger.info("createAdditive() - Additive was created");
+    }
+
+    @Override
+    public void updateAdditive(AdditiveRequest additiveRequest) {
+        logger.info("updateAdditive() - Updating additive");
+        Additive additiveInDB = additiveRepository.findById(additiveRequest.getId()).orElseThrow(EntityNotFoundException::new);
+        additiveInDB.setName(additiveRequest.getName());
+        additiveInDB.setPrice(additiveRequest.getPrice());
+        additiveInDB.setStatus(additiveRequest.getStatus());
+        AdditiveType additiveType = additiveTypeRepository.findById(additiveRequest.getAdditiveTypeId()).orElseThrow(EntityNotFoundException::new);
+        additiveInDB.setAdditiveType(additiveType);
+        additiveRepository.save(additiveInDB);
+        logger.info("updateAdditive() - Additive was updated");
     }
 
     @Override

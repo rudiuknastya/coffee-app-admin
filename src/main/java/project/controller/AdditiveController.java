@@ -65,14 +65,7 @@ public class AdditiveController {
         if(bindingResult.hasErrors()){
             return bindingResult.getFieldErrors();
         }
-        Additive additive1 = new Additive();
-        AdditiveType additiveType = additiveTypeService.getAdditiveTypeById(additive.getAdditiveTypeId());
-        additive1.setAdditiveType(additiveType);
-        additive1.setDeleted(false);
-        additive1.setName(additive.getName());
-        additive1.setPrice(additive.getPrice());
-        additive1.setStatus(additive.getStatus());
-        additiveService.saveAdditive(additive1);
+        additiveService.createAdditive(additive);
         return null;
     }
     @GetMapping("/editAdditive/{id}")
@@ -84,13 +77,7 @@ public class AdditiveController {
         if(bindingResult.hasErrors()){
             return bindingResult.getFieldErrors();
         }
-        Additive additiveInDB = additiveService.getAdditiveById(additive.getId());
-        additiveInDB.setName(additive.getName());
-        additiveInDB.setPrice(additive.getPrice());
-        additiveInDB.setStatus(additive.getStatus());
-        AdditiveType additiveType = additiveTypeService.getAdditiveTypeById(additive.getAdditiveTypeId());
-        additiveInDB.setAdditiveType(additiveType);
-        additiveService.saveAdditive(additiveInDB);
+        additiveService.updateAdditive(additive);
         return null;
     }
     @GetMapping("/searchAdditive")

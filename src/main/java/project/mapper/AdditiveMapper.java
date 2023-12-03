@@ -2,6 +2,7 @@ package project.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 import project.model.additiveModel.AdditiveDTO;
 import project.entity.Additive;
@@ -25,4 +26,16 @@ public interface AdditiveMapper {
     @Mapping(target="additiveTypeName", source="additiveType.name")
     AdditiveOrderResponse additiveToAdditiveOrderResponse(Additive additive);
     List<AdditiveOrderSelect> additiveListToAdditiveOrderSelectList(List<Additive> additives);
+    @Named("adminListToAdminDTOList")
+    static Additive additiveRequestToAdditive(AdditiveRequest additiveRequest){
+        if(additiveRequest == null){
+            return null;
+        }
+        Additive additive = new Additive();
+        additive.setDeleted(false);
+        additive.setName(additiveRequest.getName());
+        additive.setPrice(additiveRequest.getPrice());
+        additive.setStatus(additiveRequest.getStatus());
+        return additive;
+    }
 }
