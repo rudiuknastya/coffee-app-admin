@@ -6,11 +6,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import project.model.adminModel.AdminDTO;
 import project.entity.Admin;
 import project.entity.Role;
 import project.mapper.AdminMapper;
+import project.model.adminModel.AdminRequest;
 import project.model.adminModel.AdminResponse;
 import project.model.adminModel.ProfileDTO;
 import project.repository.AdminRepository;
@@ -25,10 +27,13 @@ import static project.specifications.AdminSpecification.*;
 @Service
 public class AdminServiceImpl implements AdminService {
     private final AdminRepository adminRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public AdminServiceImpl(AdminRepository adminRepository) {
+    public AdminServiceImpl(AdminRepository adminRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.adminRepository = adminRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
+
     private Logger logger = LogManager.getLogger("serviceLogger");
     @Override
     public Page<AdminDTO> getAdmins(Pageable pageable, String email) {
@@ -114,5 +119,33 @@ public class AdminServiceImpl implements AdminService {
         Admin admin = adminRepository.findByPassword(password);
         logger.info("getAdminByPassword() - Admin was found");
         return admin;
+    }
+
+    @Override
+    public void updateAdmin(AdminRequest adminRequest) {
+        logger.info("updateAdmin() - Updating admin");
+        Admin adminInDB = adminRepository.findById(adminRequest.getId()).orElseThrow(EntityNotFoundException::new);
+        adminInDB.setFirstName(adminRequest.getFirstName());
+        adminInDB.setLastName(adminRequest.getLastName());
+        adminInDB.setEmail(adminRequest.getEmail());
+        adminInDB.setCity(adminRequest.getCity());
+        adminInDB.setBirthDate(adminRequest.getBirthDate());
+        adminInDB.setRole(adminRequest.getRole());
+        adminRepository.save(adminInDB);
+        logger.info("updateAdmin() - Admin was updated");
+    }
+
+    @Override
+    public void updateAdminProfile(ProfileDTO profileDTO, String newPassword, String confirmNewPassword, String oldPassword) {
+        Admin admin = adminRepository.findById(profileDTO.getId()).orElseThrow(EntityNotFoundException::new);
+        admin.setFirstName(profileDTO.getFirstName());
+        admin.setLastName(profileDTO.getLastName());
+        admin.setEmail(profileDTO.getEmail());
+        admin.setBirthDate(profileDTO.getBirthDate());
+        admin.setCity(profileDTO.getCity());
+        if(!newPassword.equals("") && !confirmNewPassword.equals("") && !oldPassword.equals("") && newPassword.equals(confirmNewPassword)){
+            admin.setPassword(bCryptPasswordEncoder.encode(newPassword));
+        }
+        adminRepository.save(admin);
     }
 }

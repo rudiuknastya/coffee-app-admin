@@ -102,14 +102,7 @@ public class AdminController {
             fieldErrors.add(fieldError);
             return fieldErrors;
         }
-        Admin adminInDB = adminService.getAdminById(admin.getId());
-        adminInDB.setFirstName(admin.getFirstName());
-        adminInDB.setLastName(admin.getLastName());
-        adminInDB.setEmail(admin.getEmail());
-        adminInDB.setCity(admin.getCity());
-        adminInDB.setBirthDate(admin.getBirthDate());
-        adminInDB.setRole(admin.getRole());
-        adminService.saveAdmin(adminInDB);
+        adminService.updateAdmin(admin);
         return null;
     }
     @GetMapping("/profile")
@@ -206,16 +199,7 @@ public class AdminController {
         if(fieldErrors.size() != 0){
             return fieldErrors;
         }
-        Admin admin = adminService.getAdminById(profileDTO.getId());
-        admin.setFirstName(profileDTO.getFirstName());
-        admin.setLastName(profileDTO.getLastName());
-        admin.setEmail(profileDTO.getEmail());
-        admin.setBirthDate(profileDTO.getBirthDate());
-        admin.setCity(profileDTO.getCity());
-        if(!newPassword.equals("") && !confirmNewPassword.equals("") && !oldPassword.equals("") && newPassword.equals(confirmNewPassword)){
-            admin.setPassword(bCryptPasswordEncoder.encode(newPassword));
-        }
-        adminService.saveAdmin(admin);
+        adminService.updateAdminProfile(profileDTO,newPassword,confirmNewPassword,oldPassword);
         return null;
     }
 
