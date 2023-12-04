@@ -97,21 +97,7 @@ public class OrderItemController {
         if(bindingResult.hasErrors()){
             return bindingResult.getFieldErrors();
         }
-        OrderItem orderItem = orderItemService.getOrderItemById(orderItemResponse.getId());
-        if(!orderItem.getQuantity().equals(orderItemResponse.getQuantity())){
-            String s = "Змінено кількість товарів у замовленні з "+orderItem.getQuantity()+" на "+orderItemResponse.getQuantity();
-            orderHistoryService.createAndSaveOrderHistory(s,orderItem.getOrder());
-        }
-        BigDecimal p = orderItem.getPrice();
-        p = p.divide(new BigDecimal(orderItem.getQuantity()));
-        p = p.multiply(new BigDecimal(orderItemResponse.getQuantity()));
-        BigDecimal op = orderItem.getOrder().getPrice();
-        op = op.subtract(orderItem.getPrice());
-        orderItem.setPrice(p);
-        orderItem.setQuantity(orderItemResponse.getQuantity());
-        op = op.add(orderItem.getPrice());
-        orderItem.getOrder().setPrice(op);
-        orderItemService.saveOrderItem(orderItem);
+        orderItemService.updateOrderItem(orderItemResponse);
         return null;
     }
     @GetMapping("/getOrderAdditive/{id}")
@@ -125,29 +111,8 @@ public class OrderItemController {
         return additiveService.getAdditivesForAdditiveTypeForOrder(id, pageable);
     }
     @PostMapping("/orderItem/edit/editOrderItemAdditive")
-    public @ResponseBody List<FieldError> editOrderItemAdditive(@ModelAttribute("orderItemAdditive") AdditiveOrderRequest additiveOrderRequest, BindingResult bindingResult, @RequestParam("oldAdditiveId")Long oldAdditiveId){
-        Additive newAdditive = additiveService.getAdditiveById(additiveOrderRequest.getAdditiveId());
-        OrderItem orderItem = orderItemService.getOrderItemWithAdditivesById(additiveOrderRequest.getOrderItemId());
-        int i = 0;
-        for(Additive additive: orderItem.getAdditives()){
-            if(additive.getId().equals(oldAdditiveId)){
-                orderItem.getAdditives().set(i,newAdditive);
-                BigDecimal p = orderItem.getPrice();
-                BigDecimal op = orderItem.getOrder().getPrice();
-                op = op.subtract(orderItem.getPrice());
-                p = p.subtract(additive.getPrice().multiply(new BigDecimal(orderItem.getQuantity())));
-                p = p.add(newAdditive.getPrice().multiply(new BigDecimal(orderItem.getQuantity())));
-                orderItem.setPrice(p);
-                op = op.add(orderItem.getPrice());
-                orderItem.getOrder().setPrice(op);
-                if(!additive.getName().equals(newAdditive.getName()) ) {
-                    String s = "Змінено додаток для товару " + orderItem.getProduct().getName() + " з " + additive.getName() + " на " + newAdditive.getName();
-                    orderHistoryService.createAndSaveOrderHistory(s,orderItem.getOrder());
-                }
-            }
-            i++;
-        }
-        orderItemService.saveOrderItem(orderItem);
-        return null;
+    public @ResponseBody ResponseEntity editOrderItemAdditive(@ModelAttribute("orderItemAdditive") AdditiveOrderRequest additiveOrderRequest, BindingResult bindingResult, @RequestParam("oldAdditiveId")Long oldAdditiveId){
+        orderItemService.updateOrderItemAdditive(additiveOrderRequest,oldAdditiveId);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

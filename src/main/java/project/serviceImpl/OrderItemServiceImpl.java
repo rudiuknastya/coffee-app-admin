@@ -7,23 +7,38 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import project.entity.Additive;
+import project.entity.Order;
+import project.entity.OrderHistory;
 import project.mapper.OrderItemMapper;
+import project.model.additiveModel.AdditiveOrderRequest;
 import project.model.orderModel.OrderAdditive;
 import project.model.orderItemModel.OrderItemDTO;
 import project.entity.OrderItem;
 import project.model.orderItemModel.OrderItemResponse;
+import project.repository.AdditiveRepository;
+import project.repository.OrderHistoryRepository;
 import project.repository.OrderItemRepository;
 import project.service.OrderItemService;
 import static project.specifications.OrderItemSpecification.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
 public class OrderItemServiceImpl implements OrderItemService {
     private final OrderItemRepository orderItemRepository;
+    private final OrderHistoryRepository orderHistoryRepository;
+    private final AdditiveRepository additiveRepository;
 
-    public OrderItemServiceImpl(OrderItemRepository orderItemRepository) {
+    public OrderItemServiceImpl(OrderItemRepository orderItemRepository, OrderHistoryRepository orderHistoryRepository, AdditiveRepository additiveRepository) {
         this.orderItemRepository = orderItemRepository;
+        this.orderHistoryRepository = orderHistoryRepository;
+        this.additiveRepository = additiveRepository;
     }
+
     private Logger logger = LogManager.getLogger("serviceLogger");
     @Override
     public Page<OrderItemDTO> getOrderItemDTOs(Pageable pageable, Long orderId) {
@@ -101,5 +116,59 @@ public class OrderItemServiceImpl implements OrderItemService {
         Long count = orderItemRepository.getOrderItemsCount(id);
         logger.info("getOrderItemsCount() - Order items count was found");
         return count;
+    }
+
+    @Override
+    public void updateOrderItem(OrderItemResponse orderItemResponse) {
+        logger.info("updateOrderItem() - Updating order item");
+        OrderItem orderItem = orderItemRepository.findById(orderItemResponse.getId()).orElseThrow(EntityNotFoundException::new);
+        if(!orderItem.getQuantity().equals(orderItemResponse.getQuantity())){
+            String s = "Змінено кількість товарів у замовленні з "+orderItem.getQuantity()+" на "+orderItemResponse.getQuantity();
+            createAndSaveOrderHistory(s,orderItem.getOrder());
+        }
+        BigDecimal p = orderItem.getPrice();
+        p = p.divide(new BigDecimal(orderItem.getQuantity()));
+        p = p.multiply(new BigDecimal(orderItemResponse.getQuantity()));
+        BigDecimal op = orderItem.getOrder().getPrice();
+        op = op.subtract(orderItem.getPrice());
+        orderItem.setPrice(p);
+        orderItem.setQuantity(orderItemResponse.getQuantity());
+        op = op.add(orderItem.getPrice());
+        orderItem.getOrder().setPrice(op);
+        orderItemRepository.save(orderItem);
+        logger.info("updateOrderItem() - Order item was updated");
+    }
+
+    @Override
+    public void updateOrderItemAdditive(AdditiveOrderRequest additiveOrderRequest, Long oldAdditiveId) {
+        logger.info("updateOrderItemAdditive() - Updating order item additive");
+        Additive newAdditive = additiveRepository.findById(additiveOrderRequest.getAdditiveId()).orElseThrow(EntityNotFoundException::new);
+        OrderItem orderItem = orderItemRepository.findOrderItemWithAdditives(additiveOrderRequest.getOrderItemId());
+        int i = 0;
+        for(Additive additive: orderItem.getAdditives()){
+            if(additive.getId().equals(oldAdditiveId)){
+                orderItem.getAdditives().set(i,newAdditive);
+                BigDecimal p = orderItem.getPrice();
+                BigDecimal op = orderItem.getOrder().getPrice();
+                op = op.subtract(orderItem.getPrice());
+                p = p.subtract(additive.getPrice().multiply(new BigDecimal(orderItem.getQuantity())));
+                p = p.add(newAdditive.getPrice().multiply(new BigDecimal(orderItem.getQuantity())));
+                orderItem.setPrice(p);
+                op = op.add(orderItem.getPrice());
+                orderItem.getOrder().setPrice(op);
+                if(!additive.getName().equals(newAdditive.getName()) ) {
+                    String s = "Змінено додаток для товару " + orderItem.getProduct().getName() + " з " + additive.getName() + " на " + newAdditive.getName();
+                    createAndSaveOrderHistory(s,orderItem.getOrder());
+                }
+            }
+            i++;
+        }
+        orderItemRepository.save(orderItem);
+        logger.info("updateOrderItemAdditive() - Order item additive was updated");
+    }
+
+    private void createAndSaveOrderHistory(String event, Order order) {
+        OrderHistory orderHistory = new OrderHistory(event, LocalDate.now(), LocalTime.now(),order);
+        orderHistoryRepository.save(orderHistory);
     }
 }
