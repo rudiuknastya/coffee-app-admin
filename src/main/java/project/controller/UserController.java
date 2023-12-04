@@ -102,14 +102,7 @@ public class UserController {
             fieldErrors.add(fieldError);
             return fieldErrors;
         }
-        User userInDB = userService.getUserById(user.getId());
-        userInDB.setEmail(user.getEmail());
-        userInDB.setName(user.getName());
-        userInDB.setPhoneNumber(user.getPhoneNumber());
-        userInDB.setLanguage(user.getLanguage());
-        userInDB.setBirthDate(user.getBirthDate());
-        userInDB.setStatus(user.getStatus());
-        userService.saveUser(userInDB);
+        userService.updateUser(user);
         return null;
     }
     @GetMapping("/getUserLanguagePercentages")

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import project.model.userModel.UserDTO;
 import project.entity.User;
 import project.entity.UserStatus;
+import project.model.userModel.UserRequest;
 import project.model.userModel.UserResponse;
 
 import java.util.List;
@@ -19,4 +20,5 @@ public interface UserService {
     User getUserByPhoneNumber(String phoneNumber);
     List<Long> getLanguagePercentages();
     Long getUsersCount();
+    void updateUser(UserRequest userRequest);
 }

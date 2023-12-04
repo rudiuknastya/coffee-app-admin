@@ -11,6 +11,7 @@ import project.model.userModel.UserDTO;
 import project.entity.User;
 import project.entity.UserStatus;
 import project.mapper.UserMapper;
+import project.model.userModel.UserRequest;
 import project.model.userModel.UserResponse;
 import project.repository.UserRepository;
 import project.service.UserService;
@@ -116,5 +117,19 @@ public class UserServiceImpl implements UserService {
         Long count = userRepository.findUsersCount();
         logger.info("getUsersCount() - Users count was found");
         return count;
+    }
+
+    @Override
+    public void updateUser(UserRequest userRequest) {
+        logger.info("updateUser() - Updating user");
+        User userInDB = userRepository.findById(userRequest.getId()).orElseThrow(EntityNotFoundException::new);
+        userInDB.setEmail(userRequest.getEmail());
+        userInDB.setName(userRequest.getName());
+        userInDB.setPhoneNumber(userRequest.getPhoneNumber());
+        userInDB.setLanguage(userRequest.getLanguage());
+        userInDB.setBirthDate(userRequest.getBirthDate());
+        userInDB.setStatus(userRequest.getStatus());
+        userRepository.save(userInDB);
+        logger.info("updateUser() - Users was updated");
     }
 }
