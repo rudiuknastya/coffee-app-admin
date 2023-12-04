@@ -79,4 +79,15 @@ public class LocationServiceImpl implements LocationService {
         logger.info("getLocationCount() - Locations count was found");
         return count;
     }
+
+    @Override
+    public void updateLocation(Location location) {
+        Location locationInDB = locationRepository.findById(location.getId()).orElseThrow(EntityNotFoundException::new);
+        locationInDB.setCity(location.getCity());
+        locationInDB.setAddress(location.getAddress());
+        locationInDB.setCoordinates(location.getCoordinates());
+        locationInDB.setPhoneNumber(location.getPhoneNumber());
+        locationInDB.setWorkingHours(location.getWorkingHours());
+        locationRepository.save(locationInDB);
+    }
 }

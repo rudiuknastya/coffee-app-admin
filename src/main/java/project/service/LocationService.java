@@ -13,4 +13,5 @@ public interface LocationService {
     Location getLocationById(Long id);
     Location getLocationByPhoneNumber(String number);
     Long getLocationCount();
+    void updateLocation(Location location);
 }

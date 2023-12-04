@@ -118,13 +118,7 @@ public class LocationController {
             fieldErrors.add(fieldError);
             return fieldErrors;
         }
-        Location locationInDB = locationService.getLocationById(location.getId());
-        locationInDB.setCity(location.getCity());
-        locationInDB.setAddress(location.getAddress());
-        locationInDB.setCoordinates(location.getCoordinates());
-        locationInDB.setPhoneNumber(location.getPhoneNumber());
-        locationInDB.setWorkingHours(location.getWorkingHours());
-        locationService.saveLocation(locationInDB);
+        locationService.updateLocation(location);
         return null;
     }
     @GetMapping("/getLocationCount")
