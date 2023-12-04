@@ -7,11 +7,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import project.entity.Product;
 import project.mapper.CategoryMapper;
 import project.model.CategoryDTO;
 import project.model.CategoryNameDTO;
 import project.entity.Category;
 import project.repository.CategoryRepository;
+import project.repository.ProductRepository;
 import project.service.CategoryService;
 import static project.specifications.CategorySpecification.*;
 import java.util.List;
@@ -19,9 +21,11 @@ import java.util.List;
 @Service
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
+    private final ProductRepository productRepository;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+    public CategoryServiceImpl(CategoryRepository categoryRepository, ProductRepository productRepository) {
         this.categoryRepository = categoryRepository;
+        this.productRepository = productRepository;
     }
 
     private Logger logger = LogManager.getLogger("serviceLogger");
@@ -80,5 +84,29 @@ public class CategoryServiceImpl implements CategoryService {
         CategoryNameDTO categoryNameDTO = CategoryMapper.CATEGORY_MAPPER.categoryToCategoryNameDTO(category);
         logger.info("getCategoryNameDTOById() - Category name was found");
         return categoryNameDTO;
+    }
+
+    @Override
+    public void updateCategory(Category category) {
+        logger.info("updateCategory() - Updating category");
+        Category categoryInDb = categoryRepository.findById(category.getId()).orElseThrow(EntityNotFoundException::new);
+        categoryInDb.setName(category.getName());
+        categoryInDb.setStatus(category.getStatus());
+        categoryRepository.save(categoryInDb);
+        logger.info("updateCategory() - Category was updated");
+    }
+
+    @Override
+    public void deleteCategory(Long id) {
+        logger.info("deleteCategory() - Deleting category");
+        Category category = categoryRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        category.setDeleted(true);
+        List<Product> products = productRepository.findProductsForCategory(id);
+        for(Product product: products){
+            product.setDeleted(true);
+            productRepository.save(product);
+        }
+        categoryRepository.save(category);
+        logger.info("deleteCategory() - Category was deleted");
     }
 }

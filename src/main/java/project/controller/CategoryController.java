@@ -22,11 +22,9 @@ import java.util.List;
 @Controller
 public class CategoryController {
     private final CategoryService categoryService;
-    private final ProductService productService;
 
-    public CategoryController(CategoryService categoryService, ProductService productService) {
+    public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
-        this.productService = productService;
     }
 
     @GetMapping("/categories")
@@ -57,10 +55,7 @@ public class CategoryController {
         if(bindingResult.hasErrors()){
             return bindingResult.getFieldErrors();
         }
-        Category categoryInDb = categoryService.getCategoryById(category.getId());
-        categoryInDb.setName(category.getName());
-        categoryInDb.setStatus(category.getStatus());
-        categoryService.saveCategory(categoryInDb);
+        categoryService.updateCategory(category);
         return null;
     }
     @GetMapping("/searchCategories")
@@ -70,14 +65,7 @@ public class CategoryController {
     }
     @GetMapping("/deleteCategory/{id}")
     public @ResponseBody ResponseEntity deleteCategory(@PathVariable Long id){
-        Category category = categoryService.getCategoryById(id);
-        category.setDeleted(true);
-        List<Product> products = productService.getProductsForCategory(id);
-        for(Product product: products){
-            product.setDeleted(true);
-            productService.saveProduct(product);
-        }
-        categoryService.saveCategory(category);
+        categoryService.deleteCategory(id);
         return new ResponseEntity(HttpStatus.OK);
     }
 }

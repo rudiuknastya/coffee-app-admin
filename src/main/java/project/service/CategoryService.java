@@ -15,4 +15,6 @@ public interface CategoryService {
     Page<CategoryDTO> searchCategories(String name, Pageable pageable);
     Page<CategoryNameDTO> getCategoriesName(Pageable pageable, String name);
     CategoryNameDTO getCategoryNameDTOById(Long id);
+    void updateCategory(Category category);
+    void deleteCategory(Long id);
 }
