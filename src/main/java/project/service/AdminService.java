@@ -21,4 +21,6 @@ public interface AdminService {
     void deleteAdmin(Long id);
     void updateAdmin(AdminRequest adminRequest);
     void updateAdminProfile(ProfileDTO profileDTO, String newPassword, String confirmNewPassword, String oldPassword);
+    Long getAdminsCount();
+    void createAdmin();
 }

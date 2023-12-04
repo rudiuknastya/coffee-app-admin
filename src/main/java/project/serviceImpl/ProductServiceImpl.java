@@ -3,6 +3,7 @@ package project.serviceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -42,8 +43,8 @@ public class ProductServiceImpl implements ProductService {
         this.categoryRepository = categoryRepository;
         this.additiveTypeRepository = additiveTypeRepository;
     }
-
-    String uploadPath = "C:\\Users\\Anastassia\\IdeaProjects\\Coffee-app-admin\\uploads";
+    @Value("${upload.path}")
+    private String uploadPath;
     private Logger logger = LogManager.getLogger("serviceLogger");
     @Override
     public Page<ProductDTO> getProducts(Pageable pageable) {
@@ -204,6 +205,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private void saveImage(MultipartFile image, Product product, String name) throws IOException {
+        File uploadDir = new File(uploadPath);
+        if (!uploadDir.exists()){
+            uploadDir.mkdir();
+        }
         if (!image.getOriginalFilename().equals("") && name.equals("")) {
             String uuidFile = UUID.randomUUID().toString();
             String uniqueName = uuidFile + "." + image.getOriginalFilename();

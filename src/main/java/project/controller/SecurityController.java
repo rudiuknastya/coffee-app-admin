@@ -33,6 +33,9 @@ public class SecurityController {
 
     @GetMapping("/login")
     public String showLogin(){
+        if(adminService.getAdminsCount().equals(0L)){
+            adminService.createAdmin();
+        }
         return "security/loginForm";
     }
     @GetMapping("/confirmation")

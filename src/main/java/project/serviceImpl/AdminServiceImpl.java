@@ -18,6 +18,7 @@ import project.model.adminModel.ProfileDTO;
 import project.repository.AdminRepository;
 import project.service.AdminService;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.springframework.data.jpa.domain.Specification.where;
@@ -137,6 +138,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void updateAdminProfile(ProfileDTO profileDTO, String newPassword, String confirmNewPassword, String oldPassword) {
+        logger.info("updateAdminProfile() - Updating admin profile");
         Admin admin = adminRepository.findById(profileDTO.getId()).orElseThrow(EntityNotFoundException::new);
         admin.setFirstName(profileDTO.getFirstName());
         admin.setLastName(profileDTO.getLastName());
@@ -147,5 +149,29 @@ public class AdminServiceImpl implements AdminService {
             admin.setPassword(bCryptPasswordEncoder.encode(newPassword));
         }
         adminRepository.save(admin);
+        logger.info("updateAdminProfile() - Admin profile was updated");
+    }
+
+    @Override
+    public Long getAdminsCount() {
+        logger.info("getAdminsCount() - Finding admins count");
+        Long count = adminRepository.count();
+        logger.info("getAdminsCount() - Admins count was found");
+        return count;
+    }
+
+    @Override
+    public void createAdmin() {
+        logger.info("createAdmin() - Creating admin");
+        Admin admin = new Admin();
+        admin.setEmail("admin@gmail.com");
+        admin.setPassword(bCryptPasswordEncoder.encode("admin"));
+        admin.setRole(Role.ADMIN);
+        admin.setFirstName("");
+        admin.setLastName("");
+        admin.setCity("");
+        admin.setBirthDate(LocalDate.now());
+        adminRepository.save(admin);
+        logger.info("createAdmin() - Admin was created");
     }
 }

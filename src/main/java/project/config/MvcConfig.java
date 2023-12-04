@@ -13,10 +13,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class MvcConfig implements WebMvcConfigurer {
     @Value("${secret-key}")
     private String SECRET_KEY;
+    @Value("${upload.path}")
+    private String uploadPath;
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:uploads/");
+                .addResourceLocations("file://"+uploadPath+"/");
     }
     @Bean
     public SendGrid sendGrid() {
