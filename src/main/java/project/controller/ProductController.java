@@ -35,12 +35,10 @@ import java.util.UUID;
 public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
-    private final AdditiveTypeService additiveTypeService;
 
-    public ProductController(ProductService productService, CategoryService categoryService, AdditiveTypeService additiveTypeService) {
+    public ProductController(ProductService productService, CategoryService categoryService) {
         this.productService = productService;
         this.categoryService = categoryService;
-        this.additiveTypeService = additiveTypeService;
     }
     String uploadPath = "C:\\Users\\Anastassia\\IdeaProjects\\Coffee-app-admin\\uploads";
     private int pageSize = 1;
@@ -109,26 +107,7 @@ public class ProductController {
             fieldErrors.add(fieldError);
             return fieldErrors;
         }
-        List<AdditiveType> additiveTypes = null;
-        if(adTypes != null){
-            additiveTypes = new ArrayList<>();
-            for(int i = 0; i < adTypes.length; i++){
-                AdditiveType additiveType = additiveTypeService.getAdditiveTypeById(adTypes[i]);
-                additiveTypes.add(additiveType);
-            }
-        }
-        Product productToSave = new Product();
-        if(mainImage != null) {
-            saveImage(mainImage, productToSave, mainImageName);
-        }
-        productToSave.setName(product.getName());
-        productToSave.setDescription(product.getDescription());
-        productToSave.setPrice(product.getPrice());
-        productToSave.setStatus(product.getStatus());
-        productToSave.setDeleted(false);
-        productToSave.setCategory(categoryService.getCategoryById(product.getCategoryId()));
-        productToSave.setAdditiveTypes(additiveTypes);
-        productService.saveProduct(productToSave);
+        productService.createAndSaveProduct(product,adTypes,mainImage,mainImageName);
         return null;
     }
 
@@ -164,48 +143,8 @@ public class ProductController {
             fieldErrors.add(fieldError);
             return fieldErrors;
         }
-        Product productInDB = productService.getProductWithAdditiveTypesById(product.getId());
-        productInDB.getAdditiveTypes().clear();
-        productService.saveProduct(productInDB);
-        if(adTypes.length > 0) {
-            List<AdditiveType> additiveTypes = additiveTypeService.getAdditiveTypesByIds(adTypes);
-            productInDB.setAdditiveTypes(additiveTypes);
-        }
-        if(mainImage != null) {
-            saveImage(mainImage, productInDB, mainImageName);
-        }
-        productInDB.setName(product.getName());
-        productInDB.setPrice(product.getPrice());
-        productInDB.setStatus(product.getStatus());
-        productInDB.setDescription(product.getDescription());
-        productInDB.setCategory(categoryService.getCategoryById(product.getCategoryId()));
-        productService.saveProduct(productInDB);
+        productService.updateProduct(product,adTypes,mainImage,mainImageName);
         return null;
-    }
-
-    private void saveImage(MultipartFile image, Product product, String name) throws IOException {
-        if (!image.getOriginalFilename().equals("") && name.equals("")) {
-            String uuidFile = UUID.randomUUID().toString();
-            String uniqueName = uuidFile + "." + image.getOriginalFilename();
-            product.setImage(uniqueName);
-            Path path = Paths.get(uploadPath + "/" + uniqueName);
-                image.transferTo(new File(path.toUri()));
-
-        } else if (image.getOriginalFilename().equals("") && name.equals("")) {
-            File file = new File(uploadPath + "/" + product.getImage());
-            file.delete();
-            product.setImage(null);
-        }else if(!image.getOriginalFilename().equals(name)&& !image.getOriginalFilename().equals("")){
-            String uuidFile = UUID.randomUUID().toString();
-            String uniqueName = uuidFile+"."+image.getOriginalFilename();
-            product.setImage(uniqueName);
-            Path path = Paths.get(uploadPath+"/"+uniqueName);
-            image.transferTo(new File(path.toUri()));
-            File file = new File(uploadPath+"/"+name);
-            file.delete();
-        } else if (!name.equals("")){
-            product.setImage(name);
-        }
     }
 
     private boolean isSupportedExtension(String extension) {

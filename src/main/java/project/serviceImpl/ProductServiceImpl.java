@@ -7,25 +7,43 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import project.entity.AdditiveType;
+import project.entity.Category;
 import project.model.productModel.ProductDTO;
 import project.model.productModel.ProductNameDTO;
 import project.entity.Product;
 import project.mapper.ProductMapper;
+import project.model.productModel.ProductRequest;
 import project.model.productModel.ProductResponse;
+import project.repository.AdditiveTypeRepository;
+import project.repository.CategoryRepository;
 import project.repository.ProductRepository;
 import project.service.ProductService;
 
 import static project.specifications.ProductSpecification.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
-    public ProductServiceImpl(ProductRepository productRepository) {
+    private final CategoryRepository categoryRepository;
+    private final AdditiveTypeRepository additiveTypeRepository;
+
+    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository, AdditiveTypeRepository additiveTypeRepository) {
         this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
+        this.additiveTypeRepository = additiveTypeRepository;
     }
 
+    String uploadPath = "C:\\Users\\Anastassia\\IdeaProjects\\Coffee-app-admin\\uploads";
     private Logger logger = LogManager.getLogger("serviceLogger");
     @Override
     public Page<ProductDTO> getProducts(Pageable pageable) {
@@ -137,5 +155,76 @@ public class ProductServiceImpl implements ProductService {
         Long count = productRepository.findProductsCount();
         logger.info("getProductsCount() - Products count was found");
         return count;
+    }
+
+    @Override
+    public void createAndSaveProduct(ProductRequest productRequest, Long[]adTypes, MultipartFile mainImage,String mainImageName) throws IOException {
+        logger.info("createAndSaveProduct() - Creating and saving product");
+        List<AdditiveType> additiveTypes = null;
+        if(adTypes != null){
+            additiveTypes = new ArrayList<>();
+            for(int i = 0; i < adTypes.length; i++){
+                AdditiveType additiveType = additiveTypeRepository.findById(adTypes[i]).orElseThrow(EntityNotFoundException::new);
+                additiveTypes.add(additiveType);
+            }
+        }
+        Product productToSave = ProductMapper.PRODUCT_MAPPER.productToProductRequest(productRequest);
+        if(mainImage != null) {
+            saveImage(mainImage, productToSave, mainImageName);
+        }
+        productToSave.setDeleted(false);
+        Category category = categoryRepository.findById(productRequest.getCategoryId()).orElseThrow(EntityNotFoundException::new);
+        productToSave.setCategory(category);
+        productToSave.setAdditiveTypes(additiveTypes);
+        productRepository.save(productToSave);
+        logger.info("createAndSaveProduct() - Product was created and saved");
+    }
+
+    @Override
+    public void updateProduct(ProductRequest productRequest, Long[] adTypes, MultipartFile mainImage, String mainImageName) throws IOException {
+        logger.info("updateProduct() - Updating product");
+        Product productInDB = productRepository.findProductWithAdditiveTypesById(productRequest.getId());
+        productInDB.getAdditiveTypes().clear();
+        productRepository.save(productInDB);
+        if(adTypes.length > 0) {
+            List<AdditiveType> additiveTypes = additiveTypeRepository.findAllById(List.of(adTypes));
+            productInDB.setAdditiveTypes(additiveTypes);
+        }
+        if(mainImage != null) {
+            saveImage(mainImage, productInDB, mainImageName);
+        }
+        productInDB.setName(productRequest.getName());
+        productInDB.setPrice(productRequest.getPrice());
+        productInDB.setStatus(productRequest.getStatus());
+        productInDB.setDescription(productRequest.getDescription());
+        Category category = categoryRepository.findById(productRequest.getCategoryId()).orElseThrow(EntityNotFoundException::new);
+        productInDB.setCategory(category);
+        productRepository.save(productInDB);
+        logger.info("updateProduct() - Product was updated");
+    }
+
+    private void saveImage(MultipartFile image, Product product, String name) throws IOException {
+        if (!image.getOriginalFilename().equals("") && name.equals("")) {
+            String uuidFile = UUID.randomUUID().toString();
+            String uniqueName = uuidFile + "." + image.getOriginalFilename();
+            product.setImage(uniqueName);
+            Path path = Paths.get(uploadPath + "/" + uniqueName);
+            image.transferTo(new File(path.toUri()));
+
+        } else if (image.getOriginalFilename().equals("") && name.equals("")) {
+            File file = new File(uploadPath + "/" + product.getImage());
+            file.delete();
+            product.setImage(null);
+        }else if(!image.getOriginalFilename().equals(name)&& !image.getOriginalFilename().equals("")){
+            String uuidFile = UUID.randomUUID().toString();
+            String uniqueName = uuidFile+"."+image.getOriginalFilename();
+            product.setImage(uniqueName);
+            Path path = Paths.get(uploadPath+"/"+uniqueName);
+            image.transferTo(new File(path.toUri()));
+            File file = new File(uploadPath+"/"+name);
+            file.delete();
+        } else if (!name.equals("")){
+            product.setImage(name);
+        }
     }
 }
