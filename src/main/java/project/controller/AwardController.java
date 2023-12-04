@@ -23,12 +23,10 @@ import java.util.List;
 public class AwardController {
     private final AwardService awardService;
     private final ProductService productService;
-    private final UserService userService;
 
-    public AwardController(AwardService awardService, ProductService productService, UserService userService) {
+    public AwardController(AwardService awardService, ProductService productService) {
         this.awardService = awardService;
         this.productService = productService;
-        this.userService = userService;
     }
 
     private int pageSize = 1;
@@ -49,19 +47,7 @@ public class AwardController {
     }
     @GetMapping("/deleteAward")
     public @ResponseBody ResponseEntity deleteAward(@RequestParam("userId") Long userId, @RequestParam("productId") Long productId){
-        User user = userService.getUserWithProducts(userId);
-        int count = 0;
-        int productToRemove = 0;
-        int i = 0;
-        for(Product product: user.getProducts()){
-            if(product.getId().equals(productId) && count <= 0){
-                productToRemove = i;
-                count++;
-            }
-            i++;
-        }
-        user.getProducts().remove(productToRemove);
-        userService.saveUser(user);
+        awardService.deleteAward(userId,productId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -76,16 +62,7 @@ public class AwardController {
     }
     @PostMapping("/editAward")
     public @ResponseBody ResponseEntity updateAward(@RequestParam("userId") Long userId, @RequestParam("newProductId") Long newProductId, @RequestParam("oldProductId") Long oldProductId){
-        User user = userService.getUserWithProducts(userId);
-        int i = 0;
-        for(Product product: user.getProducts()){
-            if(product.getId().equals(oldProductId)){
-                Product product1 = productService.getProductById(newProductId);
-                user.getProducts().set(i, product1);
-            }
-            i++;
-        }
-        userService.saveUser(user);
+        awardService.updateAward(userId,newProductId,oldProductId);
         return new ResponseEntity(HttpStatus.OK);
     }
 }
