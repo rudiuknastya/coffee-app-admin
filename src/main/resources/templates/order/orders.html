@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      class="light-style layout-navbar-fixed layout-menu-fixed"
+      dir="ltr"
+      data-theme="theme-default"
+      data-template="vertical-menu-template-no-customizer" >
+<head th:replace="~{fragments :: head}"></head>
+<body>
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+        <aside th:replace="~{fragments :: sidebar(${pageNum})}"></aside>
+        <div class="layout-page">
+            <nav th:replace="~{fragments :: navbar}"></nav>
+            <div class="content-wrapper">
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <div class="card py-5 px-5">
+                        <h4>Замовлення</h4>
+                        <div class="row d-flex justify-content-between mb-4">
+                            <div class="col-5">
+                                <input class="form-control" type="search" id="searchInput" placeholder="Пошук за адресою філіалу" aria-label="Search" maxlength="100">
+                            </div>
+                            <div class="col-3">
+                                <input  id="orderDate" placeholder="Оберіть дату"  class="form-control" type="text" autocomplete="off">
+                            </div>
+                            <div class="col-3">
+                                <select class="form-select" id="statusSelect" aria-label="Default select example">
+                                    <option></option>
+                                    <option th:each="s : ${status}" th:value="${s}" th:text="${s.getStatusName()}"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h4>Замовлення перейде у статус скасованого</h4>
+                                        <h4>Вкажіть у коментарі чому ви видаляєте це замовлення</h4>
+                                        <form class="row g-3">
+                                            <div class="col-md-12" >
+                                                <label for="autosize-demo" class="form-label">Коментар</label>
+                                                <textarea id="autosize-demo" rows="3" class="form-control" maxlength="300"></textarea>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger" onclick="deleteOrder()">Видалити</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Ім'я</th>
+                                    <th>Адреса філіалу</th>
+                                    <th>Дата замовлення</th>
+                                    <th>Час замовлення</th>
+                                    <th>Статус</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody id = "myTable">
+                                </tbody>
+                            </table>
+                            <div class="d-flex justify-content-between">
+                                <div class="col-4 mt-4" id="paginationElements"></div>
+                                <ul class="pagination mt-4 justify-content-end"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+<script th:src="@{/assets/vendor/libs/hammer/hammer.js}"></script>
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<script th:src="@{/assets/js/main.js}"></script>
+<script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/i18n/uk.js"></script>
+<script th:src="@{/assets/vendor/libs/moment/moment.js}"></script>
+<script th:src="@{/assets/vendor/libs/autosize/autosize.js}"></script>
+<script th:src="@{/assets/js/forms-extras.js}"></script>
+<script th:src="@{/assets/vendor/libs/flatpickr/flatpickr.js}"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/uk.js"></script>
+<script>
+    $(document).ready(function(){
+        $('#statusSelect').select2({
+            language: "uk",
+            minimumResultsForSearch: -1,
+            placeholder: "Оберіть статус",
+            allowClear: true
+        });
+        $("#orderDate").flatpickr({
+		    locale: "uk",
+			dateFormat: "d.m.Y"
+        });
+        getOrders(0);
+    });
+    var paginationType;
+    var data = "";
+	function getOrders(currentPage) {
+		$.ajax({
+					type : "GET",
+					url : "getOrders",
+					data: {
+                        page: currentPage
+                    },
+					success : function(response) {
+						$('.tr').remove();
+						$('ul.pagination li').remove();
+						data = response.content
+						for (i = 0; i < data.length; i++) {
+                            var date = moment(data[i].orderDate).format('DD.MM.YYYY');
+                            if(data[i].status.localeCompare('Відмінено') != 0){
+                                var canc = '<a href="/orders/edit/'+data[i].id+'" role="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
+													+ data[i].id
+													+ ');" ><i class="ti ti-trash"></i></button>'
+                            } else {
+                                var canc = '';
+                            }
+							$("#myTable")
+									.append(
+											'<tr class="tr"> <td>'
+													+ data[i].name
+													+ '</td> <td>'
+													+ data[i].locationAddress
+													+ '</td> <td>'
+													+ date
+													+ '</td> <td>'
+													+ data[i].orderTime
+													+ '</td> <td>'
+													+ data[i].status
+													+ '</td> <td>'+canc+'<a href="/orders/orderHistory/'+data[i].id+'" role="button" class="btn btn-warning" title="Історія замовлень" style="color: white"><i class="ti ti-list"></i></a> </td> </tr>');
+
+						}
+
+                              paginationType = 1;
+                              buildPagination(response);
+
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+	}
+
+	function buildPagination(response) {
+		totalPages = response.totalPages;
+		var pageNumber = response.pageable.pageNumber;
+        if(totalPages > 1){
+		var prev = '';
+
+			if(pageNumber !== 0) {
+                prev = '<li class="page-item prev"><a class="page-link waves-effect" id="prev" href="javascript:void(0);"><i class="ti ti-chevron-left ti-xs"></i></a></li>';
+			} else {
+                prev = '<li class="page-item prev disabled"><a class="page-link waves-effect" href="javascript:void(0);"><i class="ti ti-chevron-left ti-xs"></i></a></li>';
+		    }
+
+
+		var next = '';
+
+			if(pageNumber !== totalPages - 1) {
+				next = '<li class="page-item next"><a class="page-link waves-effect" id="next" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
+			} else {
+                next = '<li class="page-item next disabled"><a class="page-link waves-effect" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
+		    }
+
+       var pages = '';
+       var dots = '<li class="page-item disabled"><a class="page-link waves-effect" href="javascript:void(0);"> ... </a></li>';
+       if(pageNumber < 3){
+            for(var i = 1; i <= 5; i++){
+                if(i <= totalPages) {
+                    if(pageNumber+1 !== i){
+                        pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+                    } else {
+                        pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+                    }
+                }
+            }
+            if(totalPages > 6){
+                pages += dots;
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+totalPages+'</a></li>';
+            }
+
+       } else if (3 > totalPages - 1 - pageNumber) {
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
+            if(totalPages > 6){
+                pages += dots
+            }
+            for(var i = totalPages - 4; i <= totalPages; i++){
+                if(i > 1 ){
+                    if(pageNumber+1 !== i){
+                        pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+                    } else {
+                        pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+                    }
+                }
+            }
+
+       } else {
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
+            pages += dots
+
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+pageNumber+'</a></li>';
+            pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+(pageNumber+1)+'</a></li>';
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+(pageNumber+2)+'</a></li>';
+
+            pages += dots;
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+totalPages+'</a></li>';
+       }
+
+		pages = prev + pages + next;
+        $("#paginationElements").text("Показано "+response.numberOfElements+" з "+response.size+" елементів");
+		$("ul.pagination").append(pages);
+		} else {
+            $("#paginationElements").text("")
+            if(response.numberOfElements == 0){
+                $("#myTable").append('<tr class="tr"><td colspan="6" class="text-center">Дані не знайдено</td>></tr>')
+            }
+		}
+	}
+
+	$(document).on("click", "ul.pagination li a", function() {
+	    let val = $(this).text();
+	    let id = $(this).attr('id');
+        if(id === "prev"){
+            let activeValue = parseInt($("ul.pagination li.active").text());
+            if(paginationType === 1){
+                getOrders(activeValue-2);
+            }
+            if(paginationType === 2){
+                searchAndFilter(activeValue-2);
+            }
+        } else if (id === "next"){
+            let activeValue = parseInt($("ul.pagination li.active").text());
+            if(paginationType === 1){
+                getOrders(activeValue);
+            }
+            if(paginationType === 2){
+                searchAndFilter(activeValue);
+            }
+        } else {
+            let currentPage = parseInt(val - 1);
+            if(paginationType === 1){
+                getOrders(currentPage);
+            }
+            if(paginationType === 2){
+                searchAndFilter(currentPage);
+            }
+        }
+	});
+
+	var orderId;
+	function openDeleteModal(id){
+	    orderId = id
+        $('#deleteModal').modal('show');
+	}
+	function deleteOrder(){
+        $.ajax({
+					type : "POST",
+					url : "deleteOrder/"+orderId,
+					data: {
+                      comment: $('#autosize-demo').val()
+                    },
+					success : function(response) {
+					    $('#deleteModal').modal('hide');
+					    getOrders(0);
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+	}
+
+
+    var searchValue;
+    $('#searchInput').on("change", function(){
+        searchValue = $(this).val();
+        searchAndFilter(0);
+    });
+    var selectValue;
+    $('#statusSelect').on("change", function(){
+        selectValue = $(this).val();
+        searchAndFilter(0);
+    });
+    var dateValue;
+    $('#orderDate').on("change", function(){
+        if($(this).val().localeCompare('') == 0){
+          dateValue = null;
+        } else {
+          dateValue = moment($(this).val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
+        }
+        searchAndFilter(0);
+    });
+
+    function searchAndFilter(currentPage){
+        $.ajax({
+					type : "GET",
+					url : "searchOrders",
+					data: {
+					    page: currentPage,
+                        address: searchValue,
+                        status: selectValue,
+                        date: dateValue
+                    },
+					success : function(response) {
+					    $('.tr').remove();
+						$('ul.pagination li').remove();
+						data = response.content
+						for (i = 0; i < data.length; i++) {
+							$("#myTable")
+									.append(
+											'<tr class="tr"> <td>'
+													+ data[i].name
+													+ '</td> <td>'
+													+ data[i].locationAddress
+													+ '</td> <td>'
+													+ data[i].orderDate
+													+ '</td> <td>'
+													+ data[i].orderTime
+													+ '</td> <td>'
+													+ data[i].status
+													+ '</td> <td><a href="/orders/edit/'+data[i].id+'" role="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
+													+ data[i].id
+													+ ');" ><i class="ti ti-trash"></i></button></td> </tr>');
+
+						}
+
+                              paginationType = 2;
+                              buildPagination(response);
+
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+    }
+
+</script>
+</html>

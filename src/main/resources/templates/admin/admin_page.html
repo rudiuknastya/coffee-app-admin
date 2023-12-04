@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      class="light-style layout-navbar-fixed layout-menu-fixed"
+      dir="ltr"
+      data-theme="theme-default"
+      data-template="vertical-menu-template-no-customizer" >
+<head th:replace="~{fragments :: head}"></head>
+<body>
+<div class="layout-wrapper layout-content-navbar">
+  <div class="layout-container">
+    <aside th:replace="~{fragments :: sidebar(${pageNum})}"></aside>
+    <div class="layout-page">
+      <nav th:replace="~{fragments :: navbar}"></nav>
+      <div class="content-wrapper">
+        <div class="container-xxl flex-grow-1 container-p-y">
+          <div class="card py-5 px-5">
+            <form class="row g-3" style="color:black;">
+              <div class="col-md-6" >
+                <label for="inputName" class="form-label">Ім'я</label>
+                <input type="text" class="form-control" id="inputName" maxlength="100">
+                <div class="text-danger" id="nameValidation"></div>
+              </div>
+              <div class="col-md-6" >
+                <label for="inputLastName" class="form-label">Прізвище</label>
+                <input type="text" class="form-control" id="inputLastName">
+                <div class="text-danger" id="lastNameValidation"></div>
+              </div>
+
+              <div class="col-md-6" >
+                <label for="selectCity" class="form-label">Місто</label>
+                <select class="form-select" id="selectCity">
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="birthdate" class="form-label">Дата народження</label>
+                <input id="birthdate" class="form-control flatpickr" type="text">
+                <div class="text-danger" id="birthDateValidation"> </div>
+              </div>
+
+              <div class="col-md-6" >
+                <label for="inputEmail" class="form-label">E-mail</label>
+                <input type="text" class="form-control" id="inputEmail" maxlength="100">
+                <div class="text-danger" id="emailValidation"></div>
+              </div>
+              <div class="col-md-6">
+                <label for="roleSelect" class="form-label">Роль</label>
+                <select class="form-select" id="roleSelect">
+                </select>
+              </div>
+
+              <div class="col-md-12 mt-5 d-flex justify-content-end">
+                <button type="button" class="btn btn-primary" onclick="edit()">Зберегти</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+<script th:src="@{/assets/vendor/libs/hammer/hammer.js}"></script>
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<script th:src="@{/assets/js/main.js}"></script>
+<script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/i18n/uk.js"></script>
+<script th:src="@{/assets/vendor/libs/flatpickr/flatpickr.js}"></script>
+<script th:src="@{/assets/vendor/libs/moment/moment.js}"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/uk.js"></script>
+<script>
+var url = window.location.pathname;
+var id = url.substring(url.lastIndexOf('/') + 1);
+  $(document).ready(function(){
+        $('#roleSelect').select2({
+            language: "uk",
+            minimumResultsForSearch: -1,
+            ajax: {
+                type: "GET",
+                url: "getRoles",
+                processResults: function (response) {
+                    return {
+                        results: $.map(response, function (item) {
+                            return {
+                                text: item.name,
+                                id: item.role
+                            }
+                        })
+                    };
+                }
+            }
+        });
+        $('#selectCity').select2({
+        language: "uk",
+        maximumInputLength: 100,
+            ajax: {
+                type: "get",
+                url: "getCities",
+                data: function (params) {
+                    return {
+                        search: params.term,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: $.map(response.content, function (item) {
+                            return {
+                                text: item.city,
+                                id: item.city
+                            }
+                        }),
+                        pagination: {
+                            more: (response.pageable.pageNumber+1)  < response.totalPages
+                        }
+                    };
+                }
+
+            }
+        });
+
+        $.ajax({
+					type : "GET",
+					url : "getAdmin/"+id,
+					success : function(response) {
+					    $('#inputName').val(response.firstName);
+					    $('#inputLastName').val(response.lastName);
+					    $('#inputEmail').val(response.email);
+					    $("#birthdate").flatpickr({
+					      locale: "uk",
+					      defaultDate: moment(response.birthDate, 'YYYY-MM-DD').format('DD.MM.YYYY'),
+					      dateFormat: "d.m.Y"
+                        });
+
+                      var option = new Option(response.role.name, response.role.role, true, true);
+                      $('#roleSelect').append(option).trigger('change');
+
+                      var option = new Option(response.city, response.city, true, true);
+                      $('#selectCity').append(option).trigger('change');
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+
+    });
+
+
+    function edit(){
+    $("#nameValidation").text("");
+	$("#inputName").removeClass("is-invalid");
+	$("#lastNameValidation").text("");
+	$("#inputLastName").removeClass("is-invalid");
+	$("#birthDateValidation").text("");
+	$("#birthdate").removeClass("is-invalid");
+	$("#emailValidation").text("");
+	$("#inputEmail").removeClass("is-invalid");
+	if($("#birthdate").val().localeCompare('') == 0){
+	  var d = null;
+	} else {
+	  var d = moment($("#birthdate").val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
+	}
+
+	console.log(d);
+      $.ajax({
+					type : "POST",
+					url : "editAdmin",
+					data: {
+                        id: Number(id),
+                        firstName: $("#inputName").val(),
+                        lastName: $("#inputLastName").val(),
+                        email: $("#inputEmail").val(),
+                        birthDate: d,
+                        city: $('#selectCity').val(),
+                        role: $('#roleSelect').val()
+                    },
+					success : function(response) {
+					console.log(typeof response)
+					  if(typeof response === "object"){
+                        for(er of response){
+                          if(er.field.localeCompare('firstName') == 0 ){
+                            $("#nameValidation").text(er.defaultMessage);
+                            $("#inputName").addClass("is-invalid");
+                          }
+                          if(er.field.localeCompare('lastName') == 0){
+                            $("#lastNameValidation").text(er.defaultMessage);
+                            $("#inputLastName").addClass("is-invalid");
+                          }
+                          if(er.field.localeCompare('birthDate') == 0){
+                            $("#birthDateValidation").text(er.defaultMessage);
+                            $("#birthdate").addClass("is-invalid");
+                          }
+                          if(er.field.localeCompare('email') == 0){
+                            $("#emailValidation").text(er.defaultMessage);
+                            $("#inputEmail").addClass("is-invalid");
+                          }
+                        }
+                      } else {
+                        window.location.href = '/admins';
+                      }
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+    }
+
+</script>
+</body>
+</html>

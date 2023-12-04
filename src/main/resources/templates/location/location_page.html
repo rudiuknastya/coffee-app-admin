@@ -14,36 +14,35 @@
       <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
           <div class="card py-5 px-5">
-            <form th:action = "@{/admin/locations/{l} (l=${link})}" th:object = "${location}" method="post" class="row g-3" style="color:black;">
+            <form class="row g-3" style="color:black;">
               <div class="col-md-6" >
                 <label for="selectCity" class="form-label">Місто</label>
-                <select class="form-select" aria-label=".form-select-lg example" id="selectCity" th:field = "*{city}">
-                  <option th:each="c : ${cities}" th:value="${c}" th:text="${c}"></option>
+                <select class="form-select" id="selectCity">
                 </select>
-                <div class="text-danger" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></div>
+                <div class="text-danger" id="cityValidation"></div>
               </div>
               <div class="col-md-6" >
                 <label for="inputPhone" class="form-label">Номер телефону</label>
-                <input type="text" class="form-control" id="inputPhone"  th:field = "*{phoneNumber}">
-                <div class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
+                <input type="text" class="form-control inputPhone" id="inputPhone" placeholder="+380994445566" maxlength="20" >
+                <div class="text-danger" id="phoneValidation"></div>
               </div>
               <div>
-                <label for="exampleFormControlTextarea1" class="form-label">Адреса</label>
-                <input class="form-control" id="exampleFormControlTextarea1" th:field = "*{address}">
-                <div class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"> </div>
+                <label for="inputAddress" class="form-label">Адреса</label>
+                <input class="form-control" id="inputAddress" placeholder="вул.Васильківська 5" maxlength="100">
+                <div class="text-danger" id="addressValidation"> </div>
               </div>
               <div class="col-md-6" >
                 <label for="inputCoordinates" class="form-label">Координати</label>
-                <input type="text" class="form-control" id="inputCoordinates"  th:field = "*{coordinates}">
-                <div class="text-danger" th:if="${#fields.hasErrors('coordinates')}" th:errors="*{coordinates}"></div>
+                <input type="text" class="form-control" id="inputCoordinates" maxlength="100">
+                <div class="text-danger" id="coordinatesValidation"></div>
               </div>
               <div class="col-md-6" >
                 <label for="inputWorkingHours" class="form-label">Графік роботи</label>
-                <textarea type="text" class="form-control" id="inputWorkingHours" rows="2"  th:field = "*{workingHours}"></textarea>
-                <div class="text-danger" th:if="${#fields.hasErrors('workingHours')}" th:errors="*{workingHours}"></div>
+                <textarea type="text" class="form-control" id="inputWorkingHours" rows="2" maxlength="100"></textarea>
+                <div class="text-danger" id="workingValidation"></div>
               </div>
-              <div class="col-md-12 text-center mt-5">
-                <button type="submit" class="btn btn-primary">Зберегти</button>
+              <div class="col-md-12 mt-5 d-flex justify-content-end">
+                <button type="button" class="btn btn-primary" onclick="save()">Зберегти</button>
               </div>
             </form>
           </div>
@@ -59,6 +58,130 @@
 <script th:src="@{/assets/vendor/libs/hammer/hammer.js}"></script>
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
+<script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
+<script th:src="@{/assets/vendor/libs/cleavejs/cleave.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/i18n/uk.js"></script>
+<script th:inline="javascript">
+  var link = [[${link}]];
+  var id = null;
+  $(document).ready(function(){
+      new Cleave('.inputPhone', {
+        numericOnly: true,
+        blocks: [0, 15],
+        delimiters: ["+"]
+    });
+        $('#selectCity').select2({
+        language: "uk",
+        placeholder: "Оберіть місто",
+        maximumInputLength: 100,
+            ajax: {
+                type: "GET",
+                url: "/getCitiesForLocations",
+                data: function (params) {
+                    return {
+                        search: params.term,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: $.map(response.content, function (item) {
+                            return {
+                                text: item.city,
+                                id: item.city
+                            }
+                        }),
+                        pagination: {
+                            more: (response.pageable.pageNumber+1)  < response.totalPages
+                        }
+                    };
+                }
 
+            }
+        });
+
+        if(link.localeCompare('saveLocation') != 0){
+          var url = window.location.pathname;
+          id = url.substring(url.lastIndexOf('/') + 1);
+          $.ajax({
+					type : "GET",
+					url : "getLocation/"+id,
+					success : function(response) {
+					    $('#inputCoordinates').val(response.coordinates);
+					    $('#inputAddress').val(response.address);
+					    $('#inputPhone').val(response.phoneNumber);
+                        $('#inputWorkingHours').val(response.workingHours);
+                      var option = new Option(response.city, response.city, true, true);
+                      $('#selectCity').append(option).trigger('change');
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+
+        }
+
+    });
+
+    function save(){
+      $("#addressValidation").text("");
+	  $("#inputAddress").removeClass("is-invalid");
+	  $("#cityValidation").text("");
+	  $("#selectCity").removeClass("is-invalid");
+	  $("#phoneValidation").text("");
+	  $("#inputPhone").removeClass("is-invalid");
+	  $("#workingValidation").text("");
+	  $("#inputWorkingHours").removeClass("is-invalid");
+	  $("#coordinatesValidation").text("");
+	  $("#inputCoordinates").removeClass("is-invalid");
+      $.ajax({
+					type : "POST",
+					url : link,
+					data: {
+					    id: id,
+                        city: $('#selectCity').val(),
+                        address: $("#inputAddress").val(),
+                        phoneNumber: $("#inputPhone").val(),
+                        workingHours: $("#inputWorkingHours").val(),
+                        coordinates: $('#inputCoordinates').val()
+                    },
+					success : function(response) {
+					console.log(typeof response)
+					  if(typeof response === "object"){
+                        for(er of response){
+                          if(er.field.localeCompare('city') == 0 ){
+                            $("#cityValidation").text(er.defaultMessage);
+                            $("#selectCity").addClass("is-invalid");
+                          }
+                          if(er.field.localeCompare('address') == 0){
+                            $("#addressValidation").text(er.defaultMessage);
+                            $("#inputAddress").addClass("is-invalid");
+                          }
+                          if(er.field.localeCompare('phoneNumber') == 0){
+                            $("#phoneValidation").text(er.defaultMessage);
+                            $("#inputPhone").addClass("is-invalid");
+                          }
+                          if(er.field.localeCompare('workingHours') == 0){
+                            $("#workingValidation").text(er.defaultMessage);
+                            $("#inputWorkingHours").addClass("is-invalid");
+                          }
+                          if(er.field.localeCompare('coordinates') == 0){
+                            $("#coordinatesValidation").text(er.defaultMessage);
+                            $("#inputCoordinates").addClass("is-invalid");
+                          }
+                        }
+                      } else {
+                        window.location.href = '/locations';
+                      }
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+
+    }
+</script>
 </body>
 </html>

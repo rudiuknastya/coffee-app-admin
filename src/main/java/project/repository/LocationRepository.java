@@ -5,22 +5,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import project.entity.Location;
 
-public interface LocationRepository extends JpaRepository<Location, Long>, JpaSpecificationExecutor<Location> {
-    interface Spec{
-        static Specification<Location> byAddressLike(String addressPattern){
-            return (root, query, builder) ->
-                    builder.like(builder.upper(root.get("address")), "%"+addressPattern.toUpperCase()+"%");
-        }
-        static Specification<Location> byCity(String city){
-            return (root, query, builder) ->
-                    builder.equal(root.get("city"), city);
-        }
-        static Specification<Location> byDeleted(){
-            return (root, query, builder) ->
-                    builder.equal(root.get("deleted"), false);
-        }
+import java.util.Optional;
 
-    }
+public interface LocationRepository extends JpaRepository<Location, Long>, JpaSpecificationExecutor<Location> {
+    Optional<Location> findByPhoneNumber(String number);
+    @Query(value = "select count(id) from location where deleted = 0", nativeQuery = true)
+    Long findLocationCount();
+
 }

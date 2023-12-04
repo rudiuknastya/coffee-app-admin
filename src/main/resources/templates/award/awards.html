@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      class="light-style layout-navbar-fixed layout-menu-fixed"
+      dir="ltr"
+      data-theme="theme-default"
+      data-template="vertical-menu-template-no-customizer" >
+<head th:replace="~{fragments :: head}"></head>
+<body>
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+        <aside th:replace="~{fragments :: sidebar(${pageNum})}"></aside>
+        <div class="layout-page">
+            <nav th:replace="~{fragments :: navbar}"></nav>
+            <div class="content-wrapper">
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <div class="card py-5 px-5">
+                        <h4>Нагороди</h4>
+                        <div class="row d-flex justify-content-between mb-4">
+                            <div class="col-12">
+                                <input class="form-control" type="search" id="searchInput" placeholder="Пошук за номером телефону" aria-label="Search" maxlength="100">
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h4>Ви впевнені що хочете видалити цей елемент?</h4>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger" onclick="deleteAward()">Видалити</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form id="editForm" class="row g-3">
+                                            <div class="col-md-6" >
+                                                <label for="selectProduct" class="form-label">Товар</label>
+                                                <select class="select2 form-select" name="editSelectAdType" id="selectProduct">
+<!--                                                    <option th:each="p : ${products}" th:value="${p.id}" th:text="${p.name}"></option>-->
+                                                </select>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+                                        <button type="button" class="btn btn-primary" onclick="edit()">Зберегти</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Ім'я</th>
+                                    <th>Номер телефону</th>
+                                    <th>Товар</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody id = "myTable">
+                                </tbody>
+                            </table>
+                            <div class="d-flex justify-content-between">
+                                <div class="col-4 mt-4" id="paginationElements"></div>
+                                <ul class="pagination mt-4 justify-content-end"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+<script th:src="@{/assets/vendor/libs/hammer/hammer.js}"></script>
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<script th:src="@{/assets/js/main.js}"></script>
+<script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
+<script th:src="@{/assets/js/forms-selects.js}"></script>
+<script>
+    $(document).ready(function(){
+        getAwards(0);
+    });
+    var paginationType;
+    var data = "";
+	function getAwards(currentPage) {
+		$.ajax({
+					type : "GET",
+					url : "getAwards",
+					data: {
+                        page: currentPage
+                    },
+					success : function(response) {
+						$('.tr').remove();
+						$('ul.pagination li').remove();
+						data = response.content
+						for (i = 0; i < data.length; i++) {
+							$("#myTable")
+									.append(
+											'<tr class="tr"> <td>'
+													+ data[i].userName
+													+ '</td> <td>'
+													+ data[i].phoneNumber
+													+ '</td> <td>'
+													+ data[i].productName
+													+ '</td> <td><button type="button" class="btn btn-primary" title="Редагувати" onclick="openEditModal('
+													+ data[i].userId +','+ data[i].productId
+													+ ');"><i class="ti ti-pencil"></i></button> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
+													+ data[i].userId +','+ data[i].productId
+													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
+
+						}
+
+                              paginationType = 1;
+                              buildPagination(response);
+
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+	}
+	function buildPagination(response) {
+		totalPages = response.totalPages;
+		var pageNumber = response.pageable.pageNumber;
+        if(totalPages > 1){
+		var prev = '';
+
+			if(pageNumber !== 0) {
+                prev = '<li class="page-item prev"><a class="page-link waves-effect" id="prev" href="javascript:void(0);"><i class="ti ti-chevron-left ti-xs"></i></a></li>';
+			} else {
+                prev = '<li class="page-item prev disabled"><a class="page-link waves-effect" href="javascript:void(0);"><i class="ti ti-chevron-left ti-xs"></i></a></li>';
+		    }
+
+
+		var next = '';
+
+			if(pageNumber !== totalPages - 1) {
+				next = '<li class="page-item next"><a class="page-link waves-effect" id="next" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
+			} else {
+                next = '<li class="page-item next disabled"><a class="page-link waves-effect" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
+		    }
+
+       var pages = '';
+       var dots = '<li class="page-item disabled"><a class="page-link waves-effect" href="javascript:void(0);"> ... </a></li>';
+       if(pageNumber < 3){
+            for(var i = 1; i <= 5; i++){
+                if(i <= totalPages) {
+                    if(pageNumber+1 !== i){
+                        pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+                    } else {
+                        pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+                    }
+                }
+            }
+            if(totalPages > 6){
+                pages += dots;
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+totalPages+'</a></li>';
+            }
+
+       } else if (3 > totalPages - 1 - pageNumber) {
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
+            if(totalPages > 6){
+                pages += dots
+            }
+            for(var i = totalPages - 4; i <= totalPages; i++){
+                if(i > 1 ){
+                    if(pageNumber+1 !== i){
+                        pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+                    } else {
+                        pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+                    }
+                }
+            }
+
+       } else {
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
+            pages += dots
+
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+pageNumber+'</a></li>';
+            pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+(pageNumber+1)+'</a></li>';
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+(pageNumber+2)+'</a></li>';
+
+            pages += dots;
+            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+totalPages+'</a></li>';
+       }
+
+		pages = prev + pages + next;
+        $("#paginationElements").text("Показано "+response.numberOfElements+" з "+response.size+" елементів");
+		$("ul.pagination").append(pages);
+		} else {
+            $("#paginationElements").text("")
+            if(response.numberOfElements == 0){
+                $("#myTable").append('<tr class="tr"><td colspan="4" class="text-center">Дані не знайдено</td>></tr>')
+            }
+		}
+	}
+
+	$(document).on("click", "ul.pagination li a", function() {
+	    let val = $(this).text();
+	    let id = $(this).attr('id');
+        if(id === "prev"){
+            let activeValue = parseInt($("ul.pagination li.active").text());
+            if(paginationType === 1){
+                getAwards(activeValue-2);
+            }
+            if(paginationType === 2){
+                search(activeValue-2);
+            }
+        } else if (id === "next"){
+            let activeValue = parseInt($("ul.pagination li.active").text());
+            if(paginationType === 1){
+                getAwards(activeValue);
+            }
+            if(paginationType === 2){
+                search(activeValue);
+            }
+        } else {
+            let currentPage = parseInt(val - 1);
+            if(paginationType === 1){
+                getAwards(currentPage);
+            }
+            if(paginationType === 2){
+                search(currentPage);
+            }
+        }
+	});
+    var user;
+    var product;
+
+	function openDeleteModal(userId, productId){
+	    user = userId;
+        product = productId;
+        $('#deleteModal').modal('show');
+	}
+	function deleteAward(){
+        $.ajax({
+					type : "GET",
+					url : "deleteAward",
+					data: {
+                        userId: user,
+                        productId: product
+                    },
+					success : function(response) {
+					    $('#deleteModal').modal('hide');
+					    getAwards(0);
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+	}
+
+	function openEditModal(userId, productId){
+    user = userId;
+    product = productId;
+    $('#selectProduct').select2({
+            dropdownParent: $("#editModal"),
+            maximumInputLength: 100,
+            ajax: {
+                type: "get",
+                url: "getProductsForAward",
+                data: function (params) {
+                    return {
+                        search: params.term,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: $.map(response.content, function (item, i) {
+                        console.log(i)
+                            return {
+                                text: item.name,
+                                id: item.id,
+                            }
+                        }),
+                        pagination: {
+                            more: (response.pageable.pageNumber+1)  < response.totalPages
+                        }
+                    };
+                }
+            }
+        });
+
+        var productSelect = $('#selectProduct');
+        $.ajax({
+            type: 'GET',
+            url: 'getProductForAward/' + productId
+        }).then(function (data) {
+            var option = new Option(data.name, data.id, true, true);
+            productSelect.append(option).trigger('change');
+
+            productSelect.trigger({
+                type: 'select2:select',
+                params: {
+                    data: data
+                }
+            });
+        });
+        $('#editModal').modal('show');
+    }
+    function edit(){
+        $.ajax({
+					type : "POST",
+					url : "editAward",
+					data: {
+                        userId: user,
+                        newProductId: $('#selectProduct').val(),
+                        oldProductId: product
+                    },
+					success : function(response) {
+					    $('#editModal').modal('hide');
+					    getAwards(0);
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+    }
+
+    var searchValue;
+	$('#searchInput').on("change", function(){
+       searchValue = $(this).val();
+       search(0);
+    });
+    function search(currentPage){
+        $.ajax({
+					type : "GET",
+					url : "searchAwards",
+					data: {
+					    page: currentPage,
+                        phone: searchValue
+                    },
+					success : function(response) {
+					    $('.tr').remove();
+						$('ul.pagination li').remove();
+						data = response.content
+						for (i = 0; i < data.length; i++) {
+							$("#myTable")
+									.append(
+											'<tr class="tr"> <td>'
+													+ data[i].userName
+													+ '</td> <td>'
+													+ data[i].phoneNumber
+													+ '</td> <td>'
+													+ data[i].productName
+													+ '</td> <td><button type="button" class="btn btn-primary" title="Редагувати" onclick="openEditModal('
+													+ data[i].userId +','+ data[i].productId
+													+ ');"><i class="ti ti-pencil"></i></button> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
+													+ data[i].userId +','+ data[i].productId
+													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
+
+						}
+
+                              paginationType = 2;
+                              buildPagination(response);
+
+
+					},
+					error : function(err) {
+						alert("error is" + err)
+					}
+				});
+    }
+
+</script>
+</html>

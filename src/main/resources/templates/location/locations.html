@@ -16,32 +16,26 @@
                     <div class="card py-5 px-5">
                         <h4>Філіали</h4>
                         <div class="row d-flex justify-content-between mb-4">
-<!--                            <form class="col-5 d-flex" role="search">-->
                             <div class="col-5">
-                                <input class="form-control me-2" type="search" id="searchInput" placeholder="Введіть адресу" aria-label="Search">
+                                <input class="form-control me-2" type="search" id="searchInput" placeholder="Пошук за адресою" aria-label="Search" maxlength="100">
                             </div>
-<!--                                <button class="btn btn-outline-primary" id="search" type="submit">Пошук</button>-->
-<!--                            </form>-->
                             <div class="col-3">
-                                <select class="select2 form-select" id="citySelect" aria-label="Default select example">
-                                    <option selected>Місто</option>
-                                    <option th:each="c : ${cities}" th:value="${c}" th:text="${c}"></option>
+                                <select class="form-select" id="selectCity" aria-label="Default select example">
                                 </select>
                             </div>
-                            <a th:href="@{/admin/locations/new}" type="button" class="btn btn-label-primary col-3 me-3"><i class="ti ti-plus"></i>Створити філіал</a>
+                            <a th:href="@{/locations/new}" type="button" class="btn btn-label-primary col-3 me-3"><i class="ti ti-plus"></i>Створити філіал</a>
                         </div>
 
-                        <div class="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                            <div class="modal-dialog">
+                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <button type="button" class="btn-close" onclick="closeModal()" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <h4>Ви впевнені що хочете видалити цей елемент?</h4>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" onclick="closeModal()" data-bs-dismiss="modal">Закрити</button>
                                         <button type="button" class="btn btn-danger" onclick="deleteLocation()">Видалити</button>
                                     </div>
                                 </div>
@@ -60,19 +54,12 @@
                             </tr>
                             </thead>
                             <tbody id = "locationsTable">
-<!--                            <tr th:each = "location: ${locations}">-->
-<!--                                <td th:text="${location.city}"></td>-->
-<!--                                <td th:text="${location.address}"></td>-->
-<!--                                <td th:text="${location.phoneNumber}"></td>-->
-<!--                                <td>-->
-<!--                                    <a th:href="@{/admin/locations/edit/{id}(id=${location.id})}" role="button" class="btn btn-primary"><i class="ti ti-pencil"></i></a>-->
-<!--                                    <a href="@{/admin/users/delete/{id}(id=${user.id})}" role="button" class="btn btn-danger"><i class="ti ti-trash"></i></a>-->
-<!--                                </td>-->
-<!--                            </tr>-->
-
                             </tbody>
                         </table>
-                        <ul class="pagination mt-4 justify-content-end"></ul>
+                        <div class="d-flex justify-content-between">
+                            <div class="col-4 mt-4" id="paginationElements"></div>
+                            <ul class="pagination mt-4 col-8 justify-content-end"></ul>
+                        </div>
                     </div>
                     </div>
                 </div>
@@ -84,13 +71,43 @@
 <script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
 <script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
 <script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
-<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
+<!--<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>-->
 <script th:src="@{/assets/vendor/libs/hammer/hammer.js}"></script>
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
-
+<script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
+<script th:src="@{/assets/js/forms-selects.js}"></script>
 <script>
     $(document).ready(function(){
+        $('#selectCity').select2({
+            placeholder: "Оберіть місто",
+            allowClear: true,
+            maximumInputLength: 100,
+            ajax: {
+                type: "get",
+                url: "/getCitiesForLocations",
+                data: function (params) {
+                    return {
+                        search: params.term,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: $.map(response.content, function (item) {
+                            return {
+                                text: item.city,
+                                id: item.city
+                            }
+                        }),
+                        pagination: {
+                            more: (response.pageable.pageNumber+1)  < response.totalPages
+                        }
+                    };
+                }
+
+            }
+        });
         getLocations(0);
     });
     var paginationType;
@@ -115,7 +132,7 @@
 													+ data[i].address
 													+ '</td> <td>'
 													+ data[i].phoneNumber
-													+ '</td> <td><a th:href="@{/admin/locations/edit/'+data[i].id+'}" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openModal('
+													+ '</td> <td><a href="/locations/edit/'+data[i].id+'" type="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 
@@ -197,14 +214,18 @@
        }
 
 		pages = prev + pages + next;
-
+        $("#paginationElements").text("Показано "+response.numberOfElements+" з "+response.size+" елементів");
 		$("ul.pagination").append(pages);
+		}else {
+            $("#paginationElements").text("")
+            if(response.numberOfElements == 0){
+                $("#locationsTable").append('<tr class="tr"><td colspan="4" class="text-center">Дані не знайдено</td>></tr>')
+            }
 		}
 	}
 	$(document).on("click", "ul.pagination li a", function() {
 	    let val = $(this).text();
-	    let id = $(this).attr('id')
-	    console.log(paginationType);
+	    let id = $(this).attr('id');
         if(id === "prev"){
             let activeValue = parseInt($("ul.pagination li.active").text());
             if(paginationType === 1){
@@ -234,12 +255,8 @@
 	});
     var locationId;
 	function openModal(id){
-	    locationId = id
-	    console.log(locationId)
+	    locationId = id;
         $('#deleteModal').modal('show');
-	}
-	function closeModal(){
-	    $('#deleteModal').modal('hide');
 	}
 	function deleteLocation(){
         $.ajax({
@@ -258,16 +275,15 @@
 					}
 				});
 	}
+
     var searchValue;
     $('#searchInput').on("change", function(){
         searchValue = $(this).val();
         searchAndFilter(0);
     });
     var selectValue;
-    $('#citySelect').on("change", function(){
+    $('#selectCity').on("change", function(){
         selectValue = $(this).val();
-        console.log(searchValue);
-        console.log(selectValue);
         searchAndFilter(0);
     });
 
@@ -293,7 +309,7 @@
 													+ data[i].address
 													+ '</td> <td>'
 													+ data[i].phoneNumber
-													+ '</td> <td><a th:href="@{/admin/locations/edit/'+data[i].id+'}" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openModal('
+													+ '</td> <td><a href="/locations/edit/'+data[i].id+'" role="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 

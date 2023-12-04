@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      class="light-style layout-navbar-fixed layout-menu-fixed"
+      dir="ltr"
+      data-theme="theme-default"
+      data-template="vertical-menu-template-no-customizer" >
+<head th:replace="~{fragments :: head}"></head>
+<body>
+<div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+        <aside th:replace="~{fragments :: sidebar(${pageNum})}"></aside>
+        <div class="layout-page">
+            <nav th:replace="~{fragments :: navbar}"></nav>
+            <div class="content-wrapper">
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <div class="card py-5 px-5">
+                    <div class="row">
+                        <div class="col-lg-3 col-sm-6 mb-4">
+                            <div class="card">
+                                <div class="card-body d-flex justify-content-between align-items-center">
+                                    <div class="card-title mb-0">
+                                        <h5 id="users" class="mb-0 me-2"></h5>
+                                        <small>Користувачів</small>
+                                    </div>
+                                    <div class="card-icon">
+                                    <span class="badge bg-label-primary rounded-pill p-2">
+                                      <i class="ti ti-user ti-sm"></i>
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-sm-6 mb-4">
+                            <div class="card">
+                                <div class="card-body d-flex justify-content-between align-items-center">
+                                    <div class="card-title mb-0">
+                                        <h5 id="locations" class="mb-0 me-2"></h5>
+                                        <small>Філіалів</small>
+                                    </div>
+                                    <div class="card-icon">
+                                    <span class="badge bg-label-success rounded-pill p-2">
+                                      <i class="ti ti-map-pin ti-sm"></i>
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-sm-6 mb-4">
+                            <div class="card">
+                                <div class="card-body d-flex justify-content-between align-items-center">
+                                    <div class="card-title mb-0">
+                                        <h5 id="products" class="mb-0 me-2"></h5>
+                                        <small>Товарів</small>
+                                    </div>
+                                    <div class="card-icon">
+                                    <span class="badge bg-label-danger rounded-pill p-2">
+                                      <i class="ti ti-coffee ti-sm"></i>
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-sm-6 mb-4">
+                            <div class="card">
+                                <div class="card-body d-flex justify-content-between align-items-center">
+                                    <div class="card-title mb-0">
+                                        <h5 id="orders" class="mb-0 me-2"></h5>
+                                        <small>Замовлень</small>
+                                    </div>
+                                    <div class="card-icon">
+                                    <span class="badge bg-label-warning rounded-pill p-2">
+                                      <i class="ti ti-shopping-cart ti-sm"></i>
+                                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                        <div class="col-12 mb-4">
+                            <div class="card">
+                                <div class="card-header header-elements">
+                                    <div>
+                                        <h5 class="card-title mb-0">Середня ціна замовлення на місяць</h5>
+                                    </div>
+                                </div>
+                                <div class="card-body pt-2">
+                                    <canvas id="lineChart" class="chartjs" data-height="500"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    <div class="row">
+
+                        <div class="col-xl-8 col-12 mb-4">
+                            <div class="card">
+                                <div class="card-header header-elements">
+                                    <div class="d-flex flex-column">
+                                        <h5 class="card-title mb-0">Середня кількість замовлень на місяць</h5>
+                                    </div>
+
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="horizontalBarChart" class="chartjs" height="207" data-height="400"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-12 mb-4">
+                            <div class="card">
+                                <h5 class="card-header mb-2">Мова користувачів</h5>
+                                <div class="card-body">
+                                    <canvas id="doughnutChart" class="chartjs mb-5" data-height="350"></canvas>
+                                    <ul class="doughnut-legend d-flex justify-content-around ps-0 mb-2 mt-4 pt-1">
+                                        <li class="ct-series-0 d-flex flex-column me-3">
+                                            <h6 class="mb-0 fw-bold">Українська</h6>
+                                            <span
+                                                    class="badge badge-dot my-2 cursor-pointer rounded-pill mx-auto"
+                                                    style="background-color: rgb(102, 110, 232); width: 35px; height: 6px"
+                                            ></span>
+                                            <div id="ukrPercentage" class="text-muted mx-auto">80 %</div>
+                                        </li>
+                                        <li class="ct-series-1 d-flex flex-column me-3">
+                                            <h6 class="mb-0 fw-bold">Ангійська</h6>
+                                            <span
+                                                    class="badge badge-dot my-2 cursor-pointer rounded-pill mx-auto"
+                                                    style="background-color: rgb(40, 208, 148); width: 35px; height: 6px"
+                                            ></span>
+                                            <div id="engPercentage" class="text-muted mx-auto">10 %</div>
+                                        </li>
+                                        <li class="ct-series-2 d-flex flex-column">
+                                            <h6 class="mb-0 fw-bold">Іспанська</h6>
+                                            <span
+                                                    class="badge badge-dot my-2 cursor-pointer rounded-pill mx-auto"
+                                                    style="background-color: rgb(253, 172, 52); width: 35px; height: 6px"
+                                            ></span>
+                                            <div id="spaPercentage" class="text-muted mx-auto">10 %</div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
+<script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
+<script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
+<script th:src="@{/assets/vendor/libs/hammer/hammer.js}"></script>
+<script th:src="@{/assets/vendor/js/menu.js}"></script>
+<script th:src="@{/assets/js/main.js}"></script>
+<script th:src="@{/assets/vendor/libs/chartjs/chartjs.js}"></script>
+<script>
+    $(document).ready(function(){
+        $.ajax({
+			type : "GET",
+			url : "/getUsersCount",
+			success : function(response) {
+			    $("#users").text(response);
+			},
+            error : function(err) {
+			  alert("error is" + err)
+			}
+		});
+		$.ajax({
+			type : "GET",
+			url : "/getLocationCount",
+			success : function(response) {
+			    $("#locations").text(response);
+			},
+            error : function(err) {
+			  alert("error is" + err)
+			}
+		});
+		$.ajax({
+			type : "GET",
+			url : "/getProductsCount",
+			success : function(response) {
+			    $("#products").text(response);
+			},
+            error : function(err) {
+			  alert("error is" + err)
+			}
+		});
+		$.ajax({
+			type : "GET",
+			url : "/getOrdersCount",
+			success : function(response) {
+			    $("#orders").text(response);
+			},
+            error : function(err) {
+			  alert("error is" + err)
+			}
+		});
+
+        $.ajax({
+			type : "GET",
+			url : "/getOrderArgPriceForMonth",
+			success : function(response) {
+                new Chart($("#lineChart"), {
+                    type: 'line',
+                    data: {
+                      labels: ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'],
+                      datasets: [{
+                        data: response,
+                        borderColor: '#ea5455',
+                        tension: 0.5,
+                        pointStyle: 'circle',
+                        backgroundColor: '#ea5455',
+                        fill: false,
+                        pointRadius: 1,
+                        pointHoverRadius: 5,
+                        pointHoverBorderWidth: 5,
+                        pointBorderColor: 'transparent',
+                        pointHoverBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#ea5455'
+                      }]
+                    },
+                    options: {
+                        plugins: {
+                          tooltip: {
+                            // Updated default tooltip UI
+                            rtl: isRtl,
+                            backgroundColor: '#fff',
+                            titleColor: '#5d596c',
+                            bodyColor: '#6f6b7d',
+                            borderWidth: 1,
+                            borderColor: '#dbdade'
+                          },
+                          legend: {
+                          display: false
+                          }
+                        }
+                    }
+                });
+
+			},
+			error : function(err) {
+			  alert("error is" + err)
+			}
+		});
+
+        $.ajax({
+			type : "GET",
+			url : "/getUserLanguagePercentages",
+			success : function(response) {
+			$("#ukrPercentage").text(response[0]+'%');
+			$("#engPercentage").text(response[1]+'%');
+			$("#spaPercentage").text(response[2]+'%');
+			    new Chart($('#doughnutChart'), {
+                  type: 'doughnut',
+                  data: {
+                    labels: ['Українська', 'Англійська', 'Іспанська'],
+                    datasets: [
+                      {
+                        data: response,
+                        backgroundColor: ['#7367f0', '#28dac6', '#FDAC34'],
+                        borderWidth: 0,
+                        pointStyle: 'rectRounded'
+                      }
+                    ]
+                  },
+                  options: {
+                    responsive: true,
+                    animation: {
+                      duration: 500
+                    },
+                    cutout: '68%',
+                    plugins: {
+                      legend: {
+                        display: false
+                      },
+                      tooltip: {
+                        callbacks: {
+                          label: function (context) {
+                            const label = context.labels || '',
+                              value = context.parsed;
+                            const output = ' ' + label + ' : ' + value + ' %';
+                            return output;
+                          }
+                        },
+                        // Updated default tooltip UI
+                        rtl: isRtl,
+                        backgroundColor: '#fff',
+                        titleColor: '#5d596c',
+                        bodyColor: '#6f6b7d',
+                        borderWidth: 1,
+                        borderColor: '#dbdade'
+                      }
+                    }
+                  }
+                });
+			},
+			error : function(err) {
+			  alert("error is" + err)
+			}
+		});
+		$.ajax({
+			type : "GET",
+			url : "/getOrdersCountInMonth",
+			success : function(response) {
+			    new Chart($('#horizontalBarChart'), {
+                  type: 'bar',
+                  data: {
+                    labels: ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'],
+                    datasets: [
+                      {
+                        data: response,
+                        backgroundColor: '#00cfe8',
+                        borderColor: 'transparent'
+                      }
+                    ]
+                  },
+                  options: {
+                    indexAxis: 'y',
+                    animation: {
+                      duration: 500
+                    },
+                    elements: {
+                      bar: {
+                        borderRadius: {
+                          topRight: 15,
+                          bottomRight: 15
+                        }
+                      }
+                    },
+                    plugins: {
+                      tooltip: {
+                        rtl: isRtl,
+                        backgroundColor: '#fff',
+                        titleColor: '#5d596c',
+                        bodyColor: '#6f6b7d',
+                        borderWidth: 1,
+                        borderColor: '#dbdade'
+                      },
+                      legend: {
+                        display: false
+                      }
+                    },
+                    scales: {
+                      x: {
+                        min: 0,
+                        grid: {
+                          color: '#dbdade',
+                          borderColor: '#dbdade'
+                        },
+                        ticks: {
+                          color: '#a5a3ae'
+                        }
+                      },
+                      y: {
+                        grid: {
+                          borderColor: '#dbdade',
+                          display: false,
+                          drawBorder: false
+                        },
+                        ticks: {
+                          color: '#a5a3ae'
+                        }
+                      }
+                    }
+                  }
+                });
+			},
+            error : function(err) {
+			  alert("error is" + err)
+			}
+		});
+
+
+    });
+</script>
+</html>
