@@ -3,19 +3,25 @@ package project.serviceImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+import project.entity.Admin;
 import project.entity.PasswordResetToken;
+import project.repository.AdminRepository;
 import project.repository.PasswordResetTokenRepository;
 import project.service.PasswordResetTokenService;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class PasswordResetTokenServiceImpl implements PasswordResetTokenService {
     private final PasswordResetTokenRepository passwordResetTokenRepository;
+    private final AdminRepository adminRepository;
 
-    public PasswordResetTokenServiceImpl(PasswordResetTokenRepository passwordResetTokenRepository) {
+    public PasswordResetTokenServiceImpl(PasswordResetTokenRepository passwordResetTokenRepository, AdminRepository adminRepository) {
         this.passwordResetTokenRepository = passwordResetTokenRepository;
+        this.adminRepository = adminRepository;
     }
+
     private Logger logger = LogManager.getLogger("serviceLogger");
 
     @Override
@@ -46,5 +52,21 @@ public class PasswordResetTokenServiceImpl implements PasswordResetTokenService 
         PasswordResetToken passwordResetToken = passwordResetTokenRepository.findByToken(token);
         logger.info("getPasswordResetToken() - Password reset token was found");
         return passwordResetToken;
+    }
+
+    @Override
+    public String createAndSavePasswordResetToken(Admin admin) {
+        logger.info("createAndSavePasswordResetToken() - Creating and saving password reset token");
+        String token = UUID.randomUUID().toString();
+        if(admin.getPasswordResetToken() != null){
+            admin.getPasswordResetToken().setToken(token);
+            admin.getPasswordResetToken().setExpirationDate();
+            adminRepository.save(admin);
+        } else {
+            PasswordResetToken passwordResetToken = new PasswordResetToken(token, admin);
+            passwordResetTokenRepository.save(passwordResetToken);
+        }
+        logger.info("createAndSavePasswordResetToken() - Password reset token was created and saved");
+        return token;
     }
 }

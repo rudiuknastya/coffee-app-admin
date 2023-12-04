@@ -77,15 +77,7 @@ public class SecurityController {
         if(admin == null){
             return "wrong";
         }
-        String token = UUID.randomUUID().toString();
-        if(admin.getPasswordResetToken() != null){
-            admin.getPasswordResetToken().setToken(token);
-            admin.getPasswordResetToken().setExpirationDate();
-            adminService.saveAdmin(admin);
-        } else {
-            PasswordResetToken passwordResetToken = new PasswordResetToken(token, admin);
-            passwordResetTokenService.savePasswordResetToken(passwordResetToken);
-        }
+        String token = passwordResetTokenService.createAndSavePasswordResetToken(admin);
         mailService.sendToken(token,email);
         return "success";
     }
