@@ -96,7 +96,7 @@ var root = myArray[1];
             maximumInputLength: 100,
             ajax: {
                 type: "get",
-                url: root+"/getCategoriesForProducts",
+                url: "/"+root+"/getCategoriesForProducts",
                 data: function (params) {
                     return {
                         search: params.term,
@@ -127,7 +127,7 @@ var root = myArray[1];
             maximumInputLength: 100,
             ajax: {
                 type: "get",
-                url: root+"/getAdTypesForAdditives",
+                url: "/"+root+"/getAdTypesForAdditives",
                 data: function (params) {
                     return {
                         search: params.term,

@@ -1,7 +1,7 @@
 secret-key: ${secretKey}
 sender: ${sender}
 upload:
-  path: /home/avada/web/slj.avada-media-dev1.od.ua/projects/A.Rudiuk/Coffee-app
+  path: /home/avada/web/slj.avada-media-dev1.od.ua/projects/A.Rudiuk/Coffee-app/uploads
 
 spring:
   mail:
