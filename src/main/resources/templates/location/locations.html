@@ -85,7 +85,7 @@
             maximumInputLength: 100,
             ajax: {
                 type: "get",
-                url: "/getCitiesForLocations",
+                url: "getCitiesForLocations",
                 data: function (params) {
                     return {
                         search: params.term,
@@ -132,7 +132,7 @@
 													+ data[i].address
 													+ '</td> <td>'
 													+ data[i].phoneNumber
-													+ '</td> <td><a href="/locations/edit/'+data[i].id+'" type="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openModal('
+													+ '</td> <td><a href="locations/edit/'+data[i].id+'" type="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 

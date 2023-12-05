@@ -39,7 +39,7 @@ public class LocationController {
         Pageable pageable = PageRequest.of(page,pageSize);
         return locationService.getLocationsByPage(pageable);
     }
-    @GetMapping("/getCitiesForLocations")
+    @GetMapping("/locations/getCitiesForLocations")
     public @ResponseBody Page<City> getCitiesForLocations(@RequestParam(value = "search", required = false)String city, @RequestParam("page")int page){
         Pageable pageable = PageRequest.of(page-1,pageSize);
         return cityService.getCities(pageable, city);
