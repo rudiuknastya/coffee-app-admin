@@ -87,8 +87,8 @@
 var link = [[${link}]];
 var id = '';
 const currentUrl = window.location.href;
-const myArray = text.split("/");
-var root = myArray[0];
+const myArray = currentUrl.split("/");
+var root = myArray[1];
   $(document).ready(function(){
         $('#selectCategory').select2({
             language: "uk",
