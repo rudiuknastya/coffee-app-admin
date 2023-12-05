@@ -40,7 +40,6 @@ public class ProductController {
         this.productService = productService;
         this.categoryService = categoryService;
     }
-    String uploadPath = "C:\\Users\\Anastassia\\IdeaProjects\\Coffee-app-admin\\uploads";
     private int pageSize = 1;
     @GetMapping("/products")
     public String products(Model model){

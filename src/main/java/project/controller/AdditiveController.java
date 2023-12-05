@@ -31,7 +31,7 @@ public class AdditiveController {
         this.additiveTypeService = additiveTypeService;
     }
 
-    private int pageSize = 2;
+    private int pageSize = 1;
     @GetMapping("/additives")
     public String additives(Model model){
         model.addAttribute("pageNum", 5);

@@ -22,11 +22,10 @@ import java.util.List;
 @Controller
 public class CategoryController {
     private final CategoryService categoryService;
-
     public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
     }
-
+    private int pageSize = 1;
     @GetMapping("/categories")
     public String categories(Model model){
         model.addAttribute("pageNum", 2);
@@ -34,7 +33,7 @@ public class CategoryController {
     }
     @GetMapping("/getCategories")
     public @ResponseBody Page<CategoryDTO> getCategories(@RequestParam("page")int page){
-        Pageable pageable = PageRequest.of(page,1);
+        Pageable pageable = PageRequest.of(page,pageSize);
         return categoryService.getAllCategories(pageable);
     }
     @PostMapping("/saveCategory")
@@ -60,7 +59,7 @@ public class CategoryController {
     }
     @GetMapping("/searchCategories")
     public @ResponseBody Page<CategoryDTO> searchCategories(@RequestParam("page")int page, @RequestParam("name")String name){
-        Pageable pageable = PageRequest.of(page,1);
+        Pageable pageable = PageRequest.of(page,pageSize);
         return categoryService.searchCategories(name, pageable);
     }
     @GetMapping("/deleteCategory/{id}")
