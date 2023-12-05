@@ -79,6 +79,9 @@
 <script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
 <script>
+const currentUrl = window.location.href;
+const myArray = text.split("/");
+root = myArray[0];
 $(document).ready(function(){
         $('#categorySelect').select2({
             placeholder: "Оберіть категорію",
@@ -86,7 +89,7 @@ $(document).ready(function(){
             maximumInputLength: 100,
             ajax: {
                 type: "get",
-                url: "../getCategoriesForProducts",
+                url: "getCategoriesForProducts",
                 data: function (params) {
                     return {
                         search: params.term,

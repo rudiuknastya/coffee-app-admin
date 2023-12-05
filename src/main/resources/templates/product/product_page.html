@@ -86,6 +86,9 @@
 <script th:inline="javascript">
 var link = [[${link}]];
 var id = '';
+const currentUrl = window.location.href;
+const myArray = text.split("/");
+root = myArray[0];
   $(document).ready(function(){
         $('#selectCategory').select2({
             language: "uk",
@@ -93,7 +96,7 @@ var id = '';
             maximumInputLength: 100,
             ajax: {
                 type: "get",
-                url: "/getCategoriesForProducts",
+                url: root+"/getCategoriesForProducts",
                 data: function (params) {
                     return {
                         search: params.term,
@@ -124,7 +127,7 @@ var id = '';
             maximumInputLength: 100,
             ajax: {
                 type: "get",
-                url: "/getAdTypesForAdditives",
+                url: root+"/getAdTypesForAdditives",
                 data: function (params) {
                     return {
                         search: params.term,
@@ -243,7 +246,7 @@ var id = '';
                           }
                         }
                       } else {
-                        window.location.href = '/products';
+                        window.location.href = root+'/products';
                       }
 
 					},
