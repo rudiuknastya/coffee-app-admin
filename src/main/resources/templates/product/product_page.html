@@ -88,7 +88,7 @@ var link = [[${link}]];
 var id = '';
 const currentUrl = window.location.href;
 const myArray = currentUrl.split("/");
-var root = myArray[1];
+var root = myArray[3];
   $(document).ready(function(){
         $('#selectCategory').select2({
             language: "uk",
@@ -163,7 +163,7 @@ var root = myArray[1];
 					    $('#inputPrice').val(response.price);
 					    $('#inputDescription').val(response.description);
                         if(response.image != null){
-                          $("#main_image").attr("src", '/uploads/'+response.image);
+                          $("#main_image").attr("src", 'uploads/'+response.image);
                         }
                         if(response.category != null){
                           var option = new Option(response.category.name, response.category.id, true, true);
