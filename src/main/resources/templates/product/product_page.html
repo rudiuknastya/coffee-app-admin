@@ -163,7 +163,7 @@ var root = myArray[3];
 					    $('#inputPrice').val(response.price);
 					    $('#inputDescription').val(response.description);
                         if(response.image != null){
-                          $("#main_image").attr("src", 'uploads/'+response.image);
+                          $("#main_image").attr("src", '/'+root+'/uploads/'+response.image);
                         }
                         if(response.category != null){
                           var option = new Option(response.category.name, response.category.id, true, true);
