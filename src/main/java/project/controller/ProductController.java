@@ -51,7 +51,7 @@ public class ProductController {
         Pageable pageable = PageRequest.of(page, pageSize);
         return productService.getProducts(pageable);
     }
-    @GetMapping("getCategoriesForProducts")
+    @GetMapping("/getCategoriesForProducts")
     public @ResponseBody Page<CategoryNameDTO> getCategoriesForProducts(@RequestParam(value = "search", required = false)String name, @RequestParam("page")int page){
         Pageable pageable = PageRequest.of(page-1, pageSize);
         return categoryService.getCategoriesName(pageable, name);
