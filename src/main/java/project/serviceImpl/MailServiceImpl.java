@@ -55,9 +55,11 @@ public class MailServiceImpl implements MailService {
     }
     private String build(String token, HttpServletRequest httpRequest) {
         Context context = new Context();
-        final String baseUrl = ServletUriComponentsBuilder.fromRequestUri(httpRequest).build().toUriString();
-        logger.info("url: "+baseUrl);
-        String l = baseUrl+"/changePassword?token="+token;
+        final String fullUrl = ServletUriComponentsBuilder.fromRequestUri(httpRequest).build().toUriString();
+        logger.info("url: "+ fullUrl);
+        int in = fullUrl.lastIndexOf("/");
+        String baseUrl = fullUrl.substring(0,in);
+        String l = baseUrl +"/changePassword?token="+token;
         context.setVariable("link", l);
         return templateEngine.process("email/emailTemplate", context);
     }
