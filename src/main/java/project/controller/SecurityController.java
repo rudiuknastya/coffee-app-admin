@@ -1,5 +1,6 @@
 package project.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -76,7 +77,12 @@ public class SecurityController {
         if(email.equals("")){
             return "blank";
         }
-        Admin admin = adminService.getAdminByEmail(email);
+        Admin admin = null;
+        try {
+            admin = adminService.getAdminByEmail(email);
+        }catch (EntityNotFoundException e){
+
+        }
         if(admin == null){
             return "wrong";
         }
