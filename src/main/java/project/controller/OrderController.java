@@ -103,15 +103,15 @@ public class OrderController {
         return "order/order_item";
     }
 
-    @GetMapping("/statistic/getOrderArgPriceForMonth")
+    @GetMapping("/getOrderArgPriceForMonth")
     public @ResponseBody List<BigDecimal> getOrderArgPriceForMonth(){
         return orderService.getOrderAvrgPricesInMonth();
     }
-    @GetMapping("/statistic/getOrdersCount")
+    @GetMapping("/getOrdersCount")
     public @ResponseBody Long getOrdersCount(){
         return orderService.getOrdersCount();
     }
-    @GetMapping("/statistic/getOrdersCountInMonth")
+    @GetMapping("/getOrdersCountInMonth")
     public @ResponseBody List<Long> getOrdersCountInMonth(){
         return orderService.getOrdersCountInMonth();
     }

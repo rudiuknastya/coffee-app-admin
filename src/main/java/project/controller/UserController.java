@@ -105,11 +105,11 @@ public class UserController {
         userService.updateUser(user);
         return null;
     }
-    @GetMapping("/statistic/getUserLanguagePercentages")
+    @GetMapping("/getUserLanguagePercentages")
     public @ResponseBody List<Long> getUserLanguagePercentages(){
         return userService.getLanguagePercentages();
     }
-    @GetMapping("/statistic/getUsersCount")
+    @GetMapping("/getUsersCount")
     public @ResponseBody Long getUsersCount(){
         return userService.getUsersCount();
     }

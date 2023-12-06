@@ -274,7 +274,7 @@ $(document).ready(function(){
 													+ data[i].productName
 													+ '</td> <td>'
 													+ data[i].quantity
-													+ '</td> <td><a href="orderItem/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
+													+ '</td> <td><a href="/'+root+'orderItem/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 
@@ -458,7 +458,7 @@ $(document).ready(function(){
                         status: $('#selectStatus').val()
                     },
 					success : function(response){
-                      window.location.href = '/orders';
+                      window.location.href = "/"+root+'/orders';
 					},
 					error : function(err) {
 						alert("error is" + err)
@@ -562,7 +562,7 @@ $(document).ready(function(){
 													+ data[i].productName
 													+ '</td> <td>'
 													+ data[i].quantity
-													+ '</td> <td><a href="orders/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
+													+ '</td> <td><a href="/'+root+'orderItem/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 
