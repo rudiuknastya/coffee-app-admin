@@ -1,6 +1,7 @@
 package project.controller;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -73,7 +74,7 @@ public class SecurityController {
         }
     }
     @PostMapping("/resetPassword")
-    public @ResponseBody String resetPassword(@RequestParam("email")String email){
+    public @ResponseBody String resetPassword(HttpServletRequest request, @RequestParam("email")String email){
         if(email.equals("")){
             return "blank";
         }
@@ -87,7 +88,7 @@ public class SecurityController {
             return "wrong";
         }
         String token = passwordResetTokenService.createAndSavePasswordResetToken(admin);
-        mailService.sendToken(token,email);
+        mailService.sendToken(token,email,request);
         return "success";
     }
 }
