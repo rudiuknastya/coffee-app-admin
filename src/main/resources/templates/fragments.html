@@ -152,7 +152,7 @@
 
             <!-- User -->
             <li class="nav-item navbar-dropdown dropdown-user dropdown">
-                <a class="nav-link" href="/profile">
+                <a class="nav-link" th:href="@{/profile}">
                     <div class="avatar avatar-online">
                         <img th:src="@{/assets/img/avatars/1.png}" alt class="h-auto rounded-circle" />
                     </div>
@@ -166,7 +166,7 @@
 
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/logout">
+                <a class="nav-link" th:href="@{/logout}">
                     <h3 class="mb-0"><i class="bi bi-box-arrow-right"></i></h3>
                 </a>
             </li>
