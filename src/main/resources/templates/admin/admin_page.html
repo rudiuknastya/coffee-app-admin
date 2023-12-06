@@ -73,6 +73,9 @@
 <script>
 var url = window.location.pathname;
 var id = url.substring(url.lastIndexOf('/') + 1);
+const currentUrl = window.location.href;
+const myArray = currentUrl.split("/");
+var root = myArray[3];
   $(document).ready(function(){
         $('#roleSelect').select2({
             language: "uk",
@@ -199,7 +202,7 @@ var id = url.substring(url.lastIndexOf('/') + 1);
                           }
                         }
                       } else {
-                        window.location.href = '/admins';
+                        window.location.href = '/'+root+'/admins';
                       }
 
 					},
