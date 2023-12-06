@@ -93,6 +93,9 @@
 var orderId = [[${orderId}]];
 var url = window.location.pathname;
 var id = url.substring(url.lastIndexOf('/') + 1);
+const currentUrl = window.location.href;
+const myArray = currentUrl.split("/");
+var root = myArray[3];
 $(document).ready(function(){
          $.ajax({
 			type : "GET",
@@ -120,7 +123,7 @@ $(document).ready(function(){
                     $("#quantityValidation").text(response[0].defaultMessage);
                     $("#inputQuantity").addClass("is-invalid");
                 } else {
-                    window.location.href = '/orders/edit/'+orderId;
+                    window.location.href = "/"+root+'/orders/edit/'+orderId;
                 }
             },
 			error : function(err) {
@@ -134,7 +137,7 @@ $(document).ready(function(){
 	function getOrderItemAdditives(currentPage) {
 		$.ajax({
 					type : "GET",
-					url : "/getOrderItemAdditives/"+id,
+					url : "/"+root+"/getOrderItemAdditives/"+id,
 					data: {
                         page: currentPage
                     },
@@ -279,7 +282,7 @@ $(document).ready(function(){
     additiveId = adId;
         $.ajax({
 					type : "GET",
-					url : "/getOrderAdditive/"+adId,
+					url : "/"+root+"/getOrderAdditive/"+adId,
 					success : function(response) {
 					$("#adType").text(response.additiveTypeName);
 					    $('#selectAdType').select2({
@@ -288,7 +291,7 @@ $(document).ready(function(){
                             maximumInputLength: 100,
                             ajax: {
                                 type: "get",
-                                url: "/getAdditivesForAdditiveTypeForOrder/"+response.additiveTypeId,
+                                url: "/"+root+"/getAdditivesForAdditiveTypeForOrder/"+response.additiveTypeId,
                                 data: function (params) {
                                     return {
                                         search: params.term,
@@ -349,7 +352,7 @@ $(document).ready(function(){
     function search(currentPage){
         $.ajax({
 					type : "GET",
-					url : "/searchOrderItemAdditives/"+id,
+					url : "/"+root+"/searchOrderItemAdditives/"+id,
 					data: {
 					    page: currentPage,
                         name: searchValue

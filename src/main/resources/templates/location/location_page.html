@@ -62,8 +62,11 @@
 <script th:src="@{/assets/vendor/libs/cleavejs/cleave.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/i18n/uk.js"></script>
 <script th:inline="javascript">
-  var link = [[${link}]];
-  var id = null;
+var link = [[${link}]];
+var id = null;
+const currentUrl = window.location.href;
+const myArray = currentUrl.split("/");
+var root = myArray[3];
   $(document).ready(function(){
       new Cleave('.inputPhone', {
         numericOnly: true,
@@ -76,7 +79,7 @@
         maximumInputLength: 100,
             ajax: {
                 type: "GET",
-                url: "/getCitiesForLocations",
+                url: "/"+root+"/getCitiesForLocations",
                 data: function (params) {
                     return {
                         search: params.term,

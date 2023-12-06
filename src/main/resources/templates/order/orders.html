@@ -125,7 +125,7 @@
 						for (i = 0; i < data.length; i++) {
                             var date = moment(data[i].orderDate).format('DD.MM.YYYY');
                             if(data[i].status.localeCompare('Відмінено') != 0){
-                                var canc = '<a href="/orders/edit/'+data[i].id+'" role="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
+                                var canc = '<a href="orders/edit/'+data[i].id+'" role="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></i></button>'
                             } else {
@@ -143,7 +143,7 @@
 													+ data[i].orderTime
 													+ '</td> <td>'
 													+ data[i].status
-													+ '</td> <td>'+canc+'<a href="/orders/orderHistory/'+data[i].id+'" role="button" class="btn btn-warning" title="Історія замовлень" style="color: white"><i class="ti ti-list"></i></a> </td> </tr>');
+													+ '</td> <td>'+canc+'<a href="orders/orderHistory/'+data[i].id+'" role="button" class="btn btn-warning" title="Історія замовлень" style="color: white"><i class="ti ti-list"></i></a> </td> </tr>');
 
 						}
 
@@ -335,7 +335,7 @@
 													+ data[i].orderTime
 													+ '</td> <td>'
 													+ data[i].status
-													+ '</td> <td><a href="/orders/edit/'+data[i].id+'" role="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
+													+ '</td> <td><a href="orders/edit/'+data[i].id+'" role="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></i></button></td> </tr>');
 

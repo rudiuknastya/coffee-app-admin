@@ -73,7 +73,7 @@ public class ProductController {
         productService.saveProduct(product);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    @GetMapping("/getProductsCount")
+    @GetMapping("/statistic/getProductsCount")
     public @ResponseBody Long getProductsCount(){
         return productService.getProductsCount();
     }

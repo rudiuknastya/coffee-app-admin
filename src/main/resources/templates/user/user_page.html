@@ -75,6 +75,9 @@
 <script>
 var url = window.location.pathname;
 var id = url.substring(url.lastIndexOf('/') + 1);
+const currentUrl = window.location.href;
+const myArray = currentUrl.split("/");
+var root = myArray[3];
   $(document).ready(function(){
         new Cleave('.inputPhone', {
         numericOnly: true,
@@ -87,7 +90,7 @@ var id = url.substring(url.lastIndexOf('/') + 1);
             minimumResultsForSearch: -1,
             ajax: {
                 type: "GET",
-                url: "/users/getUserStatuses",
+                url: "/"+root+"/users/getUserStatuses",
                 processResults: function (response) {
                     return {
                         results: $.map(response, function (item) {
@@ -107,7 +110,7 @@ var id = url.substring(url.lastIndexOf('/') + 1);
             minimumResultsForSearch: -1,
             ajax: {
                 type: "GET",
-                url: "/users/getUserLanguages",
+                url: "/"+root+"/users/getUserLanguages",
                 processResults: function (response) {
                     return {
                         results: $.map(response, function (item) {
@@ -197,7 +200,7 @@ var id = url.substring(url.lastIndexOf('/') + 1);
                           }
                         }
                       } else {
-                        window.location.href = '/users';
+                        window.location.href = "/"+root+'/users';
                       }
 
 					},

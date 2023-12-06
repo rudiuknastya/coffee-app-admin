@@ -112,6 +112,9 @@
 <script>
 var url = window.location.pathname;
 var id = url.substring(url.lastIndexOf('/') + 1);
+const currentUrl = window.location.href;
+const myArray = currentUrl.split("/");
+var root = myArray[3];
 var delivery = false;
 $(document).ready(function(){
         $('#selectStatus').select2({
@@ -194,7 +197,7 @@ $(document).ready(function(){
                           maximumInputLength: 100,
                               ajax: {
                                   type: "get",
-                                  url: "/getCitiesForLocations",
+                                  url: "/"+root+"/getCitiesForLocations",
                                   data: function (params) {
                                       return {
                                           search: params.term,
@@ -256,7 +259,7 @@ $(document).ready(function(){
 	function getOrderItems(currentPage) {
 		$.ajax({
 					type : "GET",
-					url : "/getOrderItems/"+id,
+					url : "/"+root+"/getOrderItems/"+id,
 					data: {
                         page: currentPage
                     },
@@ -271,7 +274,7 @@ $(document).ready(function(){
 													+ data[i].productName
 													+ '</td> <td>'
 													+ data[i].quantity
-													+ '</td> <td><a href="/orderItem/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
+													+ '</td> <td><a href="orderItem/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 
@@ -400,7 +403,7 @@ $(document).ready(function(){
 	    orderItemId = id
 	    $.ajax({
 			type : "GET",
-			url : "/checkOrderItem/"+orderItemId,
+			url : "/"+root+"/checkOrderItem/"+orderItemId,
 			success : function(response) {
 			  if(response.localeCompare('wrong') == 0){
                 $('#cancelModal').modal('show');
@@ -417,7 +420,7 @@ $(document).ready(function(){
 	function deleteOrderItem(){
         $.ajax({
 			type : "GET",
-			url : "/deleteOrderItem/"+orderItemId,
+			url : "/"+root+"/deleteOrderItem/"+orderItemId,
 			success : function(response) {
 			  $('#deleteModal').modal('hide');
 			  getOrderItems(0);
@@ -432,7 +435,7 @@ $(document).ready(function(){
 	function cancelOrder(){
 	  $.ajax({
 			type : "POST",
-			url : "/cancelOrder/"+orderItemId,
+			url : "/"+root+"/cancelOrder/"+orderItemId,
 			data: {
 			  comment: $('#autosize-demo').val()
 			},
@@ -524,7 +527,7 @@ $(document).ready(function(){
                           }
                         }
                       } else {
-                        window.location.href = '/orders';
+                        window.location.href = "/"+root+'/orders';
                       }
 
 					},
@@ -543,7 +546,7 @@ $(document).ready(function(){
     function search(currentPage){
         $.ajax({
 					type : "GET",
-					url : "/searchOrderItems/"+orderId,
+					url : "/"+root+"/searchOrderItems/"+orderId,
 					data: {
 					    page: currentPage,
                         name: searchValue
@@ -559,7 +562,7 @@ $(document).ready(function(){
 													+ data[i].productName
 													+ '</td> <td>'
 													+ data[i].quantity
-													+ '</td> <td><a href="/orders/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
+													+ '</td> <td><a href="orders/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
 													+ data[i].id
 													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 

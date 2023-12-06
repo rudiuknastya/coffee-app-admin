@@ -121,7 +121,7 @@ public class LocationController {
         locationService.updateLocation(location);
         return null;
     }
-    @GetMapping("/getLocationCount")
+    @GetMapping("/statistic/getLocationCount")
     public @ResponseBody Long getLocationCount(){
         return locationService.getLocationCount();
     }

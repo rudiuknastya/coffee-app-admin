@@ -162,7 +162,7 @@
     $(document).ready(function(){
         $.ajax({
 			type : "GET",
-			url : "/getUsersCount",
+			url : "getUsersCount",
 			success : function(response) {
 			    $("#users").text(response);
 			},
@@ -172,7 +172,7 @@
 		});
 		$.ajax({
 			type : "GET",
-			url : "/getLocationCount",
+			url : "getLocationCount",
 			success : function(response) {
 			    $("#locations").text(response);
 			},
@@ -182,7 +182,7 @@
 		});
 		$.ajax({
 			type : "GET",
-			url : "/getProductsCount",
+			url : "getProductsCount",
 			success : function(response) {
 			    $("#products").text(response);
 			},
@@ -192,7 +192,7 @@
 		});
 		$.ajax({
 			type : "GET",
-			url : "/getOrdersCount",
+			url : "getOrdersCount",
 			success : function(response) {
 			    $("#orders").text(response);
 			},
@@ -203,7 +203,7 @@
 
         $.ajax({
 			type : "GET",
-			url : "/getOrderArgPriceForMonth",
+			url : "getOrderArgPriceForMonth",
 			success : function(response) {
                 new Chart($("#lineChart"), {
                     type: 'line',
@@ -250,7 +250,7 @@
 
         $.ajax({
 			type : "GET",
-			url : "/getUserLanguagePercentages",
+			url : "getUserLanguagePercentages",
 			success : function(response) {
 			$("#ukrPercentage").text(response[0]+'%');
 			$("#engPercentage").text(response[1]+'%');
@@ -305,7 +305,7 @@
 		});
 		$.ajax({
 			type : "GET",
-			url : "/getOrdersCountInMonth",
+			url : "getOrdersCountInMonth",
 			success : function(response) {
 			    new Chart($('#horizontalBarChart'), {
                   type: 'bar',
