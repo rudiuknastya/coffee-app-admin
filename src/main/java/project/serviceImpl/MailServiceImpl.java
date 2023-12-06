@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import project.service.MailService;
@@ -53,7 +54,8 @@ public class MailServiceImpl implements MailService {
     }
     private String build(String token) {
         Context context = new Context();
-        String l = "http://localhost:8080/changePassword?token="+token;
+        final String baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
+        String l = baseUrl+"/changePassword?token="+token;
         context.setVariable("link", l);
         return templateEngine.process("email/emailTemplate", context);
     }
