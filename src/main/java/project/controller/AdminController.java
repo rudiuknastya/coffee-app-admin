@@ -1,5 +1,6 @@
 package project.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -86,23 +87,27 @@ public class AdminController {
         return adminService.getAdminResponseById(id);
     }
     @PostMapping("/admins/edit/editAdmin")
-    public @ResponseBody List<FieldError> updateAdmin(@Valid @ModelAttribute("editAdmin") AdminRequest admin, BindingResult bindingResult){
-        Admin admin1 = adminService.getAdminByEmail(admin.getEmail());
+    public @ResponseBody List<FieldError> updateAdmin(@Valid @ModelAttribute("editAdmin") AdminRequest adminRequest, BindingResult bindingResult){
+        Admin admin = null;
+        try {
+            admin = adminService.getAdminByEmail(adminRequest.getEmail());
+        } catch (EntityNotFoundException e){
+        }
         if(bindingResult.hasErrors()) {
             List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
-            if(admin1 != null && admin1.getId() != admin.getId()){
+            if(admin != null && admin.getId() != adminRequest.getId()){
                 FieldError fieldError = new FieldError("Email exist","email","Така пошта вже існує");
                 fieldErrors.add(fieldError);
             }
             return fieldErrors;
         }
-        if(admin1 != null && admin1.getId() != admin.getId()){
+        if(admin != null && admin.getId() != adminRequest.getId()){
             List<FieldError> fieldErrors = new ArrayList<>(1);
             FieldError fieldError = new FieldError("Email exist","email","Така пошта вже існує");
             fieldErrors.add(fieldError);
             return fieldErrors;
         }
-        adminService.updateAdmin(admin);
+        adminService.updateAdmin(adminRequest);
         return null;
     }
     @GetMapping("/profile")
