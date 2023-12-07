@@ -9,6 +9,7 @@ import project.model.userModel.UserRequest;
 import project.model.userModel.UserResponse;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
     Page<UserDTO> getUsers(Pageable pageable);
@@ -17,8 +18,10 @@ public interface UserService {
     Page<UserDTO> searchUser(String phone, UserStatus status, Pageable pageable);
     User getUserWithProducts(Long id);
     UserResponse getUserResponseById(Long id);
-    User getUserByPhoneNumber(String phoneNumber);
+    Optional<User> getUserByPhoneNumber(String phoneNumber);
     List<Long> getLanguagePercentages();
     Long getUsersCount();
     void updateUser(UserRequest userRequest);
+    void deleteUser(Long id);
+    Optional<User> getUserByEmail(String email);
 }

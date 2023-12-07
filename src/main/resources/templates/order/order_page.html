@@ -546,7 +546,7 @@ $(document).ready(function(){
     function search(currentPage){
         $.ajax({
 					type : "GET",
-					url : "/"+root+"/searchOrderItems/"+orderId,
+					url : "/"+root+"/searchOrderItems/"+id,
 					data: {
 					    page: currentPage,
                         name: searchValue

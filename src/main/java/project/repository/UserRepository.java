@@ -19,7 +19,7 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     Page<AwardDTO> findUserAwardsByUserPhoneNumber(@Param("phone")String phone, Pageable pageable);
     @Query(value = "SELECT u FROM User u INNER JOIN FETCH u.products p WHERE u.deleted=false AND u.id= :id")
     User findUserWithProductsById(@Param("id")Long id);
-    User findByPhoneNumber(String phoneNumber);
+    Optional<User> findByPhoneNumber(String phoneNumber);
     @Query(value = "select t.s *100/count(id) as perc from user cross join (select count(id) as s from user where language = 'UKR')t GROUP BY s", nativeQuery = true)
     Long findPercentageOfUkr();
     @Query(value = "select t.s *100/count(id) as perc from user cross join (select count(id) as s from user where language = 'ENG')t GROUP BY s", nativeQuery = true)
@@ -28,5 +28,6 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     Long findPercentageOfSpa();
     @Query(value = "select count(id) from user where deleted = 0", nativeQuery = true)
     Long findUsersCount();
+    Optional<User> findByEmail(String email);
 
 }

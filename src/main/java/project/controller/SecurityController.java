@@ -17,6 +17,7 @@ import project.service.MailService;
 import project.service.PasswordResetTokenService;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Controller
@@ -78,16 +79,11 @@ public class SecurityController {
         if(email.equals("")){
             return "blank";
         }
-        Admin admin = null;
-        try {
-            admin = adminService.getAdminByEmail(email);
-        }catch (EntityNotFoundException e){
-
-        }
-        if(admin == null){
+        Optional<Admin> admin = adminService.getAdminByEmail(email);
+        if(!admin.isPresent()){
             return "wrong";
         }
-        String token = passwordResetTokenService.createAndSavePasswordResetToken(admin);
+        String token = passwordResetTokenService.createAndSavePasswordResetToken(admin.get());
         mailService.sendToken(token,email,request);
         return "success";
     }

@@ -29,7 +29,7 @@ public class Admin {
     private String city;
     @Enumerated(EnumType.STRING)
     private Role role;
-    @OneToOne(mappedBy = "admin")
+    @OneToOne(mappedBy = "admin", cascade = CascadeType.ALL)
     private PasswordResetToken passwordResetToken;
 
     public PasswordResetToken getPasswordResetToken() {

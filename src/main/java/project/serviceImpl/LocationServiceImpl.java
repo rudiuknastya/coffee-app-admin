@@ -12,6 +12,7 @@ import project.service.LocationService;
 import project.specifications.LocationSpecification;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.data.jpa.domain.Specification.where;
 import static project.specifications.LocationSpecification.*;
@@ -65,9 +66,9 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public Location getLocationByPhoneNumber(String number) {
+    public Optional<Location> getLocationByPhoneNumber(String number) {
         logger.info("getLocationByPhoneNumber() - Finding location by phone number "+number);
-        Location location = locationRepository.findByPhoneNumber(number).orElseThrow(EntityNotFoundException::new);
+        Optional<Location> location = locationRepository.findByPhoneNumber(number);
         logger.info("getLocationByPhoneNumber() - Location was found");
         return location;
     }

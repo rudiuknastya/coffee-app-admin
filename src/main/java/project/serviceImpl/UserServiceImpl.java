@@ -18,6 +18,7 @@ import project.service.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.data.jpa.domain.Specification.where;
 import static project.specifications.UserSpecification.*;
@@ -93,9 +94,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByPhoneNumber(String phoneNumber) {
+    public Optional<User> getUserByPhoneNumber(String phoneNumber) {
         logger.info("getUserByPhoneNumber() - Finding user by phoneNumber "+phoneNumber);
-        User user = userRepository.findByPhoneNumber(phoneNumber);
+        Optional<User> user = userRepository.findByPhoneNumber(phoneNumber);
         logger.info("getUserByPhoneNumber() - User was found");
         return user;
     }
@@ -130,6 +131,24 @@ public class UserServiceImpl implements UserService {
         userInDB.setBirthDate(userRequest.getBirthDate());
         userInDB.setStatus(userRequest.getStatus());
         userRepository.save(userInDB);
-        logger.info("updateUser() - Users was updated");
+        logger.info("updateUser() - User was updated");
+    }
+
+    @Override
+    public void deleteUser(Long id) {
+        logger.info("deleteUser() - Deleting user");
+        User user = userRepository.findUserWithProductsById(id);
+        user.setDeleted(true);
+        user.getProducts().clear();
+        userRepository.save(user);
+        logger.info("deleteUser() - User was deleted");
+    }
+
+    @Override
+    public Optional<User> getUserByEmail(String email) {
+        logger.info("getUserByEmail() - Finding user by email");
+        Optional<User> user = userRepository.findByEmail(email);
+        logger.info("getUserByEmail() - User was found");
+        return user;
     }
 }

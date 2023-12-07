@@ -9,10 +9,12 @@ import project.model.adminModel.AdminRequest;
 import project.model.adminModel.AdminResponse;
 import project.model.adminModel.ProfileDTO;
 
+import java.util.Optional;
+
 public interface AdminService {
     Page<AdminDTO> getAdmins(Pageable pageable, String email);
     Admin getAdminById(Long id);
-    Admin getAdminByEmail(String email);
+    Optional<Admin> getAdminByEmail(String email);
     Admin saveAdmin(Admin admin);
     Admin getAdminByPassword(String password);
     AdminResponse getAdminResponseById(Long id);

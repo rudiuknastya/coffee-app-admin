@@ -158,9 +158,9 @@ var root = myArray[3];
 					type : "GET",
 					url : "getProduct/"+id,
 					success : function(response) {
-					console.log(response.name);
 					    $('#inputName').val(response.name);
 					    $('#inputPrice').val(response.price);
+					    $("#status").prop( "checked", response.status );
 					    $('#inputDescription').val(response.description);
                         if(response.image != null){
                           $("#main_image").attr("src", '/'+root+'/uploads/'+response.image);

@@ -22,6 +22,7 @@ import project.service.CityService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class AdminController {
@@ -88,20 +89,17 @@ public class AdminController {
     }
     @PostMapping("/admins/edit/editAdmin")
     public @ResponseBody List<FieldError> updateAdmin(@Valid @ModelAttribute("editAdmin") AdminRequest adminRequest, BindingResult bindingResult){
-        Admin admin = null;
-        try {
-            admin = adminService.getAdminByEmail(adminRequest.getEmail());
-        } catch (EntityNotFoundException e){
-        }
+        Optional<Admin> admin = adminService.getAdminByEmail(adminRequest.getEmail());
+
         if(bindingResult.hasErrors()) {
             List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
-            if(admin != null && admin.getId() != adminRequest.getId()){
+            if(admin.isPresent() && admin.get().getId() != adminRequest.getId()){
                 FieldError fieldError = new FieldError("Email exist","email","Така пошта вже існує");
                 fieldErrors.add(fieldError);
             }
             return fieldErrors;
         }
-        if(admin != null && admin.getId() != adminRequest.getId()){
+        if(admin.isPresent() && admin.get().getId() != adminRequest.getId()){
             List<FieldError> fieldErrors = new ArrayList<>(1);
             FieldError fieldError = new FieldError("Email exist","email","Така пошта вже існує");
             fieldErrors.add(fieldError);

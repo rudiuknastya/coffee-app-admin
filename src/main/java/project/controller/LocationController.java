@@ -18,6 +18,7 @@ import project.service.LocationService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class LocationController {
@@ -70,16 +71,16 @@ public class LocationController {
     }
     @PostMapping("/locations/saveLocation")
     public @ResponseBody List<FieldError> saveLocation(@Valid @ModelAttribute("location") Location location, BindingResult bindingResult, Model model){
-        Location location1 = locationService.getLocationByPhoneNumber(location.getPhoneNumber());
+        Optional<Location> location1 = locationService.getLocationByPhoneNumber(location.getPhoneNumber());
         if (bindingResult.hasErrors()) {
             List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
-            if(location1 != null && location1.getId() != location.getId()){
+            if(location1.isPresent() && location1.get().getId() != location.getId()){
                 FieldError fieldError = new FieldError("Number exist","phoneNumber","Такий номер телефону вже існує");
                 fieldErrors.add(fieldError);
             }
             return fieldErrors;
         }
-        if(location1 != null && location1.getId() != location.getId()){
+        if(location1.isPresent() && location1.get().getId() != location.getId()){
             List<FieldError> fieldErrors = new ArrayList<>(1);
             FieldError fieldError = new FieldError("Number exist","phoneNumber","Такий номер телефону вже існує");
             fieldErrors.add(fieldError);
@@ -103,16 +104,16 @@ public class LocationController {
     }
     @PostMapping("/locations/edit/editLocation")
     public @ResponseBody List<FieldError> updateLocation(@Valid @ModelAttribute("location") Location location, BindingResult bindingResult){
-        Location location1 = locationService.getLocationByPhoneNumber(location.getPhoneNumber());
+        Optional<Location> location1 = locationService.getLocationByPhoneNumber(location.getPhoneNumber());
         if (bindingResult.hasErrors()) {
             List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
-            if(location1 != null && location1.getId() != location.getId()){
+            if(location1.isPresent() && location1.get().getId() != location.getId()){
                 FieldError fieldError = new FieldError("Number exist","phoneNumber","Такий номер телефону вже існує");
                 fieldErrors.add(fieldError);
             }
             return fieldErrors;
         }
-        if(location1 != null && location1.getId() != location.getId()){
+        if(location1.isPresent() && location1.get().getId() != location.getId()){
             List<FieldError> fieldErrors = new ArrayList<>(1);
             FieldError fieldError = new FieldError("Number exist","phoneNumber","Такий номер телефону вже існує");
             fieldErrors.add(fieldError);

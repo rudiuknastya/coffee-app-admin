@@ -20,6 +20,7 @@ import project.service.AdminService;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.data.jpa.domain.Specification.where;
 import static project.specifications.AdminSpecification.*;
@@ -98,9 +99,9 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public Admin getAdminByEmail(String email) {
+    public Optional<Admin> getAdminByEmail(String email) {
         logger.info("getAdminByEmail() - Finding admin by email "+email);
-        Admin admin = adminRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
+        Optional<Admin> admin = adminRepository.findByEmail(email);
         logger.info("getAdminByEmail() - Admin was found");
         return admin;
     }

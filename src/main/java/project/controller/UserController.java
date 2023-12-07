@@ -19,6 +19,7 @@ import project.service.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class UserController {
@@ -46,9 +47,7 @@ public class UserController {
     }
     @GetMapping("/deleteUser/{id}")
     public @ResponseBody ResponseEntity deleteUser(@PathVariable Long id){
-        User user = userService.getUserById(id);
-        user.setDeleted(true);
-        userService.saveUser(user);
+        userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/users/edit/{id}")
@@ -86,23 +85,38 @@ public class UserController {
         return languageDTOS;
     }
     @PostMapping("/users/edit/editUser")
-    public @ResponseBody List<FieldError> updateUser(@Valid @ModelAttribute("editUser") UserRequest user, BindingResult bindingResult){
-        User user1 = userService.getUserByPhoneNumber(user.getPhoneNumber());
+    public @ResponseBody List<FieldError> updateUser(@Valid @ModelAttribute("editUser") UserRequest userRequest, BindingResult bindingResult){
+        Optional<User> userByPhoneNumber = userService.getUserByPhoneNumber(userRequest.getPhoneNumber());
+        Optional<User> userByEmail = userService.getUserByEmail(userRequest.getEmail());
         if(bindingResult.hasErrors() ) {
             List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
-            if(user1 != null && user1.getId() != user.getId()){
+            if(userByPhoneNumber.isPresent() && userByPhoneNumber.get().getId() != userRequest.getId()){
                 FieldError fieldError = new FieldError("Number exist","phoneNumber","Такий номер телефону вже існує");
+                fieldErrors.add(fieldError);
+            }
+            if(userByEmail.isPresent() && userByEmail.get().getId() != userRequest.getId()){
+                FieldError fieldError = new FieldError("Email exist","email","Така пошта вже існує");
                 fieldErrors.add(fieldError);
             }
             return fieldErrors;
         }
-        if(user1 != null && user1.getId() != user.getId()){
+        if(userByPhoneNumber.isPresent() && userByPhoneNumber.get().getId() != userRequest.getId()){
             FieldError fieldError = new FieldError("Number exist","phoneNumber","Такий номер телефону вже існує");
+            List<FieldError> fieldErrors = new ArrayList<>();
+            if(userByEmail.isPresent() && userByEmail.get().getId() != userRequest.getId()){
+                FieldError emailFieldError = new FieldError("Email exist","email","Така пошта вже існує");
+                fieldErrors.add(emailFieldError);
+            }
+            fieldErrors.add(fieldError);
+            return fieldErrors;
+        }
+        if(userByEmail.isPresent() && userByEmail.get().getId() != userRequest.getId()){
+            FieldError fieldError = new FieldError("Email exist","email","Така пошта вже існує");
             List<FieldError> fieldErrors = new ArrayList<>();
             fieldErrors.add(fieldError);
             return fieldErrors;
         }
-        userService.updateUser(user);
+        userService.updateUser(userRequest);
         return null;
     }
     @GetMapping("/getUserLanguagePercentages")
