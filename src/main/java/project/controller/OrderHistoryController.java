@@ -3,27 +3,40 @@ package project.controller;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import project.entity.Admin;
 import project.entity.OrderHistory;
 import project.model.orderHistoryModel.OrderHistoryDTO;
 import project.model.orderHistoryModel.OrderHistoryResponse;
+import project.service.AdminService;
 import project.service.OrderHistoryService;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Controller
 public class OrderHistoryController {
     private final OrderHistoryService orderHistoryService;
+    private final AdminService adminService;
 
-    public OrderHistoryController(OrderHistoryService orderHistoryService) {
+    public OrderHistoryController(OrderHistoryService orderHistoryService, AdminService adminService) {
         this.orderHistoryService = orderHistoryService;
+        this.adminService = adminService;
     }
+
     private int pageSize = 5;
     @GetMapping("/orders/orderHistory/{id}")
     public String orderHistories(Model model){
         model.addAttribute("pageNum", 6);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        String email = userDetails.getUsername();
+        Optional<Admin> admin = adminService.getAdminByEmail(email);
+        model.addAttribute("image",admin.get().getImage());
         return "orderHistory/order_histories";
     }
     @GetMapping("/orders/orderHistory/getOrderHistories/{id}")

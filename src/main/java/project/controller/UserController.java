@@ -6,16 +6,21 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import project.entity.Admin;
 import project.model.userModel.*;
 import project.entity.Language;
 import project.entity.User;
 import project.entity.UserStatus;
+import project.service.AdminService;
 import project.service.UserService;
+import project.serviceImpl.AdminServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,15 +29,23 @@ import java.util.Optional;
 @Controller
 public class UserController {
     private final UserService userService;
+    private final AdminService adminService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, AdminService adminService) {
         this.userService = userService;
+        this.adminService = adminService;
     }
-    private int pageSize = 1;
+
+    private int pageSize = 5;
     @GetMapping("/users")
     public String showUsers(Model model){
         model.addAttribute("pageNum", 10);
         model.addAttribute("status", UserStatus.values());
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        String email = userDetails.getUsername();
+        Optional<Admin> admin = adminService.getAdminByEmail(email);
+        model.addAttribute("image",admin.get().getImage());
         return "user/users";
     }
     @GetMapping("/getUsers")
@@ -53,6 +66,11 @@ public class UserController {
     @GetMapping("/users/edit/{id}")
     public String editUser(@PathVariable Long id, Model model){
         model.addAttribute("pageNum", 10);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        String email = userDetails.getUsername();
+        Optional<Admin> admin = adminService.getAdminByEmail(email);
+        model.addAttribute("image",admin.get().getImage());
         return "user/user_page";
     }
     @GetMapping("/users/edit/getUser/{id}")

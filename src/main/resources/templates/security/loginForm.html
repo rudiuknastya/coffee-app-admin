@@ -7,6 +7,9 @@
 <head th:replace="~{fragments :: head}"></head>
 <body>
 <div class="container-xxl">
+    <div class="col-3" style="position: absolute; top:30px; right: 60px;">
+        <div class="alert alert-success d-none" role="alert" id="successLogout">Ви успішно вийшли з акаунту</div>
+    </div>
     <div class="authentication-wrapper authentication-basic container-p-y">
         <div class="authentication-inner py-4">
             <!-- Login -->
@@ -73,4 +76,16 @@
 <script th:src="@{/assets/vendor/libs/hammer/hammer.js}"></script>
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
+<script>
+    var url = window.location.href;
+    console.log(url)
+    if(url.includes('?logout')){
+        $("#successLogout").removeClass("d-none");
+                          setTimeout(
+                          function()
+                          {
+                            $("#successLogout").addClass("d-none");
+                          }, 3000);
+    }
+</script>
 </html>

@@ -27,6 +27,7 @@ public class Admin {
     private LocalDate birthDate;
     @Column(columnDefinition = "VARCHAR(100) NOT NULL")
     private String city;
+    private String image;
     @Enumerated(EnumType.STRING)
     private Role role;
     @OneToOne(mappedBy = "admin", cascade = CascadeType.ALL)
@@ -38,6 +39,14 @@ public class Admin {
 
     public void setPasswordResetToken(PasswordResetToken passwordResetToken) {
         this.passwordResetToken = passwordResetToken;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public Long getId() {

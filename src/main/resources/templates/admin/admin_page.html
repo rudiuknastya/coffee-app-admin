@@ -10,7 +10,7 @@
   <div class="layout-container">
     <aside th:replace="~{fragments :: sidebar(${pageNum})}"></aside>
     <div class="layout-page">
-      <nav th:replace="~{fragments :: navbar}"></nav>
+      <nav th:replace="~{fragments :: navbar(${image})}"></nav>
       <div class="content-wrapper">
         <div class="container-xxl flex-grow-1 container-p-y">
           <div class="card py-5 px-5">
@@ -52,6 +52,10 @@
                 <button type="button" class="btn btn-primary" onclick="edit()">Зберегти</button>
               </div>
             </form>
+            <div class="col-3" style="position: absolute; top:10px; right: 50px;">
+              <div class="alert alert-danger d-none" role="alert" id="error">Error happened</div>
+            </div>
+
           </div>
         </div>
       </div>
@@ -82,7 +86,7 @@ var root = myArray[3];
             minimumResultsForSearch: -1,
             ajax: {
                 type: "GET",
-                url: "getRoles",
+                url: "/"+root+"/admins/getRoles",
                 processResults: function (response) {
                     return {
                         results: $.map(response, function (item) {
@@ -100,7 +104,7 @@ var root = myArray[3];
         maximumInputLength: 100,
             ajax: {
                 type: "get",
-                url: "getCities",
+                url: "/"+root+"/admins/getCities",
                 data: function (params) {
                     return {
                         search: params.term,
@@ -145,12 +149,24 @@ var root = myArray[3];
 
 					},
 					error : function(err) {
-						alert("error is" + err)
+						$("#error").removeClass("d-none");
+                          setTimeout(
+                          function()
+                          {
+                            $("#error").addClass("d-none");
+                          }, 4000);
 					}
 				});
 
     });
-
+    $('#inputName').on('keypress', function(e) {
+        if (e.which == 32)
+            return false;
+    });
+    $('#inputLastName').on('keypress', function(e) {
+        if (e.which == 32)
+            return false;
+    });
 
     function edit(){
     $("#nameValidation").text("");
@@ -207,7 +223,12 @@ var root = myArray[3];
 
 					},
 					error : function(err) {
-						alert("error is" + err)
+						$("#error").removeClass("d-none");
+                          setTimeout(
+                          function()
+                          {
+                            $("#error").addClass("d-none");
+                          }, 4000);
 					}
 				});
     }

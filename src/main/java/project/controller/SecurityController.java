@@ -1,6 +1,5 @@
 package project.controller;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -16,9 +15,7 @@ import project.service.AdminService;
 import project.service.MailService;
 import project.service.PasswordResetTokenService;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.UUID;
 
 @Controller
 public class SecurityController {
@@ -37,7 +34,7 @@ public class SecurityController {
     @GetMapping("/login")
     public String showLogin(){
         if(adminService.getAdminsCount().equals(0L)){
-            adminService.createAdmin();
+            adminService.createFirstAdmin();
         }
         return "security/loginForm";
     }

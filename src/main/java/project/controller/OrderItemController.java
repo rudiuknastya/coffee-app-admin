@@ -32,7 +32,7 @@ public class OrderItemController {
     private final OrderItemService orderItemService;
     private final AdditiveService additiveService;
     private final OrderHistoryService orderHistoryService;
-    private int pageSize = 1;
+    private int pageSize = 5;
 
     public OrderItemController(OrderItemService orderItemService, AdditiveService additiveService, OrderHistoryService orderHistoryService) {
         this.orderItemService = orderItemService;

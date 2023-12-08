@@ -10,13 +10,13 @@
     <div class="layout-container">
         <aside th:replace="~{fragments :: sidebar(${pageNum})}"></aside>
         <div class="layout-page">
-            <nav th:replace="~{fragments :: navbar}"></nav>
+            <nav th:replace="~{fragments :: navbar(${image})}"></nav>
             <div class="content-wrapper">
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <div class="card py-5 px-5">
                         <h4>Адміни</h4>
                         <div class="row d-flex justify-content-between mb-4">
-                            <div class="col-9">
+                            <div class="col-5">
                                 <input class="form-control" type="search" id="searchInput" placeholder="Пошук за прізвищем або email" aria-label="Search" maxlength="100">
                             </div>
                             <div class="col-3">
@@ -25,6 +25,7 @@
                                     <option th:each="r : ${roles}" th:value="${r}" th:text="${r.getRoleName()}"></option>
                                 </select>
                             </div>
+                            <a th:href="@{/admins/new}" type="button" class="btn btn-label-primary col-3 me-3"><i class="ti ti-plus"></i>Створити адміна</a>
                         </div>
 
                         <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -61,6 +62,9 @@
                                 <div class="col-4 mt-4" id="paginationElements"></div>
                                 <ul class="pagination mt-4 justify-content-end"></ul>
                             </div>
+                        </div>
+                        <div class="col-3" style="position: absolute; top:10px; right: 50px;">
+                            <div class="alert alert-danger d-none" role="alert" id="error">Error happened</div>
                         </div>
                     </div>
                 </div>
@@ -124,7 +128,12 @@ $(document).ready(function(){
 
 					},
 					error : function(err) {
-						alert("error is" + err)
+						$("#error").removeClass("d-none");
+                          setTimeout(
+                          function()
+                          {
+                            $("#error").addClass("d-none");
+                          }, 4000);
 					}
 				});
 	}
@@ -162,6 +171,9 @@ $(document).ready(function(){
                     }
                 }
             }
+            if(totalPages == 6){
+              pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ 6 +'</a></li>';
+            }
             if(totalPages > 6){
                 pages += dots;
                 pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+totalPages+'</a></li>';
@@ -195,7 +207,9 @@ $(document).ready(function(){
        }
 
 		pages = prev + pages + next;
-        $("#paginationElements").text("Показано "+response.numberOfElements+" з "+response.size+" елементів");
+		var from = (response.size * pageNumber)+1;
+		var to = from + response.numberOfElements - 1;
+        $("#paginationElements").text("Показано від "+from+" до "+to+" з "+response.totalElements+" елементів");
 		$("ul.pagination").append(pages);
 		} else {
             $("#paginationElements").text("")
@@ -250,7 +264,12 @@ $(document).ready(function(){
 
 					},
 					error : function(err) {
-						alert("error is" + err)
+						$("#error").removeClass("d-none");
+                          setTimeout(
+                          function()
+                          {
+                            $("#error").addClass("d-none");
+                          }, 4000);
 					}
 				});
 	}
@@ -307,7 +326,12 @@ $(document).ready(function(){
 
 					},
 					error : function(err) {
-						alert("error is" + err)
+						$("#error").removeClass("d-none");
+                          setTimeout(
+                          function()
+                          {
+                            $("#error").addClass("d-none");
+                          }, 4000);
 					}
 				});
     }

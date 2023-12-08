@@ -3,24 +3,28 @@ package project.serviceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import project.model.adminModel.AdminDTO;
+import org.springframework.web.multipart.MultipartFile;
+import project.model.adminModel.*;
 import project.entity.Admin;
 import project.entity.Role;
 import project.mapper.AdminMapper;
-import project.model.adminModel.AdminRequest;
-import project.model.adminModel.AdminResponse;
-import project.model.adminModel.ProfileDTO;
 import project.repository.AdminRepository;
 import project.service.AdminService;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.springframework.data.jpa.domain.Specification.where;
 import static project.specifications.AdminSpecification.*;
@@ -35,7 +39,8 @@ public class AdminServiceImpl implements AdminService {
         this.adminRepository = adminRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
-
+    @Value("${upload.path}")
+    private String uploadPath;
     private Logger logger = LogManager.getLogger("serviceLogger");
     @Override
     public Page<AdminDTO> getAdmins(Pageable pageable, String email) {
@@ -107,12 +112,12 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ProfileDTO getProfileResponseByEmail(String email) {
+    public ProfileResponse getProfileResponseByEmail(String email) {
         logger.info("getAdminByEmail() - Finding admin for profile response by email "+email);
         Admin admin = adminRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
-        ProfileDTO profileDTO = AdminMapper.ADMIN_MAPPER.adminToProfileResponse(admin);
+        ProfileResponse profileResponse = AdminMapper.ADMIN_MAPPER.adminToProfileResponse(admin);
         logger.info("getAdminByEmail() - Admin was found");
-        return profileDTO;
+        return profileResponse;
     }
 
     @Override
@@ -138,7 +143,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void updateAdminProfile(ProfileDTO profileDTO, String newPassword, String confirmNewPassword, String oldPassword) {
+    public void updateAdminProfile(ProfileDTO profileDTO, String newPassword, String confirmNewPassword, String oldPassword, MultipartFile file) throws IOException {
         logger.info("updateAdminProfile() - Updating admin profile");
         Admin admin = adminRepository.findById(profileDTO.getId()).orElseThrow(EntityNotFoundException::new);
         admin.setFirstName(profileDTO.getFirstName());
@@ -146,6 +151,9 @@ public class AdminServiceImpl implements AdminService {
         admin.setEmail(profileDTO.getEmail());
         admin.setBirthDate(profileDTO.getBirthDate());
         admin.setCity(profileDTO.getCity());
+        if(file != null) {
+            saveImage(file, admin);
+        }
         if(!newPassword.equals("") && !confirmNewPassword.equals("") && !oldPassword.equals("") && newPassword.equals(confirmNewPassword)){
             admin.setPassword(bCryptPasswordEncoder.encode(newPassword));
         }
@@ -162,8 +170,8 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void createAdmin() {
-        logger.info("createAdmin() - Creating admin");
+    public void createFirstAdmin() {
+        logger.info("createFirstAdmin() - Creating first admin");
         Admin admin = new Admin();
         admin.setEmail("admin@gmail.com");
         admin.setPassword(bCryptPasswordEncoder.encode("admin"));
@@ -173,6 +181,30 @@ public class AdminServiceImpl implements AdminService {
         admin.setCity("");
         admin.setBirthDate(LocalDate.now());
         adminRepository.save(admin);
-        logger.info("createAdmin() - Admin was created");
+        logger.info("createFirstAdmin() - First admin was created");
+    }
+
+    @Override
+    public void createAndSaveAdmin(SaveAdminRequest adminRequest) {
+        logger.info("createAndSaveAdmin() - Creating and saving admin");
+        Admin admin = AdminMapper.ADMIN_MAPPER.saveAdminRequestToAdmin(adminRequest);
+        admin.setPassword(bCryptPasswordEncoder.encode(adminRequest.getNewPassword()));
+        adminRepository.save(admin);
+        logger.info("createAndSaveAdmin() - Admin was created and saved");
+    }
+
+    private void saveImage(MultipartFile image, Admin admin) throws IOException {
+        File uploadDir = new File(uploadPath);
+        if (!uploadDir.exists()) {
+            uploadDir.mkdir();
+        }
+        String uuidFile = UUID.randomUUID().toString();
+        String uniqueName = uuidFile+"."+image.getOriginalFilename();
+        String name = admin.getImage();
+        admin.setImage(uniqueName);
+        Path path = Paths.get(uploadPath+"/"+uniqueName);
+        image.transferTo(new File(path.toUri()));
+        File file = new File(uploadPath+"/"+name);
+        file.delete();
     }
 }

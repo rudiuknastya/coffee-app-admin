@@ -6,13 +6,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import project.entity.Admin;
 import project.entity.City;
 import project.entity.Location;
+import project.service.AdminService;
 import project.service.CityService;
 import project.service.LocationService;
 
@@ -24,15 +28,23 @@ import java.util.Optional;
 public class LocationController {
     private final LocationService locationService;
     private final CityService cityService;
+    private final AdminService adminService;
 
-    public LocationController(LocationService locationService, CityService cityService) {
+    public LocationController(LocationService locationService, CityService cityService, AdminService adminService) {
         this.locationService = locationService;
         this.cityService = cityService;
+        this.adminService = adminService;
     }
-    private int pageSize = 1;
+
+    private int pageSize = 5;
     @GetMapping("/locations")
     public String locations(Model model){
         model.addAttribute("pageNum", 7);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        String email = userDetails.getUsername();
+        Optional<Admin> admin = adminService.getAdminByEmail(email);
+        model.addAttribute("image",admin.get().getImage());
         return "location/locations";
     }
     @GetMapping("/getLocations")
@@ -67,6 +79,11 @@ public class LocationController {
         String l = "saveLocation";
         model.addAttribute("link", l);
         model.addAttribute("pageNum", 7);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        String email = userDetails.getUsername();
+        Optional<Admin> admin = adminService.getAdminByEmail(email);
+        model.addAttribute("image",admin.get().getImage());
         return "location/location_page";
     }
     @PostMapping("/locations/saveLocation")
@@ -96,6 +113,11 @@ public class LocationController {
         String l = "editLocation";
         model.addAttribute("link", l);
         model.addAttribute("pageNum", 7);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        String email = userDetails.getUsername();
+        Optional<Admin> admin = adminService.getAdminByEmail(email);
+        model.addAttribute("image",admin.get().getImage());
         return "location/location_page";
     }
     @GetMapping("/locations/edit/getLocation/{id}")

@@ -15,23 +15,27 @@
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <div class="card py-5 px-5">
                         <form class="row g-3" style="color:black;">
-                            <div class="col-md-6 row g-3 align-items-center me-2" >
-                                <div class="col-auto">
-                                    <img  src="https://static.vecteezy.com/system/resources/previews/004/141/669/non_2x/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg" style="width:120px; height:120px;" id="main_image">
-                                    <input type="file" accept="image/jpeg, image/jpg, image/png" class="form-control d-none"  id="inputMainImage" name="profileImage">
-                                </div>
-                                <div class="col-auto">
-                                    <label class="input-group-text col-form-label" for="inputMainImage" style="color:black;">Додати фото</label>
-                                </div>
-                            </div>
                             <div class="col-md-6" >
                                 <label for="inputName" class="form-label">Ім'я</label>
                                 <input type="text" class="form-control" id="inputName" maxlength="100">
                                 <div class="text-danger" id="nameValidation"></div>
-
-                                <label for="inputLastName" class="form-label mt-3">Прізвище</label>
-                                <input type="text" class="form-control" id="inputLastName" maxlength="100">
+                            </div>
+                            <div class="col-md-6" >
+                                <label for="inputLastName" class="form-label">Прізвище</label>
+                                <input type="text" class="form-control" id="inputLastName">
                                 <div class="text-danger" id="lastNameValidation"></div>
+                            </div>
+
+                            <div class="col-md-6" >
+                                <label for="selectCity" class="form-label">Місто</label>
+                                <select class="form-select" id="selectCity">
+                                </select>
+                                <div class="text-danger" id="cityValidation"> </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="birthdate" class="form-label">Дата народження</label>
+                                <input id="birthdate" class="form-control flatpickr" type="text">
+                                <div class="text-danger" id="birthDateValidation"> </div>
                             </div>
 
                             <div class="col-md-6" >
@@ -40,32 +44,23 @@
                                 <div class="text-danger" id="emailValidation"></div>
                             </div>
                             <div class="col-md-6">
-                                <label for="birthdate" class="form-label">Дата народження</label>
-                                <input id="birthdate" class="form-control flatpickr" type="text">
-                                <div class="text-danger" id="birthDateValidation"> </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="oldPassword" class="form-label">Змінити пароль</label>
-                                <input id="oldPassword" class="form-control" type="password" placeholder="Старий пароль">
-                                <div class="text-danger" id="oldPasswordValidation"> </div>
-                            </div>
-                            <div class="col-md-6" >
-                                <label for="selectCity" class="form-label">Місто</label>
-                                <select class="form-select" id="selectCity">
+                                <label for="roleSelect" class="form-label">Роль</label>
+                                <select class="form-select" id="roleSelect">
                                 </select>
+                                <div class="text-danger" id="roleValidation"> </div>
                             </div>
                             <div class="col-md-6">
-                                <input id="newPassword" class="form-control" type="password" placeholder="Новий пароль">
+                                <input id="newPassword" class="form-control" type="password" placeholder="Пароль">
                                 <div class="text-danger" id="newPasswordValidation"> </div>
                             </div>
                             <div class="col-md-6"></div>
                             <div class="col-md-6">
-                                <input id="confirmNewPassword" class="form-control" type="password" placeholder="Підтвердити новий пароль">
+                                <input id="confirmNewPassword" class="form-control" type="password" placeholder="Підтвердити пароль">
                                 <div class="text-danger" id="confirmNewPasswordValidation"> </div>
                             </div>
 
                             <div class="col-md-12 mt-5 d-flex justify-content-end">
-                                <button type="button" class="btn btn-primary" onclick="edit()">Зберегти</button>
+                                <button type="button" class="btn btn-primary" onclick="save()">Зберегти</button>
                             </div>
                         </form>
                         <div class="col-3" style="position: absolute; top:10px; right: 50px;">
@@ -89,19 +84,41 @@
 <script th:src="@{/assets/vendor/libs/flatpickr/flatpickr.js}"></script>
 <script th:src="@{/assets/vendor/libs/moment/moment.js}"></script>
 <script src="https://npmcdn.com/flatpickr/dist/l10n/uk.js"></script>
-<script th:inline="javascript">
-var email = [[${#authentication?.name}]];
-var id;
+<script>
+var url = window.location.pathname;
+var id = url.substring(url.lastIndexOf('/') + 1);
 const currentUrl = window.location.href;
 const myArray = currentUrl.split("/");
 var root = myArray[3];
   $(document).ready(function(){
+        $("#birthdate").flatpickr({
+            locale: "uk",
+		    dateFormat: "d.m.Y"
+         });
+        $('#roleSelect').select2({
+            language: "uk",
+            minimumResultsForSearch: -1,
+            ajax: {
+                type: "GET",
+                url: "getRoles",
+                processResults: function (response) {
+                    return {
+                        results: $.map(response, function (item) {
+                            return {
+                                text: item.name,
+                                id: item.role
+                            }
+                        })
+                    };
+                }
+            }
+        });
         $('#selectCity').select2({
         language: "uk",
         maximumInputLength: 100,
             ajax: {
-                type: "GET",
-                url: "/"+root+"/getCitiesForLocations",
+                type: "get",
+                url: "getCities",
                 data: function (params) {
                     return {
                         search: params.term,
@@ -125,39 +142,6 @@ var root = myArray[3];
             }
         });
 
-        $.ajax({
-					type : "GET",
-					url : "getProfile",
-					data: {
-					    email: email
-					},
-					success : function(response) {
-					    $('#inputName').val(response.firstName);
-					    $('#inputLastName').val(response.lastName);
-					    $('#inputEmail').val(response.email);
-					    if(response.image != null){
-                          $("#main_image").attr("src", '/'+root+'/uploads/'+response.image);
-                        }
-					    $("#birthdate").flatpickr({
-					      locale: "uk",
-					      defaultDate: moment(response.birthDate, 'YYYY-MM-DD').format('DD.MM.YYYY'),
-					      dateFormat: "d.m.Y"
-                        });
-                        id = response.id;
-                      var option = new Option(response.city, response.city, true, true);
-                      $('#selectCity').append(option).trigger('change');
-
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
-
     });
     $('#inputName').on('keypress', function(e) {
         if (e.which == 32)
@@ -168,7 +152,7 @@ var root = myArray[3];
             return false;
     });
 
-    function edit(){
+    function save(){
     $("#nameValidation").text("");
 	$("#inputName").removeClass("is-invalid");
 	$("#lastNameValidation").text("");
@@ -177,34 +161,33 @@ var root = myArray[3];
 	$("#birthdate").removeClass("is-invalid");
 	$("#emailValidation").text("");
 	$("#inputEmail").removeClass("is-invalid");
-	$("#oldPasswordValidation").text("");
-    $("#oldPassword").removeClass("is-invalid");
-    $("#newPasswordValidation").text("");
-    $("#newPassword").removeClass("is-invalid");
-    $("#confirmNewPasswordValidation").text("");
-    $("#confirmNewPassword").removeClass("is-invalid");
+	$("#newPasswordValidation").text("");
+	$("#newPassword").removeClass("is-invalid");
+	$("#confirmNewPasswordValidation").text("");
+	$("#confirmNewPassword").removeClass("is-invalid");
+	$("#cityValidation").text("");
+	$("#selectCity").removeClass("is-invalid");
+	$("#roleValidation").text("");
+	$("#roleSelect").removeClass("is-invalid");
 	if($("#birthdate").val().localeCompare('') == 0){
 	  var d = null;
 	} else {
 	  var d = moment($("#birthdate").val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
 	}
-	var formData = new FormData();
-      formData.append('id', id);
-      formData.append('firstName', $('#inputName').val());
-      formData.append('lastName', $('#inputLastName').val());
-      formData.append('email', $("#inputEmail").val());
-      formData.append('birthDate', d);
-      formData.append('city', $('#selectCity').val());
-      formData.append('oldPassword', $('#oldPassword').val());
-      formData.append('newPassword', $('#newPassword').val());
-      formData.append('confirmNewPassword', $('#confirmNewPassword').val());
-      formData.append('profileImage', $('#inputMainImage').prop('files')[0]);
+
       $.ajax({
 					type : "POST",
-					url : "editProfile",
-					data: formData,
-					contentType: false,
-					processData: false,
+					url : "saveAdmin",
+					data: {
+                        firstName: $("#inputName").val(),
+                        lastName: $("#inputLastName").val(),
+                        email: $("#inputEmail").val(),
+                        birthDate: d,
+                        city: $('#selectCity').val(),
+                        role: $('#roleSelect').val(),
+                        newPassword: $("#newPassword").val(),
+                        confirmNewPassword: $("#confirmNewPassword").val()
+                    },
 					success : function(response) {
 					console.log(typeof response)
 					  if(typeof response === "object"){
@@ -225,10 +208,6 @@ var root = myArray[3];
                             $("#emailValidation").text(er.defaultMessage);
                             $("#inputEmail").addClass("is-invalid");
                           }
-                          if(er.field.localeCompare('oldPassword') == 0){
-                            $("#oldPasswordValidation").text(er.defaultMessage);
-                            $("#oldPassword").addClass("is-invalid");
-                          }
                           if(er.field.localeCompare('newPassword') == 0){
                             $("#newPasswordValidation").text(er.defaultMessage);
                             $("#newPassword").addClass("is-invalid");
@@ -237,18 +216,17 @@ var root = myArray[3];
                             $("#confirmNewPasswordValidation").text(er.defaultMessage);
                             $("#confirmNewPassword").addClass("is-invalid");
                           }
+                          if(er.field.localeCompare('role') == 0){
+                            $("#roleValidation").text(er.defaultMessage);
+                            $("#roleSelect").addClass("is-invalid");
+                          }
+                          if(er.field.localeCompare('city') == 0){
+                            $("#cityValidation").text(er.defaultMessage);
+                            $("#selectCity").addClass("is-invalid");
+                          }
                         }
                       } else {
-                          $("#successEdit").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#successEdit").addClass("d-none");
-                          }, 4000);
-                            $("#oldPassword").val("");
-                            $("#confirmNewPassword").val("");
-                            $("#newPassword").val("");
-
+                        window.location.href = '/'+root+'/admins';
                       }
 
 					},
@@ -261,23 +239,6 @@ var root = myArray[3];
                           }, 4000);
 					}
 				});
-    }
-    $('#inputMainImage').on("change", function() {
-        var myFile = $(this).prop('files');
-        if(validateFile(myFile[0].name) != false){
-          $("#main_image").attr("src", window.URL.createObjectURL(myFile[0]));
-        } else {
-          $("#imageValidation").text("Некоректий тип файлу");
-          $(this).val('');
-        }
-    });
-    function validateFile(value){
-        var ext = value.substring(value.lastIndexOf('.') + 1).toLowerCase();
-        if($.inArray(ext, ['png','jpg','jpeg']) == -1 && value != "") {
-          return false;
-        } else {
-          return true;
-        }
     }
 
 </script>

@@ -7,12 +7,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import project.entity.Admin;
 import project.model.CategoryNameDTO;
 import project.model.productModel.ProductDTO;
 import project.entity.AdditiveType;
@@ -20,6 +23,7 @@ import project.entity.Product;
 import project.model.productModel.ProductRequest;
 import project.model.productModel.ProductResponse;
 import project.service.AdditiveTypeService;
+import project.service.AdminService;
 import project.service.CategoryService;
 import project.service.ProductService;
 
@@ -29,21 +33,30 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Controller
 public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
+    private final AdminService adminService;
 
-    public ProductController(ProductService productService, CategoryService categoryService) {
+    public ProductController(ProductService productService, CategoryService categoryService, AdminService adminService) {
         this.productService = productService;
         this.categoryService = categoryService;
+        this.adminService = adminService;
     }
-    private int pageSize = 1;
+
+    private int pageSize = 5;
     @GetMapping("/products")
     public String products(Model model){
         model.addAttribute("pageNum", 3);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        String email = userDetails.getUsername();
+        Optional<Admin> admin = adminService.getAdminByEmail(email);
+        model.addAttribute("image",admin.get().getImage());
         return "product/products";
     }
     @GetMapping("/getProducts")
@@ -82,6 +95,11 @@ public class ProductController {
         String l = "saveProduct";
         model.addAttribute("link", l);
         model.addAttribute("pageNum", 3);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        String email = userDetails.getUsername();
+        Optional<Admin> admin = adminService.getAdminByEmail(email);
+        model.addAttribute("image",admin.get().getImage());
         return "product/product_page";
     }
 
@@ -115,6 +133,11 @@ public class ProductController {
         String l = "editProduct";
         model.addAttribute("link", l);
         model.addAttribute("pageNum", 3);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        String email = userDetails.getUsername();
+        Optional<Admin> admin = adminService.getAdminByEmail(email);
+        model.addAttribute("image",admin.get().getImage());
         return "product/product_page";
     }
     @GetMapping("/products/edit/getProduct/{id}")

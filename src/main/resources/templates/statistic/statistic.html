@@ -10,7 +10,7 @@
     <div class="layout-container">
         <aside th:replace="~{fragments :: sidebar(${pageNum})}"></aside>
         <div class="layout-page">
-            <nav th:replace="~{fragments :: navbar}"></nav>
+            <nav th:replace="~{fragments :: navbar(${image})}"></nav>
             <div class="content-wrapper">
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <div class="card py-5 px-5">
@@ -141,9 +141,10 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
-
+                        <div class="col-3" style="position: absolute; top:10px; right: 50px;">
+                            <div class="alert alert-danger d-none" role="alert" id="error">Error happened</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -167,7 +168,12 @@
 			    $("#users").text(response);
 			},
             error : function(err) {
-			  alert("error is" + err)
+			  $("#error").removeClass("d-none");
+                          setTimeout(
+                          function()
+                          {
+                            $("#error").addClass("d-none");
+                          }, 4000);
 			}
 		});
 		$.ajax({
@@ -176,8 +182,12 @@
 			success : function(response) {
 			    $("#locations").text(response);
 			},
-            error : function(err) {
-			  alert("error is" + err)
+            error : function(err) {$("#error").removeClass("d-none");
+                          setTimeout(
+                          function()
+                          {
+                            $("#error").addClass("d-none");
+                          }, 4000);alert("error is" + err)
 			}
 		});
 		$.ajax({
@@ -187,7 +197,12 @@
 			    $("#products").text(response);
 			},
             error : function(err) {
-			  alert("error is" + err)
+			  $("#error").removeClass("d-none");
+                          setTimeout(
+                          function()
+                          {
+                            $("#error").addClass("d-none");
+                          }, 4000);
 			}
 		});
 		$.ajax({
@@ -197,7 +212,12 @@
 			    $("#orders").text(response);
 			},
             error : function(err) {
-			  alert("error is" + err)
+			  $("#error").removeClass("d-none");
+                          setTimeout(
+                          function()
+                          {
+                            $("#error").addClass("d-none");
+                          }, 4000);
 			}
 		});
 
@@ -244,7 +264,12 @@
 
 			},
 			error : function(err) {
-			  alert("error is" + err)
+			  $("#error").removeClass("d-none");
+                          setTimeout(
+                          function()
+                          {
+                            $("#error").addClass("d-none");
+                          }, 4000);
 			}
 		});
 
@@ -300,7 +325,12 @@
                 });
 			},
 			error : function(err) {
-			  alert("error is" + err)
+			  $("#error").removeClass("d-none");
+                          setTimeout(
+                          function()
+                          {
+                            $("#error").addClass("d-none");
+                          }, 4000);
 			}
 		});
 		$.ajax({
@@ -371,7 +401,12 @@
                 });
 			},
             error : function(err) {
-			  alert("error is" + err)
+			  $("#error").removeClass("d-none");
+                          setTimeout(
+                          function()
+                          {
+                            $("#error").addClass("d-none");
+                          }, 4000);
 			}
 		});
 

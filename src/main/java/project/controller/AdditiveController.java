@@ -6,11 +6,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import project.entity.Admin;
 import project.model.additiveModel.AdditiveDTO;
 import project.model.additiveModel.AdditiveRequest;
 import project.model.additiveTypeModel.AdditiveTypeNameDTO;
@@ -18,23 +21,32 @@ import project.entity.Additive;
 import project.entity.AdditiveType;
 import project.service.AdditiveService;
 import project.service.AdditiveTypeService;
+import project.service.AdminService;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class AdditiveController {
     private final AdditiveService additiveService;
     private final AdditiveTypeService additiveTypeService;
+    private final AdminService adminService;
 
-    public AdditiveController(AdditiveService additiveService, AdditiveTypeService additiveTypeService) {
+    public AdditiveController(AdditiveService additiveService, AdditiveTypeService additiveTypeService, AdminService adminService) {
         this.additiveService = additiveService;
         this.additiveTypeService = additiveTypeService;
+        this.adminService = adminService;
     }
 
-    private int pageSize = 1;
+    private int pageSize = 5;
     @GetMapping("/additives")
     public String additives(Model model){
         model.addAttribute("pageNum", 5);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        String email = userDetails.getUsername();
+        Optional<Admin> admin = adminService.getAdminByEmail(email);
+        model.addAttribute("image",admin.get().getImage());
         return "additive/additives";
     }
 

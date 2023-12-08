@@ -3,11 +3,8 @@ package project.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
-import project.model.adminModel.AdminDTO;
+import project.model.adminModel.*;
 import project.entity.Admin;
-import project.model.adminModel.AdminResponse;
-import project.model.adminModel.ProfileDTO;
-import project.model.adminModel.RoleDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +12,8 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface AdminMapper {
     AdminMapper ADMIN_MAPPER = Mappers.getMapper(AdminMapper.class);
-    ProfileDTO adminToProfileResponse(Admin admin);
+    ProfileResponse adminToProfileResponse(Admin admin);
+    Admin saveAdminRequestToAdmin(SaveAdminRequest saveAdminRequest);
     @Named("adminListToAdminDTOList")
     static List<AdminDTO> adminListToAdminDTOList(List<Admin> admins){
         if(admins == null){
