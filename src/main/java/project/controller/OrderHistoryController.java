@@ -1,8 +1,11 @@
 package project.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -49,11 +52,11 @@ public class OrderHistoryController {
         return orderHistoryService.getOrderHistoryResponseById(id);
     }
     @PostMapping("/orders/orderHistory/editOrderHistory")
-    public @ResponseBody String editOrderHistory(@ModelAttribute("orderHistory") OrderHistoryDTO orderHistoryDTO){
+    public @ResponseBody ResponseEntity<?> editOrderHistory(@Valid @ModelAttribute("orderHistory") OrderHistoryDTO orderHistoryDTO){
         OrderHistory orderHistory = orderHistoryService.getOrderHistoryById(orderHistoryDTO.getId());
         orderHistory.setComment(orderHistoryDTO.getComment());
         orderHistoryService.saveOrderHistory(orderHistory);
-        return "success";
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/orders/orderHistory/searchOrderHistories")
     public @ResponseBody Page<OrderHistoryResponse> searchOrderHistories(@RequestParam("page")int page, @RequestParam(value = "event", required = false)String event, @RequestParam(value = "date", required = false) LocalDate date, @RequestParam("id") Long id){

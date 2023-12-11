@@ -34,7 +34,8 @@
                                         <form class="row g-3">
                                             <div class="col-md-12" >
                                                 <label for="inputComment" class="form-label">Коментар</label>
-                                                <textarea type="text" class="form-control" rows="2" id="inputComment" maxlength="300"></textarea>
+                                                <textarea type="text" class="form-control" rows="2" id="inputComment" maxlength="200"></textarea>
+                                                <div id="commentValidation" class="text-danger"></div>
                                             </div>
                                         </form>
                                     </div>
@@ -361,13 +362,20 @@ var id = url.substring(url.lastIndexOf('/') + 1);
                         $('#editModal').modal('hide');
                         getOrderHistories(0);
 					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
+					error : function(XMLHttpRequest, textStatus, errorThrown) {
+                        const map = XMLHttpRequest.responseJSON;
+                        if(XMLHttpRequest.status == 400) {
+                            for (const [key, value] of Object.entries(map)) {
+                                $("#commentValidation").text(value);
+                                $("#inputComment").addClass("is-invalid");
+                            }
+                        } else {
+                            $("#error").removeClass("d-none");
+                            setTimeout(
+                                function () {
+                                    $("#error").addClass("d-none");
+                                }, 4000);
+                        }
 					}
 		});
     }
