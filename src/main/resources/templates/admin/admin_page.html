@@ -159,14 +159,6 @@ var root = myArray[3];
 				});
 
     });
-    $('#inputName').on('keypress', function(e) {
-        if (e.which == 32)
-            return false;
-    });
-    $('#inputLastName').on('keypress', function(e) {
-        if (e.which == 32)
-            return false;
-    });
 
     function edit(){
     $("#nameValidation").text("");
@@ -197,38 +189,36 @@ var root = myArray[3];
                         role: $('#roleSelect').val()
                     },
 					success : function(response) {
-					console.log(typeof response)
-					  if(typeof response === "object"){
-                        for(er of response){
-                          if(er.field.localeCompare('firstName') == 0 ){
-                            $("#nameValidation").text(er.defaultMessage);
+                        window.location.href = '/'+root+'/admins';
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown) {
+                      const map = XMLHttpRequest.responseJSON;
+                      if(XMLHttpRequest.status == 400) {
+                        for (const [key, value] of Object.entries(map)) {
+                          if(key.localeCompare('firstName') == 0 ){
+                            $("#nameValidation").text(value);
                             $("#inputName").addClass("is-invalid");
                           }
-                          if(er.field.localeCompare('lastName') == 0){
-                            $("#lastNameValidation").text(er.defaultMessage);
+                          if(key.localeCompare('lastName') == 0){
+                            $("#lastNameValidation").text(value);
                             $("#inputLastName").addClass("is-invalid");
                           }
-                          if(er.field.localeCompare('birthDate') == 0){
-                            $("#birthDateValidation").text(er.defaultMessage);
+                          if(key.localeCompare('birthDate') == 0){
+                            $("#birthDateValidation").text(value);
                             $("#birthdate").addClass("is-invalid");
                           }
-                          if(er.field.localeCompare('email') == 0){
-                            $("#emailValidation").text(er.defaultMessage);
+                          if(key.localeCompare('email') == 0){
+                            $("#emailValidation").text(value);
                             $("#inputEmail").addClass("is-invalid");
                           }
                         }
                       } else {
-                        window.location.href = '/'+root+'/admins';
+                        $("#error").removeClass("d-none");
+                        setTimeout(
+                                function () {
+                                  $("#error").addClass("d-none");
+                                }, 4000);
                       }
-
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
 					}
 				});
     }

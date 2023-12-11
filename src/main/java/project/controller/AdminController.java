@@ -21,6 +21,7 @@ import project.model.adminModel.*;
 import project.entity.*;
 import project.service.AdminService;
 import project.service.CityService;
+import project.validators.fileExtentionValidator.ValidFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public class AdminController {
         return cityService.getCities(pageable, name);
     }
     @GetMapping("/deleteAdmin/{id}")
-    public @ResponseBody ResponseEntity deleteAdmin(@PathVariable Long id){
+    public @ResponseBody ResponseEntity<?> deleteAdmin(@PathVariable Long id){
         adminService.deleteAdmin(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -101,25 +102,25 @@ public class AdminController {
         return adminService.getAdminResponseById(id);
     }
     @PostMapping("/admins/edit/editAdmin")
-    public @ResponseBody List<FieldError> updateAdmin(@Valid @ModelAttribute("editAdmin") AdminRequest adminRequest, BindingResult bindingResult){
-        Optional<Admin> admin = adminService.getAdminByEmail(adminRequest.getEmail());
-
-        if(bindingResult.hasErrors()) {
-            List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
-            if(admin.isPresent() && admin.get().getId() != adminRequest.getId()){
-                FieldError fieldError = new FieldError("Email exist","email","Така пошта вже існує");
-                fieldErrors.add(fieldError);
-            }
-            return fieldErrors;
-        }
-        if(admin.isPresent() && admin.get().getId() != adminRequest.getId()){
-            List<FieldError> fieldErrors = new ArrayList<>(1);
-            FieldError fieldError = new FieldError("Email exist","email","Така пошта вже існує");
-            fieldErrors.add(fieldError);
-            return fieldErrors;
-        }
+    public @ResponseBody ResponseEntity<?> updateAdmin(@Valid @ModelAttribute("editAdmin") AdminRequest adminRequest){
+//        Optional<Admin> admin = adminService.getAdminByEmail(adminRequest.getEmail());
+//
+//        if(bindingResult.hasErrors()) {
+//            List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
+//            if(admin.isPresent() && admin.get().getId() != adminRequest.getId()){
+//                FieldError fieldError = new FieldError("Email exist","email","Така пошта вже існує");
+//                fieldErrors.add(fieldError);
+//            }
+//            return fieldErrors;
+//        }
+//        if(admin.isPresent() && admin.get().getId() != adminRequest.getId()){
+//            List<FieldError> fieldErrors = new ArrayList<>(1);
+//            FieldError fieldError = new FieldError("Email exist","email","Така пошта вже існує");
+//            fieldErrors.add(fieldError);
+//            return fieldErrors;
+//        }
         adminService.updateAdmin(adminRequest);
-        return null;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/admins/new")
     public String newAdmin(Model model){
@@ -132,38 +133,38 @@ public class AdminController {
         return "admin/save_admin_page";
     }
     @PostMapping("/admins/saveAdmin")
-    public @ResponseBody List<FieldError> saveAdmin(@Valid @ModelAttribute("saveAdmin") SaveAdminRequest adminRequest, BindingResult bindingResult){
-        Optional<Admin> admin = adminService.getAdminByEmail(adminRequest.getEmail());
-        if(bindingResult.hasErrors()) {
-            List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
-            if(admin.isPresent()){
-                FieldError fieldError = new FieldError("Email exist","email","Така пошта вже існує");
-                fieldErrors.add(fieldError);
-            }
-            if(!adminRequest.getNewPassword().equals(adminRequest.getConfirmNewPassword())){
-                FieldError fieldError = new FieldError("confirmNewPassword","confirmNewPassword","Невірний пароль");
-                fieldErrors.add(fieldError);
-            }
-            return fieldErrors;
-        }
-        if(admin.isPresent()){
-            List<FieldError> fieldErrors = new ArrayList<>();
-            FieldError fieldError = new FieldError("Email exist","email","Така пошта вже існує");
-            fieldErrors.add(fieldError);
-            if(!adminRequest.getNewPassword().equals(adminRequest.getConfirmNewPassword())){
-                FieldError fieldError1 = new FieldError("confirmNewPassword","confirmNewPassword","Невірний пароль");
-                fieldErrors.add(fieldError1);
-            }
-            return fieldErrors;
-        }
-        if(!adminRequest.getNewPassword().equals(adminRequest.getConfirmNewPassword())){
-            List<FieldError> fieldErrors = new ArrayList<>();
-            FieldError fieldError = new FieldError("confirmNewPassword","confirmNewPassword","Невірний пароль");
-            fieldErrors.add(fieldError);
-            return fieldErrors;
-        }
+    public @ResponseBody ResponseEntity<?> saveAdmin(@Valid @ModelAttribute("saveAdmin") SaveAdminRequest adminRequest){
+//        Optional<Admin> admin = adminService.getAdminByEmail(adminRequest.getEmail());
+//        if(bindingResult.hasErrors()) {
+//            List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
+//            if(admin.isPresent()){
+//                FieldError fieldError = new FieldError("Email exist","email","Така пошта вже існує");
+//                fieldErrors.add(fieldError);
+//            }
+//            if(!adminRequest.getNewPassword().equals(adminRequest.getConfirmNewPassword())){
+//                FieldError fieldError = new FieldError("confirmNewPassword","confirmNewPassword","Невірний пароль");
+//                fieldErrors.add(fieldError);
+//            }
+//            return fieldErrors;
+//        }
+//        if(admin.isPresent()){
+//            List<FieldError> fieldErrors = new ArrayList<>();
+//            FieldError fieldError = new FieldError("Email exist","email","Така пошта вже існує");
+//            fieldErrors.add(fieldError);
+//            if(!adminRequest.getNewPassword().equals(adminRequest.getConfirmNewPassword())){
+//                FieldError fieldError1 = new FieldError("confirmNewPassword","confirmNewPassword","Невірний пароль");
+//                fieldErrors.add(fieldError1);
+//            }
+//            return fieldErrors;
+//        }
+//        if(!adminRequest.getNewPassword().equals(adminRequest.getConfirmNewPassword())){
+//            List<FieldError> fieldErrors = new ArrayList<>();
+//            FieldError fieldError = new FieldError("confirmNewPassword","confirmNewPassword","Невірний пароль");
+//            fieldErrors.add(fieldError);
+//            return fieldErrors;
+//        }
         adminService.createAndSaveAdmin(adminRequest);
-        return null;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
@@ -182,95 +183,10 @@ public class AdminController {
         return adminService.getProfileResponseByEmail(email);
     }
     @PostMapping("/editProfile")
-    public @ResponseBody List<FieldError> editProfile(@Valid @ModelAttribute("profile") ProfileDTO profileDTO, BindingResult bindingResult,
-                                                      @RequestParam("oldPassword")String oldPassword, @RequestParam("newPassword")String newPassword,
-                                                      @RequestParam("confirmNewPassword")String confirmNewPassword, @RequestParam(name = "profileImage", required = false) MultipartFile profileImage) throws IOException {
-        if(bindingResult.hasErrors()) {
-            List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
-            if(!oldPassword.equals("") && !newPassword.equals("") && !confirmNewPassword.equals("")){
-                Admin admin = adminService.getAdminById(profileDTO.getId());
-                if(!bCryptPasswordEncoder.matches(oldPassword, admin.getPassword())){
-                    FieldError fieldError = new FieldError("Old password wrong","oldPassword","Невірний пароль");
-                    fieldErrors.add(fieldError);
-                }
-            }
-            if(confirmNewPassword.equals("")){
-                if(!newPassword.equals("")) {
-                    FieldError fieldError = new FieldError("Confirm password blank", "confirmNewPassword", "Поле не може бути порожнім");
-                    fieldErrors.add(fieldError);
-                } else if(!oldPassword.equals("")){
-                    FieldError fieldError = new FieldError("Confirm password blank", "confirmNewPassword", "Поле не може бути порожнім");
-                    fieldErrors.add(fieldError);
-                }
-            }
-            if(newPassword.equals("")){
-                if(!confirmNewPassword.equals("")) {
-                    FieldError fieldError = new FieldError("New password blank", "newPassword", "Поле не може бути порожнім");
-                    fieldErrors.add(fieldError);
-                } else if(!oldPassword.equals("")){
-                    FieldError fieldError = new FieldError("New password blank", "newPassword", "Поле не може бути порожнім");
-                    fieldErrors.add(fieldError);
-                }
-            }
-            if(oldPassword.equals("")){
-                if(!confirmNewPassword.equals("")) {
-                    FieldError fieldError = new FieldError("Old password blank", "oldPassword", "Поле не може бути порожнім");
-                    fieldErrors.add(fieldError);
-                } else if(!newPassword.equals("")){
-                    FieldError fieldError = new FieldError("Old password blank", "oldPassword", "Поле не може бути порожнім");
-                    fieldErrors.add(fieldError);
-                }
-            }
-            if(!newPassword.equals("") && !confirmNewPassword.equals("") && !newPassword.equals(confirmNewPassword)){
-                FieldError fieldError = new FieldError("Confirm password wrong","confirmNewPassword","Невірний пароль");
-                fieldErrors.add(fieldError);
-            }
-            return fieldErrors;
-        }
-        List<FieldError> fieldErrors = new ArrayList<>();
-        if(!oldPassword.equals("") && !newPassword.equals("") && !confirmNewPassword.equals("")){
-            Admin admin = adminService.getAdminById(profileDTO.getId());
-            if(!bCryptPasswordEncoder.matches(oldPassword, admin.getPassword())){
-                FieldError fieldError = new FieldError("Old password wrong","oldPassword","Невірний пароль");
-                fieldErrors.add(fieldError);
-            }
-        }
-        if(confirmNewPassword.equals("")){
-            if(!newPassword.equals("")) {
-                FieldError fieldError = new FieldError("Confirm password blank", "confirmNewPassword", "Поле не може бути порожнім");
-                fieldErrors.add(fieldError);
-            } else if(!oldPassword.equals("")){
-                FieldError fieldError = new FieldError("Confirm password blank", "confirmNewPassword", "Поле не може бути порожнім");
-                fieldErrors.add(fieldError);
-            }
-        }
-        if(newPassword.equals("")){
-            if(!confirmNewPassword.equals("")) {
-                FieldError fieldError = new FieldError("New password blank", "newPassword", "Поле не може бути порожнім");
-                fieldErrors.add(fieldError);
-            } else if(!oldPassword.equals("")){
-                FieldError fieldError = new FieldError("New password blank", "newPassword", "Поле не може бути порожнім");
-                fieldErrors.add(fieldError);
-            }
-        }
-        if(oldPassword.equals("")){
-            if(!confirmNewPassword.equals("")) {
-                FieldError fieldError = new FieldError("Old password blank", "oldPassword", "Поле не може бути порожнім");
-                fieldErrors.add(fieldError);
-            } else if(!newPassword.equals("")){
-                FieldError fieldError = new FieldError("Old password blank", "oldPassword", "Поле не може бути порожнім");
-                fieldErrors.add(fieldError);
-            }
-        }
-        if(!newPassword.equals("") && !confirmNewPassword.equals("") && !newPassword.equals(confirmNewPassword)){
-            FieldError fieldError = new FieldError("Confirm password wrong","confirmNewPassword","Невірний пароль");
-            fieldErrors.add(fieldError);
-        }
-        if(fieldErrors.size() != 0){
-            return fieldErrors;
-        }
+    public @ResponseBody ResponseEntity<?> editProfile(@Valid @ModelAttribute("profile") ProfileDTO profileDTO, @RequestParam("oldPassword")String oldPassword, @RequestParam("newPassword")String newPassword,
+                                                      @RequestParam("confirmNewPassword")String confirmNewPassword, @ValidFile @RequestParam(name = "profileImage", required = false) MultipartFile profileImage) throws IOException {
         adminService.updateAdminProfile(profileDTO,newPassword,confirmNewPassword,oldPassword,profileImage);
-        return null;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

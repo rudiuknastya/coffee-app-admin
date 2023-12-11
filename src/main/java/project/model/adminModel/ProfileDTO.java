@@ -5,9 +5,13 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
+import project.validators.emailValidation.EmailExist;
 
 import java.time.LocalDate;
-
+@EmailExist(
+        id = "id",
+        email = "email"
+)
 public class ProfileDTO {
     private Long id;
     @NotEmpty(message = "Поле не може бути порожнім")

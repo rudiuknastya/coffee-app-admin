@@ -183,10 +183,9 @@ var root = myArray[3];
     $("#newPassword").removeClass("is-invalid");
     $("#confirmNewPasswordValidation").text("");
     $("#confirmNewPassword").removeClass("is-invalid");
-	if($("#birthdate").val().localeCompare('') == 0){
-	  var d = null;
-	} else {
-	  var d = moment($("#birthdate").val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
+    var d = '';
+	if($("#birthdate").val().localeCompare('') != 0){
+	  d = moment($("#birthdate").val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
 	}
 	var formData = new FormData();
       formData.append('id', id);
@@ -206,39 +205,6 @@ var root = myArray[3];
 					contentType: false,
 					processData: false,
 					success : function(response) {
-					console.log(typeof response)
-					  if(typeof response === "object"){
-                        for(er of response){
-                          if(er.field.localeCompare('firstName') == 0 ){
-                            $("#nameValidation").text(er.defaultMessage);
-                            $("#inputName").addClass("is-invalid");
-                          }
-                          if(er.field.localeCompare('lastName') == 0){
-                            $("#lastNameValidation").text(er.defaultMessage);
-                            $("#inputLastName").addClass("is-invalid");
-                          }
-                          if(er.field.localeCompare('birthDate') == 0){
-                            $("#birthDateValidation").text(er.defaultMessage);
-                            $("#birthdate").addClass("is-invalid");
-                          }
-                          if(er.field.localeCompare('email') == 0){
-                            $("#emailValidation").text(er.defaultMessage);
-                            $("#inputEmail").addClass("is-invalid");
-                          }
-                          if(er.field.localeCompare('oldPassword') == 0){
-                            $("#oldPasswordValidation").text(er.defaultMessage);
-                            $("#oldPassword").addClass("is-invalid");
-                          }
-                          if(er.field.localeCompare('newPassword') == 0){
-                            $("#newPasswordValidation").text(er.defaultMessage);
-                            $("#newPassword").addClass("is-invalid");
-                          }
-                          if(er.field.localeCompare('confirmNewPassword') == 0){
-                            $("#confirmNewPasswordValidation").text(er.defaultMessage);
-                            $("#confirmNewPassword").addClass("is-invalid");
-                          }
-                        }
-                      } else {
                           $("#successEdit").removeClass("d-none");
                           setTimeout(
                           function()
@@ -249,16 +215,48 @@ var root = myArray[3];
                             $("#confirmNewPassword").val("");
                             $("#newPassword").val("");
 
-                      }
 
 					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
+					error : function(XMLHttpRequest, textStatus, errorThrown) {
+                        const map = XMLHttpRequest.responseJSON;
+                        if(XMLHttpRequest.status == 400) {
+                            for (const [key, value] of Object.entries(map)) {
+                                if(key.localeCompare('firstName') == 0 ){
+                                    $("#nameValidation").text(value);
+                                    $("#inputName").addClass("is-invalid");
+                                }
+                                if(key.localeCompare('lastName') == 0){
+                                    $("#lastNameValidation").text(value);
+                                    $("#inputLastName").addClass("is-invalid");
+                                }
+                                if(key.localeCompare('birthDate') == 0){
+                                    $("#birthDateValidation").text(value);
+                                    $("#birthdate").addClass("is-invalid");
+                                }
+                                if(key.localeCompare('email') == 0){
+                                    $("#emailValidation").text(value);
+                                    $("#inputEmail").addClass("is-invalid");
+                                }
+                                if(key.localeCompare('oldPassword') == 0){
+                                    $("#oldPasswordValidation").text(value);
+                                    $("#oldPassword").addClass("is-invalid");
+                                }
+                                if(key.localeCompare('newPassword') == 0){
+                                    $("#newPasswordValidation").text(value);
+                                    $("#newPassword").addClass("is-invalid");
+                                }
+                                if(key.localeCompare('confirmNewPassword') == 0){
+                                    $("#confirmNewPasswordValidation").text(value);
+                                    $("#confirmNewPassword").addClass("is-invalid");
+                                }
+                            }
+                        } else {
+                            $("#error").removeClass("d-none");
+                            setTimeout(
+                                function () {
+                                    $("#error").addClass("d-none");
+                                }, 4000);
+                        }
 					}
 				});
     }
