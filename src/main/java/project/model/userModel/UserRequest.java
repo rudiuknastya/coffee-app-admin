@@ -22,8 +22,8 @@ public class UserRequest {
     @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
     private String name;
     @NotEmpty(message = "Поле не може бути порожнім ")
-    @Size(max=12, message = "Розмір поля має бути не більше 12 символів")
-    @Pattern(regexp = "\\+?380(50)?(66)?(95)?(99)?(67)?(68)?(96)?(97)?(98)?(63)?(93)?(73)?[0-9]{0,7}", message = "Невірний формат номеру")
+    @Size(max=13, message = "Розмір номеру має бути не більше 12 символів")
+    @Pattern(regexp = "\\+?380(50)?(66)?(95)?(99)?(67)?(68)?(96)?(97)?(98)?(63)?(93)?(73)?[0-9]{7}", message = "Невірний формат номеру")
     private String phoneNumber;
     @NotNull(message = "Поле не може бути порожнім")
     @DateTimeFormat(pattern = "yyyy-MM-dd")

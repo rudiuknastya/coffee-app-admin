@@ -27,7 +27,7 @@ public class UserEmailExistValidator implements ConstraintValidator<UserEmailExi
         Object idValue = new BeanWrapperImpl(s).getPropertyValue(id);
         Object emailValue = new BeanWrapperImpl(s).getPropertyValue(email);
         Optional<User> user = userRepository.findByEmail(emailValue.toString());
-        if(user.isPresent() && idValue.equals(user.get().getId())){
+        if(user.isPresent() && !idValue.equals(user.get().getId())){
             return false;
         }
         return true;

@@ -27,7 +27,7 @@ public class PhoneNumberExistValidator implements ConstraintValidator<PhoneNumbe
         Object idValue = new BeanWrapperImpl(s).getPropertyValue(id);
         Object phoneValue = new BeanWrapperImpl(s).getPropertyValue(phoneNumber);
         Optional<User> user = userRepository.findByPhoneNumber(phoneValue.toString());
-        if(user.isPresent() && idValue.equals(user.get().getId())){
+        if(user.isPresent() && !idValue.equals(user.get().getId())){
             return false;
         }
         return true;

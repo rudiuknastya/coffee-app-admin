@@ -103,39 +103,9 @@ public class UserController {
         return languageDTOS;
     }
     @PostMapping("/users/edit/editUser")
-    public @ResponseBody List<FieldError> updateUser(@Valid @ModelAttribute("editUser") UserRequest userRequest, BindingResult bindingResult){
-        Optional<User> userByPhoneNumber = userService.getUserByPhoneNumber(userRequest.getPhoneNumber());
-        Optional<User> userByEmail = userService.getUserByEmail(userRequest.getEmail());
-        if(bindingResult.hasErrors() ) {
-            List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
-            if(userByPhoneNumber.isPresent() && userByPhoneNumber.get().getId() != userRequest.getId()){
-                FieldError fieldError = new FieldError("Number exist","phoneNumber","Такий номер телефону вже існує");
-                fieldErrors.add(fieldError);
-            }
-            if(userByEmail.isPresent() && userByEmail.get().getId() != userRequest.getId()){
-                FieldError fieldError = new FieldError("Email exist","email","Така пошта вже існує");
-                fieldErrors.add(fieldError);
-            }
-            return fieldErrors;
-        }
-        if(userByPhoneNumber.isPresent() && userByPhoneNumber.get().getId() != userRequest.getId()){
-            FieldError fieldError = new FieldError("Number exist","phoneNumber","Такий номер телефону вже існує");
-            List<FieldError> fieldErrors = new ArrayList<>();
-            if(userByEmail.isPresent() && userByEmail.get().getId() != userRequest.getId()){
-                FieldError emailFieldError = new FieldError("Email exist","email","Така пошта вже існує");
-                fieldErrors.add(emailFieldError);
-            }
-            fieldErrors.add(fieldError);
-            return fieldErrors;
-        }
-        if(userByEmail.isPresent() && userByEmail.get().getId() != userRequest.getId()){
-            FieldError fieldError = new FieldError("Email exist","email","Така пошта вже існує");
-            List<FieldError> fieldErrors = new ArrayList<>();
-            fieldErrors.add(fieldError);
-            return fieldErrors;
-        }
+    public @ResponseBody ResponseEntity<?> updateUser(@Valid @ModelAttribute("editUser") UserRequest userRequest){
         userService.updateUser(userRequest);
-        return null;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/getUserLanguagePercentages")
     public @ResponseBody List<Long> getUserLanguagePercentages(){

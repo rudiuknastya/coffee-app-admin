@@ -192,38 +192,36 @@ var root = myArray[3];
                         status: $('#selectStatus').val()
                     },
 					success : function(response) {
-					console.log(typeof response)
-					  if(typeof response === "object"){
-                        for(er of response){
-                          if(er.field.localeCompare('name') == 0 ){
-                            $("#nameValidation").text(er.defaultMessage);
+                        window.location.href = "/"+root+'/users';
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown) {
+                      const map = XMLHttpRequest.responseJSON;
+                      if(XMLHttpRequest.status == 400) {
+                        for (const [key, value] of Object.entries(map)) {
+                          if(key.localeCompare('name') == 0 ){
+                            $("#nameValidation").text(value);
                             $("#inputName").addClass("is-invalid");
                           }
-                          if(er.field.localeCompare('phoneNumber') == 0){
-                            $("#phoneValidation").text(er.defaultMessage);
+                          if(key.localeCompare('phoneNumber') == 0){
+                            $("#phoneValidation").text(value);
                             $("#inputPhone").addClass("is-invalid");
                           }
-                          if(er.field.localeCompare('birthDate') == 0){
-                            $("#birthDateValidation").text(er.defaultMessage);
+                          if(key.localeCompare('birthDate') == 0){
+                            $("#birthDateValidation").text(value);
                             $("#birthdate").addClass("is-invalid");
                           }
-                          if(er.field.localeCompare('email') == 0){
-                            $("#emailValidation").text(er.defaultMessage);
+                          if(key.localeCompare('email') == 0){
+                            $("#emailValidation").text(value);
                             $("#inputEmail").addClass("is-invalid");
                           }
                         }
                       } else {
-                        window.location.href = "/"+root+'/users';
+                        $("#error").removeClass("d-none");
+                        setTimeout(
+                                function () {
+                                  $("#error").addClass("d-none");
+                                }, 4000);
                       }
-
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
 					}
 				});
     }
