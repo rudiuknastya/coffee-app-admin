@@ -3,6 +3,8 @@ package project.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import project.entity.Location;
+import project.model.locationModel.LocationRequest;
+import project.model.locationModel.SaveLocationRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,5 +16,6 @@ public interface LocationService {
     Location getLocationById(Long id);
     Optional<Location> getLocationByPhoneNumber(String number);
     Long getLocationCount();
-    void updateLocation(Location location);
+    void createAndSaveLocation(SaveLocationRequest saveLocationRequest);
+    void updateLocation(LocationRequest locationRequest);
 }

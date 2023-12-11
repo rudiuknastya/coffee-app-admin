@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import project.entity.Admin;
 import project.entity.City;
 import project.entity.Location;
+import project.model.locationModel.LocationRequest;
+import project.model.locationModel.SaveLocationRequest;
 import project.service.AdminService;
 import project.service.CityService;
 import project.service.LocationService;
@@ -87,25 +89,9 @@ public class LocationController {
         return "location/location_page";
     }
     @PostMapping("/locations/saveLocation")
-    public @ResponseBody List<FieldError> saveLocation(@Valid @ModelAttribute("location") Location location, BindingResult bindingResult, Model model){
-        Optional<Location> location1 = locationService.getLocationByPhoneNumber(location.getPhoneNumber());
-        if (bindingResult.hasErrors()) {
-            List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
-            if(location1.isPresent() && location1.get().getId() != location.getId()){
-                FieldError fieldError = new FieldError("Number exist","phoneNumber","Такий номер телефону вже існує");
-                fieldErrors.add(fieldError);
-            }
-            return fieldErrors;
-        }
-        if(location1.isPresent() && location1.get().getId() != location.getId()){
-            List<FieldError> fieldErrors = new ArrayList<>(1);
-            FieldError fieldError = new FieldError("Number exist","phoneNumber","Такий номер телефону вже існує");
-            fieldErrors.add(fieldError);
-            return fieldErrors;
-        }
-        location.setDeleted(false);
-        locationService.saveLocation(location);
-        return null;
+    public @ResponseBody ResponseEntity<?> saveLocation(@Valid @ModelAttribute("saveLocation") SaveLocationRequest location){
+        locationService.createAndSaveLocation(location);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/locations/edit/{id}")
@@ -125,24 +111,9 @@ public class LocationController {
         return locationService.getLocationById(id);
     }
     @PostMapping("/locations/edit/editLocation")
-    public @ResponseBody List<FieldError> updateLocation(@Valid @ModelAttribute("location") Location location, BindingResult bindingResult){
-        Optional<Location> location1 = locationService.getLocationByPhoneNumber(location.getPhoneNumber());
-        if (bindingResult.hasErrors()) {
-            List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
-            if(location1.isPresent() && location1.get().getId() != location.getId()){
-                FieldError fieldError = new FieldError("Number exist","phoneNumber","Такий номер телефону вже існує");
-                fieldErrors.add(fieldError);
-            }
-            return fieldErrors;
-        }
-        if(location1.isPresent() && location1.get().getId() != location.getId()){
-            List<FieldError> fieldErrors = new ArrayList<>(1);
-            FieldError fieldError = new FieldError("Number exist","phoneNumber","Такий номер телефону вже існує");
-            fieldErrors.add(fieldError);
-            return fieldErrors;
-        }
+    public @ResponseBody ResponseEntity<?> updateLocation(@Valid @ModelAttribute("editLocation") LocationRequest location){
         locationService.updateLocation(location);
-        return null;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/getLocationCount")
     public @ResponseBody Long getLocationCount(){

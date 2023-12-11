@@ -7,6 +7,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import project.entity.Location;
+import project.mapper.LocationMapper;
+import project.model.locationModel.LocationRequest;
+import project.model.locationModel.SaveLocationRequest;
 import project.repository.LocationRepository;
 import project.service.LocationService;
 import project.specifications.LocationSpecification;
@@ -82,13 +85,24 @@ public class LocationServiceImpl implements LocationService {
     }
 
     @Override
-    public void updateLocation(Location location) {
-        Location locationInDB = locationRepository.findById(location.getId()).orElseThrow(EntityNotFoundException::new);
-        locationInDB.setCity(location.getCity());
-        locationInDB.setAddress(location.getAddress());
-        locationInDB.setCoordinates(location.getCoordinates());
-        locationInDB.setPhoneNumber(location.getPhoneNumber());
-        locationInDB.setWorkingHours(location.getWorkingHours());
+    public void updateLocation(LocationRequest locationRequest) {
+        logger.info("updateLocation() - Updating location");
+        Location locationInDB = locationRepository.findById(locationRequest.getId()).orElseThrow(EntityNotFoundException::new);
+        locationInDB.setCity(locationRequest.getCity());
+        locationInDB.setAddress(locationRequest.getAddress());
+        locationInDB.setCoordinates(locationRequest.getCoordinates());
+        locationInDB.setPhoneNumber(locationRequest.getPhoneNumber());
+        locationInDB.setWorkingHours(locationRequest.getWorkingHours());
         locationRepository.save(locationInDB);
+        logger.info("updateLocation() - Location was updated");
+    }
+
+    @Override
+    public void createAndSaveLocation(SaveLocationRequest saveLocationRequest) {
+        logger.info("createAndSaveLocation() - Creating and saving location");
+        Location location = LocationMapper.LOCATION_MAPPER.saveLocationRequestToLocation(saveLocationRequest);
+        location.setDeleted(false);
+        locationRepository.save(location);
+        logger.info("createAndSaveLocation() - Location was created and saved");
     }
 }

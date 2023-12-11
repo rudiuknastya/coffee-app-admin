@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.ColumnDefault;
+import project.validators.phoneNumberValidation.LocationPhoneNumberExist;
+
 
 @Entity
 @Table(name = "location")
@@ -12,21 +14,14 @@ public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotEmpty(message = "Поле не може бути порожнім")
     @Column(columnDefinition = "VARCHAR(100) NOT NULL")
     private String city;
-    @NotEmpty(message = "Поле не може бути порожнім")
     private String address;
-    @NotEmpty(message = "Поле не може бути порожнім ")
-    @Size(min=4, max=15, message = "Розмір поля має бути не менше 4 та не більше 15 символів")
-    @Pattern(regexp = "^\\+?[1-9][0-9]{4,15}$", message = "Невірний формат номеру")
     @Column(name = "phone_number", columnDefinition="VARCHAR(20) NOT NULL UNIQUE")
     private String phoneNumber;
 
-    @NotEmpty(message = "Поле не може бути порожнім")
     @Column(name = "working_hours", columnDefinition = "VARCHAR(100) NOT NULL")
     private String workingHours;
-    @NotEmpty(message = "Поле не може бути порожнім")
     @Column(nullable = false)
     private String coordinates;
     @ColumnDefault(value = "0")

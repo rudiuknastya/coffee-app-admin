@@ -158,42 +158,40 @@ var root = myArray[3];
                         coordinates: $('#inputCoordinates').val()
                     },
 					success : function(response) {
-					console.log(typeof response)
-					  if(typeof response === "object"){
-                        for(er of response){
-                          if(er.field.localeCompare('city') == 0 ){
-                            $("#cityValidation").text(er.defaultMessage);
+                        window.location.href = '/'+root+'/locations';
+					},
+					error : function(XMLHttpRequest, textStatus, errorThrown) {
+                      const map = XMLHttpRequest.responseJSON;
+                      if(XMLHttpRequest.status == 400) {
+                        for (const [key, value] of Object.entries(map)) {
+                          if(key.localeCompare('city') == 0 ){
+                            $("#cityValidation").text(value);
                             $("#selectCity").addClass("is-invalid");
                           }
-                          if(er.field.localeCompare('address') == 0){
-                            $("#addressValidation").text(er.defaultMessage);
+                          if(key.localeCompare('address') == 0){
+                            $("#addressValidation").text(value);
                             $("#inputAddress").addClass("is-invalid");
                           }
-                          if(er.field.localeCompare('phoneNumber') == 0){
-                            $("#phoneValidation").text(er.defaultMessage);
+                          if(key.localeCompare('phoneNumber') == 0){
+                            $("#phoneValidation").text(value);
                             $("#inputPhone").addClass("is-invalid");
                           }
-                          if(er.field.localeCompare('workingHours') == 0){
-                            $("#workingValidation").text(er.defaultMessage);
+                          if(key.localeCompare('workingHours') == 0){
+                            $("#workingValidation").text(value);
                             $("#inputWorkingHours").addClass("is-invalid");
                           }
-                          if(er.field.localeCompare('coordinates') == 0){
-                            $("#coordinatesValidation").text(er.defaultMessage);
+                          if(key.localeCompare('coordinates') == 0){
+                            $("#coordinatesValidation").text(value);
                             $("#inputCoordinates").addClass("is-invalid");
                           }
                         }
                       } else {
-                        window.location.href = '/'+root+'/locations';
+                        $("#error").removeClass("d-none");
+                        setTimeout(
+                                function () {
+                                  $("#error").addClass("d-none");
+                                }, 4000);
                       }
-
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
 					}
 				});
 
