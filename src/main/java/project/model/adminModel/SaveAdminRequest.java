@@ -3,9 +3,16 @@ package project.model.adminModel;
 import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import project.entity.Role;
+import project.validators.confirmPassword.PasswordMatching;
+import project.validators.emailValidation.EmailExist;
+import project.validators.emailValidation.FieldEmailExist;
 
 import java.time.LocalDate;
-
+@PasswordMatching(
+        newPassword = "newPassword",
+        confirmNewPassword = "confirmNewPassword",
+        message = "Паролі мають бути однаковими"
+)
 public class SaveAdminRequest {
     @NotEmpty(message = "Поле не може бути порожнім")
     @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
@@ -13,6 +20,7 @@ public class SaveAdminRequest {
     @NotEmpty(message = "Поле не може бути порожнім")
     @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
     private String lastName;
+    @FieldEmailExist
     @NotEmpty(message = "Поле не може бути порожнім ")
     @Size(max=200, message = "Розмір поля має бути не більше 200 символів")
     @Email(regexp = "[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\\.[a-z]{2,3}", message = "Невірний формат email")

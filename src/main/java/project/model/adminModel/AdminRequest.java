@@ -6,9 +6,13 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 import project.entity.Role;
+import project.validators.emailValidation.EmailExist;
 
 import java.time.LocalDate;
-
+@EmailExist(
+        id = "id",
+        email = "email"
+)
 public class AdminRequest {
     private Long id;
     @NotEmpty(message = "Поле не може бути порожнім")

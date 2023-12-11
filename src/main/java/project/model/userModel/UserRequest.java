@@ -4,9 +4,18 @@ import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import project.entity.Language;
 import project.entity.UserStatus;
+import project.validators.emailValidation.UserEmailExist;
+import project.validators.phoneNumberValidation.PhoneNumberExist;
 
 import java.time.LocalDate;
-
+@UserEmailExist(
+        id = "id",
+        email = "email"
+)
+@PhoneNumberExist(
+        id = "id",
+        phoneNumber = "phoneNumber"
+)
 public class UserRequest {
     private Long id;
     @NotEmpty(message = "Поле не може бути порожнім")
