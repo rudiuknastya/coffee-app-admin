@@ -325,7 +325,6 @@
 	$(document).on("click", "ul.pagination li a", function() {
 	    let val = $(this).text();
 	    let id = $(this).attr('id')
-	    console.log(paginationType);
         if(id === "prev"){
             let activeValue = parseInt($("ul.pagination li.active").text());
             if(paginationType === 1){
@@ -439,35 +438,35 @@
                         additiveTypeId: $('#selectAdType').val()
                     },
 					success : function(response) {
-					    if(typeof response === "object"){
-					        for(er of response){
-                              if(er.field.localeCompare('name') == 0 ){
-                                $("#nameValidation").text(er.defaultMessage);
-                                $("#inputName").addClass("is-invalid");
-                              }
-                              if(er.field.localeCompare('price') == 0 ){
-                                $("#priceValidation").text(er.defaultMessage);
-                                $("#inputPrice").addClass("is-invalid");
-                              }
-                              if(er.field.localeCompare('additiveTypeId') == 0 ){
-                                $("#adTypeValidation").text(er.defaultMessage);
-                                $("#selectAdType").addClass("is-invalid");
-                              }
-                            }
-					    } else {
                             $('#saveForm')[0].reset();
                             $('#formModal').modal('hide');
                             getAdditives(0);
-					    }
 
 					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
+					error : function(XMLHttpRequest, textStatus, errorThrown) {
+                        const map = XMLHttpRequest.responseJSON;
+                        if(XMLHttpRequest.status == 400){
+                            for (const [key, value] of Object.entries(map)) {
+                                if(key.localeCompare('name') == 0 ){
+                                    $("#nameValidation").text(value);
+                                    $("#inputName").addClass("is-invalid");
+                                }
+                                if(key.localeCompare('price') == 0 ){
+                                    $("#priceValidation").text(value);
+                                    $("#inputPrice").addClass("is-invalid");
+                                }
+                                if(key.localeCompare('additiveTypeId') == 0 ){
+                                    $("#adTypeValidation").text(value);
+                                    $("#selectAdType").addClass("is-invalid");
+                                }
+                            }
+                        } else {
+                            $("#error").removeClass("d-none");
+                            setTimeout(
+                                function () {
+                                    $("#error").addClass("d-none");
+                                }, 4000);
+                        }
 					}
 				});
 	}
@@ -563,33 +562,33 @@
                         additiveTypeId: $('#editSelectAdType').val()
                     },
 					success : function(response) {
-                        if(typeof response === "object"){
-					        for(er of response){
-                              if(er.field.localeCompare('name') == 0 ){
-                                $("#editValidation").text(er.defaultMessage);
-                                $("#editName").addClass("is-invalid");
-                              }
-                              if(er.field.localeCompare('price') == 0 ){
-                                $("#editPriceValidation").text(er.defaultMessage);
-                                $("#editPrice").addClass("is-invalid");
-                              }
-                              if(er.field.localeCompare('additiveTypeId') == 0 ){
-                                $("#editAdTypeValidation").text(er.defaultMessage);
-                                $("#editSelectAdType").addClass("is-invalid");
-                              }
-                            }
-					    } else {
                             $('#editModal').modal('hide');
                             getAdditives(0);
-                        }
 					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
+					error : function(XMLHttpRequest, textStatus, errorThrown) {
+                        const map = XMLHttpRequest.responseJSON;
+                        if(XMLHttpRequest.status == 400){
+                            for (const [key, value] of Object.entries(map)) {
+                                if (key.localeCompare('name') == 0) {
+                                    $("#editValidation").text(value);
+                                    $("#editName").addClass("is-invalid");
+                                }
+                                if (key.localeCompare('price') == 0) {
+                                    $("#editPriceValidation").text(value);
+                                    $("#editPrice").addClass("is-invalid");
+                                }
+                                if (key.localeCompare('additiveTypeId') == 0) {
+                                    $("#editAdTypeValidation").text(value);
+                                    $("#editSelectAdType").addClass("is-invalid");
+                                }
+                            }
+                        } else {
+                            $("#error").removeClass("d-none");
+                            setTimeout(
+                                function () {
+                                    $("#error").addClass("d-none");
+                                }, 4000);
+                        }
 					}
 				});
 		}

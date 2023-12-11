@@ -73,24 +73,18 @@ public class AdditiveController {
     }
 
     @PostMapping("/saveAdditive")
-    public @ResponseBody List<FieldError> saveAdditive(@Valid @ModelAttribute("saveAdditive") AdditiveRequest additive, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
-            return bindingResult.getFieldErrors();
-        }
+    public @ResponseBody ResponseEntity<?> saveAdditive(@Valid @ModelAttribute("saveAdditive") AdditiveRequest additive){
         additiveService.createAdditive(additive);
-        return null;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/editAdditive/{id}")
     public @ResponseBody Additive editAdditive(@PathVariable Long id){
         return additiveService.getAdditiveById(id);
     }
     @PostMapping("/editAdditive")
-    public @ResponseBody List<FieldError> updateAdditive(@Valid @ModelAttribute("editAdditive") AdditiveRequest additive, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
-            return bindingResult.getFieldErrors();
-        }
+    public @ResponseBody ResponseEntity<?> updateAdditive(@Valid @ModelAttribute("editAdditive") AdditiveRequest additive){
         additiveService.updateAdditive(additive);
-        return null;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/searchAdditive")
     public @ResponseBody Page<AdditiveDTO> searchAdditive(@RequestParam("page")int page, @RequestParam(name="searchValue", required = false) String input, @RequestParam(name="additiveType", required = false) Long additiveType){
