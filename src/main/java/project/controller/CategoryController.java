@@ -51,25 +51,19 @@ public class CategoryController {
         return categoryService.getAllCategories(pageable);
     }
     @PostMapping("/saveCategory")
-    public @ResponseBody List<FieldError> saveCategory(@Valid @ModelAttribute("saveCategory") Category category, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
-            return bindingResult.getFieldErrors();
-        }
+    public @ResponseBody ResponseEntity<?> saveCategory(@Valid @ModelAttribute("saveCategory") Category category){
         category.setDeleted(false);
         categoryService.saveCategory(category);
-        return null;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/editCategory/{id}")
     public @ResponseBody Category editCategory(@PathVariable Long id){
         return categoryService.getCategoryById(id);
     }
     @PostMapping("/editCategory")
-    public @ResponseBody List<FieldError> updateCategory(@Valid @ModelAttribute("editCategory") Category category, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
-            return bindingResult.getFieldErrors();
-        }
+    public @ResponseBody ResponseEntity<?> updateCategory(@Valid @ModelAttribute("editCategory") Category category){
         categoryService.updateCategory(category);
-        return null;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/searchCategories")
     public @ResponseBody Page<CategoryDTO> searchCategories(@RequestParam("page")int page, @RequestParam("name")String name){
@@ -77,8 +71,8 @@ public class CategoryController {
         return categoryService.searchCategories(name, pageable);
     }
     @GetMapping("/deleteCategory/{id}")
-    public @ResponseBody ResponseEntity deleteCategory(@PathVariable Long id){
+    public @ResponseBody ResponseEntity<?> deleteCategory(@PathVariable Long id){
         categoryService.deleteCategory(id);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

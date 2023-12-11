@@ -361,22 +361,23 @@
                         id: categoryId
                     },
 					success : function(response) {
-					    if(typeof response === "object"){
-					        $("#editValidation").text(response[0].defaultMessage);
-                            $("#editName").addClass("is-invalid");
-					    } else {
                             $('#editModal').modal('hide');
                             getCategories(0);
-					    }
-
 					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
+					error : function(XMLHttpRequest, textStatus, errorThrown) {
+                        const map = XMLHttpRequest.responseJSON;
+                        if(XMLHttpRequest.status == 400) {
+                            for (const [key, value] of Object.entries(map)) {
+                                $("#editValidation").text(value);
+                                $("#editName").addClass("is-invalid");
+                            }
+                        } else {
+                            $("#error").removeClass("d-none");
+                            setTimeout(
+                                function () {
+                                    $("#error").addClass("d-none");
+                                }, 4000);
+                        }
 					}
 				});
     }
@@ -404,23 +405,24 @@
                         status: stat
                     },
 					success : function(response) {
-					    if(typeof response === "object"){
-					        $("#saveValidation").text(response[0].defaultMessage);
-                            $("#inputName").addClass("is-invalid");
-					    } else {
                             $('#categoryForm')[0].reset();
                             $('#formModal').modal('hide');
                             getCategories(0);
-					    }
-
 					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
+					error : function(XMLHttpRequest, textStatus, errorThrown) {
+                        const map = XMLHttpRequest.responseJSON;
+                        if(XMLHttpRequest.status == 400) {
+                            for (const [key, value] of Object.entries(map)) {
+                                $("#saveValidation").text(value);
+                                $("#inputName").addClass("is-invalid");
+                            }
+                        } else {
+                            $("#error").removeClass("d-none");
+                            setTimeout(
+                                function () {
+                                    $("#error").addClass("d-none");
+                                }, 4000);
+                        }
 					}
 				});
 	}

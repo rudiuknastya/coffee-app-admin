@@ -103,22 +103,6 @@ public class AdminController {
     }
     @PostMapping("/admins/edit/editAdmin")
     public @ResponseBody ResponseEntity<?> updateAdmin(@Valid @ModelAttribute("editAdmin") AdminRequest adminRequest){
-//        Optional<Admin> admin = adminService.getAdminByEmail(adminRequest.getEmail());
-//
-//        if(bindingResult.hasErrors()) {
-//            List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
-//            if(admin.isPresent() && admin.get().getId() != adminRequest.getId()){
-//                FieldError fieldError = new FieldError("Email exist","email","Така пошта вже існує");
-//                fieldErrors.add(fieldError);
-//            }
-//            return fieldErrors;
-//        }
-//        if(admin.isPresent() && admin.get().getId() != adminRequest.getId()){
-//            List<FieldError> fieldErrors = new ArrayList<>(1);
-//            FieldError fieldError = new FieldError("Email exist","email","Така пошта вже існує");
-//            fieldErrors.add(fieldError);
-//            return fieldErrors;
-//        }
         adminService.updateAdmin(adminRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -134,35 +118,6 @@ public class AdminController {
     }
     @PostMapping("/admins/saveAdmin")
     public @ResponseBody ResponseEntity<?> saveAdmin(@Valid @ModelAttribute("saveAdmin") SaveAdminRequest adminRequest){
-//        Optional<Admin> admin = adminService.getAdminByEmail(adminRequest.getEmail());
-//        if(bindingResult.hasErrors()) {
-//            List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
-//            if(admin.isPresent()){
-//                FieldError fieldError = new FieldError("Email exist","email","Така пошта вже існує");
-//                fieldErrors.add(fieldError);
-//            }
-//            if(!adminRequest.getNewPassword().equals(adminRequest.getConfirmNewPassword())){
-//                FieldError fieldError = new FieldError("confirmNewPassword","confirmNewPassword","Невірний пароль");
-//                fieldErrors.add(fieldError);
-//            }
-//            return fieldErrors;
-//        }
-//        if(admin.isPresent()){
-//            List<FieldError> fieldErrors = new ArrayList<>();
-//            FieldError fieldError = new FieldError("Email exist","email","Така пошта вже існує");
-//            fieldErrors.add(fieldError);
-//            if(!adminRequest.getNewPassword().equals(adminRequest.getConfirmNewPassword())){
-//                FieldError fieldError1 = new FieldError("confirmNewPassword","confirmNewPassword","Невірний пароль");
-//                fieldErrors.add(fieldError1);
-//            }
-//            return fieldErrors;
-//        }
-//        if(!adminRequest.getNewPassword().equals(adminRequest.getConfirmNewPassword())){
-//            List<FieldError> fieldErrors = new ArrayList<>();
-//            FieldError fieldError = new FieldError("confirmNewPassword","confirmNewPassword","Невірний пароль");
-//            fieldErrors.add(fieldError);
-//            return fieldErrors;
-//        }
         adminService.createAndSaveAdmin(adminRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
