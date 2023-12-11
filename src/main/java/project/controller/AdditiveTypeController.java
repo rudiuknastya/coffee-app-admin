@@ -56,29 +56,23 @@ public class AdditiveTypeController {
     }
 
     @GetMapping("/deleteAdditiveType/{id}")
-    public @ResponseBody ResponseEntity deleteAdditiveType(@PathVariable Long id){
+    public @ResponseBody ResponseEntity<?> deleteAdditiveType(@PathVariable Long id){
         additiveTypeService.deleteAdditiveType(id);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @PostMapping("/saveAdditiveType")
-    public @ResponseBody List<FieldError> saveAdditiveType(@Valid @ModelAttribute("saveAdditiveType") AdditiveTypeRequest additiveTypeRequest, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
-            return bindingResult.getFieldErrors();
-        }
+    public @ResponseBody ResponseEntity<?> saveAdditiveType(@Valid @ModelAttribute("saveAdditiveType") AdditiveTypeRequest additiveTypeRequest){
         additiveTypeService.createAndSaveAdditiveType(additiveTypeRequest);
-        return null;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/editAdditiveType/{id}")
     public @ResponseBody AdditiveType editAdditiveType(@PathVariable Long id){
         return additiveTypeService.getAdditiveTypeById(id);
     }
     @PostMapping("/editAdditiveType")
-    public @ResponseBody List<FieldError> updateAdditiveType(@Valid @ModelAttribute("editAdditiveType") AdditiveTypeRequest additiveTypeRequest, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
-            return bindingResult.getFieldErrors();
-        }
+    public @ResponseBody ResponseEntity<?> updateAdditiveType(@Valid @ModelAttribute("editAdditiveType") AdditiveTypeRequest additiveTypeRequest){
         additiveTypeService.updateAdditiveType(additiveTypeRequest);
-        return null;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/searchAdditiveTypes")
