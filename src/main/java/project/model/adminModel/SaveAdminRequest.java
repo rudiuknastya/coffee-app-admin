@@ -1,8 +1,6 @@
 package project.model.adminModel;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import project.entity.Role;
 
@@ -10,10 +8,13 @@ import java.time.LocalDate;
 
 public class SaveAdminRequest {
     @NotEmpty(message = "Поле не може бути порожнім")
+    @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
     private String firstName;
     @NotEmpty(message = "Поле не може бути порожнім")
+    @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
     private String lastName;
     @NotEmpty(message = "Поле не може бути порожнім ")
+    @Size(max=200, message = "Розмір поля має бути не більше 200 символів")
     @Email(regexp = "[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\\.[a-z]{2,3}", message = "Невірний формат email")
     private String email;
     @NotNull(message = "Поле не може бути порожнім")
@@ -24,8 +25,16 @@ public class SaveAdminRequest {
     @NotNull(message = "Поле не може бути порожнім")
     private Role role;
     @NotEmpty(message = "Поле не може бути порожнім ")
+    @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
+    @Pattern.List({
+            @Pattern(regexp = ".{8,}", message = "Пароль має мати принаймні одну цифру, одну велику літеру, один спецсимвол ,./? та розмір більше 8"),
+            @Pattern(regexp = ".*\\d+.*", message = "Пароль має мати принаймні одну цифру, одну велику літеру, один спецсимвол ,./? та розмір більше 8"),
+            @Pattern(regexp = ".*[,./?]+.*", message = "Пароль має мати принаймні одну цифру, одну велику літеру, один спецсимвол ,./? та розмір більше 8"),
+            @Pattern(regexp = ".*[A-Z]+.*", message = "Пароль має мати принаймні одну цифру, одну велику літеру, один спецсимвол ,./? та розмір більше 8")
+    })
     private String newPassword;
     @NotEmpty(message = "Поле не може бути порожнім ")
+    @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
     private String confirmNewPassword;
 
     public String getFirstName() {

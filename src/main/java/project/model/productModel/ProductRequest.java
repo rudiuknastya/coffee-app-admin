@@ -1,17 +1,22 @@
 package project.model.productModel;
 
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 
 public class ProductRequest {
     private Long id;
     @NotEmpty(message = "Поле не може бути порожнім")
+    @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
     private String name;
     @NotNull(message = "Поле не може бути порожнім")
+    @Digits(integer = 5, fraction = 0, message = "Розмір числа має бути не більше 5 символів")
     private BigDecimal price;
     @NotEmpty(message = "Поле не може бути порожнім")
+    @Size(max=200, message = "Розмір поля має бути не більше 200 символів")
     private String description;
     private Boolean status;
     @NotNull(message = "Поле не може бути порожнім")

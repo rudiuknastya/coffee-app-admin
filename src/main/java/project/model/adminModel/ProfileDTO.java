@@ -3,6 +3,7 @@ package project.model.adminModel;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -10,10 +11,13 @@ import java.time.LocalDate;
 public class ProfileDTO {
     private Long id;
     @NotEmpty(message = "Поле не може бути порожнім")
+    @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
     private String firstName;
     @NotEmpty(message = "Поле не може бути порожнім")
+    @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
     private String lastName;
     @NotEmpty(message = "Поле не може бути порожнім ")
+    @Size(max=200, message = "Розмір поля має бути не більше 200 символів")
     @Email(regexp = "[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\\.[a-z]{2,3}", message = "Невірний формат email")
     private String email;
     @NotNull(message = "Поле не може бути порожнім")

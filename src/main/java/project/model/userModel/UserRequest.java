@@ -10,15 +10,17 @@ import java.time.LocalDate;
 public class UserRequest {
     private Long id;
     @NotEmpty(message = "Поле не може бути порожнім")
+    @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
     private String name;
     @NotEmpty(message = "Поле не може бути порожнім ")
-    @Size(min=4, max=15, message = "Розмір поля має бути не менше 4 та не більше 15 символів")
-    @Pattern(regexp = "^\\+?[1-9][0-9]{4,15}$", message = "Невірний формат номеру")
+    @Size(max=12, message = "Розмір поля має бути не більше 12 символів")
+    @Pattern(regexp = "\\+?380(50)?(66)?(95)?(99)?(67)?(68)?(96)?(97)?(98)?(63)?(93)?(73)?[0-9]{0,7}", message = "Невірний формат номеру")
     private String phoneNumber;
     @NotNull(message = "Поле не може бути порожнім")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
     @NotEmpty(message = "Поле не може бути порожнім ")
+    @Size(max=200, message = "Розмір поля має бути не більше 200 символів")
     @Email(regexp = "[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\\.[a-z]{2,3}", message = "Невірний формат email")
     private String email;
 

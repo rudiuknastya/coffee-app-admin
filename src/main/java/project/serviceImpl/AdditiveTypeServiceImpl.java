@@ -12,6 +12,7 @@ import project.model.additiveTypeModel.AdditiveTypeDTO;
 import project.model.additiveTypeModel.AdditiveTypeNameDTO;
 import project.entity.AdditiveType;
 import project.mapper.AdditiveTypeMapper;
+import project.model.additiveTypeModel.AdditiveTypeRequest;
 import project.repository.AdditiveRepository;
 import project.repository.AdditiveTypeRepository;
 import project.service.AdditiveTypeService;
@@ -95,11 +96,11 @@ public class AdditiveTypeServiceImpl implements AdditiveTypeService {
     }
 
     @Override
-    public void updateAdditiveType(AdditiveType additiveType) {
+    public void updateAdditiveType(AdditiveTypeRequest additiveTypeRequest) {
         logger.info("updateAdditiveType() - Updating additive type");
-        AdditiveType additiveTypeInDb = additiveTypeRepository.findById(additiveType.getId()).orElseThrow(EntityNotFoundException::new);
-        additiveTypeInDb.setName(additiveType.getName());
-        additiveTypeInDb.setStatus(additiveType.getStatus());
+        AdditiveType additiveTypeInDb = additiveTypeRepository.findById(additiveTypeRequest.getId()).orElseThrow(EntityNotFoundException::new);
+        additiveTypeInDb.setName(additiveTypeRequest.getName());
+        additiveTypeInDb.setStatus(additiveTypeRequest.getStatus());
         additiveTypeRepository.save(additiveTypeInDb);
         logger.info("updateAdditiveType() - Additive type was updated");
     }
@@ -116,5 +117,14 @@ public class AdditiveTypeServiceImpl implements AdditiveTypeService {
         }
         additiveTypeRepository.save(additiveType);
         logger.info("deleteAdditiveType() - Additive type was deleted");
+    }
+
+    @Override
+    public void createAndSaveAdditiveType(AdditiveTypeRequest additiveTypeRequest) {
+        logger.info("deleteAdditiveType() - Creating and saving additive type");
+        AdditiveType additiveType = AdditiveTypeMapper.ADDITIVE_TYPE_MAPPER.additiveTypeRequestToadditiveType(additiveTypeRequest);
+        additiveType.setDeleted(false);
+        additiveTypeRepository.save(additiveType);
+        logger.info("createAndSaveAdditiveType() - Additive type was created and saved");
     }
 }

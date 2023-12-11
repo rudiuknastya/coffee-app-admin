@@ -12,7 +12,6 @@ public class AdditiveType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotEmpty(message = "Поле не може бути порожнім")
     @Column(columnDefinition = "VARCHAR(100)",nullable = false)
     private String name;
     private Boolean deleted;

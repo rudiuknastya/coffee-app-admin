@@ -1,9 +1,6 @@
 package project.model.orderModel;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -11,20 +8,26 @@ import java.time.LocalTime;
 
 public class DeliveryDTO {
     @NotEmpty(message = "Поле не може бути порожнім")
+    @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
     private String name;
     @NotEmpty(message = "Поле не може бути порожнім")
-    @Size(min=4, max=15, message = "Розмір поля має бути не менше 4 та не більше 15 символів")
-    @Pattern(regexp = "^\\+?[1-9][0-9]{4,15}$", message = "Невірний формат номеру")
+    @Size(max=12, message = "Розмір поля має бути не більше 12 символів")
+    @Pattern(regexp = "\\+?380(50)?(66)?(95)?(99)?(67)?(68)?(96)?(97)?(98)?(63)?(93)?(73)?[0-9]{7}", message = "Невірний формат номеру")
     private String phoneNumber;
     @NotEmpty(message = "Поле не може бути порожнім")
+    @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
     private String city;
     @NotEmpty(message = "Поле не може бути порожнім")
+    @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
     private String building;
     @NotEmpty(message = "Поле не може бути порожнім")
+    @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
     private String street;
     @NotEmpty(message = "Поле не може бути порожнім")
+    @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
     private String entrance;
     @NotNull(message = "Поле не може бути порожнім")
+    @Digits(integer = 4, fraction = 0, message = "Розмір числа має бути не більше 4 символів")
     private Long apartment;
     @NotNull(message = "Поле не може бути порожнім")
     @DateTimeFormat(pattern = "yyyy-MM-dd")

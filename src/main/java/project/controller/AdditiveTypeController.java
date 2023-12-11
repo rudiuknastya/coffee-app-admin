@@ -17,6 +17,7 @@ import project.entity.Admin;
 import project.model.additiveTypeModel.AdditiveTypeDTO;
 import project.entity.Additive;
 import project.entity.AdditiveType;
+import project.model.additiveTypeModel.AdditiveTypeRequest;
 import project.service.AdditiveService;
 import project.service.AdditiveTypeService;
 import project.service.AdminService;
@@ -60,12 +61,11 @@ public class AdditiveTypeController {
         return new ResponseEntity(HttpStatus.OK);
     }
     @PostMapping("/saveAdditiveType")
-    public @ResponseBody List<FieldError> saveAdditiveType(@Valid @ModelAttribute("saveAdditiveType") AdditiveType additiveType, BindingResult bindingResult){
+    public @ResponseBody List<FieldError> saveAdditiveType(@Valid @ModelAttribute("saveAdditiveType") AdditiveTypeRequest additiveTypeRequest, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             return bindingResult.getFieldErrors();
         }
-        additiveType.setDeleted(false);
-        additiveTypeService.saveAdditiveType(additiveType);
+        additiveTypeService.createAndSaveAdditiveType(additiveTypeRequest);
         return null;
     }
     @GetMapping("/editAdditiveType/{id}")
@@ -73,11 +73,11 @@ public class AdditiveTypeController {
         return additiveTypeService.getAdditiveTypeById(id);
     }
     @PostMapping("/editAdditiveType")
-    public @ResponseBody List<FieldError> updateAdditiveType(@Valid @ModelAttribute("editAdditiveType") AdditiveType additiveType, BindingResult bindingResult){
+    public @ResponseBody List<FieldError> updateAdditiveType(@Valid @ModelAttribute("editAdditiveType") AdditiveTypeRequest additiveTypeRequest, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             return bindingResult.getFieldErrors();
         }
-        additiveTypeService.updateAdditiveType(additiveType);
+        additiveTypeService.updateAdditiveType(additiveTypeRequest);
         return null;
     }
 

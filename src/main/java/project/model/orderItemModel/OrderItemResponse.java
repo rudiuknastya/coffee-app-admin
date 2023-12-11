@@ -1,10 +1,12 @@
 package project.model.orderItemModel;
 
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotNull;
 
 public class OrderItemResponse {
     private Long id;
     @NotNull(message = "Поле не може бути порожнім")
+    @Digits(integer = 4, fraction = 0, message = "Розмір числа має бути не більше 4 символів")
     private Long quantity;
 
     public Long getId() {

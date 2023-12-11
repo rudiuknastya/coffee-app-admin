@@ -1,22 +1,18 @@
-package project.entity;
+package project.model.additiveTypeModel;
 
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
-import org.hibernate.annotations.ColumnDefault;
 
-@Entity
-@Table(name = "category")
-public class Category {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class AdditiveTypeRequest {
     private Long id;
     @NotEmpty(message = "Поле не може бути порожнім")
     @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
-    @Column(nullable = false)
     private String name;
-    private Boolean deleted;
     private Boolean status;
+
+    public String getName() {
+        return name;
+    }
 
     public Long getId() {
         return id;
@@ -26,20 +22,8 @@ public class Category {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Boolean getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(Boolean deleted) {
-        this.deleted = deleted;
     }
 
     public Boolean getStatus() {

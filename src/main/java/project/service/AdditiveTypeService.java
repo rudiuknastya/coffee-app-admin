@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import project.model.additiveTypeModel.AdditiveTypeDTO;
 import project.model.additiveTypeModel.AdditiveTypeNameDTO;
 import project.entity.AdditiveType;
+import project.model.additiveTypeModel.AdditiveTypeRequest;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ public interface AdditiveTypeService {
     Page<AdditiveTypeNameDTO> getAdditiveTypeNames(Pageable pageable, String name);
     AdditiveTypeNameDTO getAdditiveTypeNameDTOById(Long id);
     List<AdditiveType> getAdditiveTypesByIds(Long[] adTypes);
-    void updateAdditiveType(AdditiveType additiveType);
+    void updateAdditiveType(AdditiveTypeRequest additiveTypeRequest);
     void deleteAdditiveType(Long id);
+    void createAndSaveAdditiveType(AdditiveTypeRequest additiveTypeRequest);
 }

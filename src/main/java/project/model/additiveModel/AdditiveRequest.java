@@ -1,15 +1,16 @@
 package project.model.additiveModel;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
 
 public class AdditiveRequest {
     private Long id;
     @NotEmpty(message = "Поле не може бути порожнім")
+    @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
     private String name;
     @NotNull(message = "Поле не може бути порожнім")
+    @Digits(integer = 5, fraction = 0, message = "Розмір числа має бути не більше 5 символів")
     private BigDecimal price;
     @NotNull(message = "Поле не може бути порожнім")
     private Long additiveTypeId;
