@@ -126,20 +126,22 @@ $(document).ready(function(){
                 quantity: $("#inputQuantity").val(),
             },
 			success : function(response) {
-			    if(typeof response === "object"){
-                    $("#quantityValidation").text(response[0].defaultMessage);
-                    $("#inputQuantity").addClass("is-invalid");
-                } else {
                     window.location.href = "/"+root+'/orders/edit/'+orderId;
-                }
             },
-			error : function(err) {
-				$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
+			error : function(XMLHttpRequest, textStatus, errorThrown) {
+                const map = XMLHttpRequest.responseJSON;
+                if(XMLHttpRequest.status == 400) {
+                    for (const [key, value] of Object.entries(map)) {
+                        $("#quantityValidation").text(value);
+                        $("#inputQuantity").addClass("is-invalid");
+                    }
+                } else {
+                    $("#error").removeClass("d-none");
+                    setTimeout(
+                        function () {
                             $("#error").addClass("d-none");
-                          }, 4000);
+                        }, 4000);
+                }
 			}
 		});
     }

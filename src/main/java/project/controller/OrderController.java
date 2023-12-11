@@ -101,17 +101,14 @@ public class OrderController {
     }
 
     @PostMapping("/orders/edit/editOrderDelivery")
-    public @ResponseBody List<FieldError> updateOrderDelivery(@ModelAttribute("order") OrderRequest order, @Valid @ModelAttribute("delivery") DeliveryDTO deliveryDTO, BindingResult bindingResult){
-        if(bindingResult.hasErrors()) {
-            return bindingResult.getFieldErrors();
-        }
+    public @ResponseBody ResponseEntity<?> updateOrderDelivery(@ModelAttribute("order") OrderRequest order, @Valid @ModelAttribute("delivery") DeliveryDTO deliveryDTO){
         orderService.updateOrderWithDelivery(order,deliveryDTO);
-        return null;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @PostMapping("/orders/edit/editOrder")
-    public @ResponseBody ResponseEntity updateOrder(@ModelAttribute("order") OrderRequest order){
+    public @ResponseBody ResponseEntity<?> updateOrder(@ModelAttribute("order") OrderRequest order){
         orderService.updateOrder(order);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/orderItem/edit/{id}")
     public String editOrderItem(@PathVariable Long id, Model model){

@@ -93,12 +93,9 @@ public class OrderItemController {
         return orderItemService.searchOrderAdditives(orderItemId, name, pageable);
     }
     @PostMapping("/orderItem/edit/editOrderItem")
-    public @ResponseBody List<FieldError> editOrderItem(@Valid @ModelAttribute("orderItem") OrderItemResponse orderItemResponse, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
-            return bindingResult.getFieldErrors();
-        }
+    public @ResponseBody ResponseEntity<?> editOrderItem(@Valid @ModelAttribute("orderItem") OrderItemResponse orderItemResponse){
         orderItemService.updateOrderItem(orderItemResponse);
-        return null;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/getOrderAdditive/{id}")
     public @ResponseBody AdditiveOrderResponse getOrderAdditive(@PathVariable Long id){
