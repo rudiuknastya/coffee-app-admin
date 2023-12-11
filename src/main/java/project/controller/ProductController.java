@@ -26,6 +26,7 @@ import project.service.AdditiveTypeService;
 import project.service.AdminService;
 import project.service.CategoryService;
 import project.service.ProductService;
+import project.validators.fileExtentionValidator.ValidFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,7 +81,7 @@ public class ProductController {
     }
 
     @GetMapping("/deleteProduct/{id}")
-    public @ResponseBody ResponseEntity deleteProduct(@PathVariable Long id){
+    public @ResponseBody ResponseEntity<?> deleteProduct(@PathVariable Long id){
         Product product = productService.getProductById(id);
         product.setDeleted(true);
         productService.saveProduct(product);
@@ -104,28 +105,10 @@ public class ProductController {
     }
 
     @PostMapping("/products/saveProduct")
-    public @ResponseBody List<FieldError> saveProduct(@Valid @ModelAttribute("product") ProductRequest product, BindingResult bindingResult,
-                                                      @RequestParam(name = "mainImage", required = false) MultipartFile mainImage, @RequestParam("mainImageName") String mainImageName,
-                                                      @RequestParam(name = "adTypes", required = false) Long [] adTypes) throws IOException {
-        if (bindingResult.hasErrors()) {
-            List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
-            if(mainImage != null && !mainImage.getOriginalFilename().equals("") && !isSupportedExtension(FilenameUtils.getExtension(
-                    mainImage.getOriginalFilename()))) {
-                FieldError fieldError = new FieldError("Image format wrong","image","Некоректний тип файлу");
-                fieldErrors.add(fieldError);
-            }
-            return fieldErrors;
-        }
-
-        if(mainImage != null && !mainImage.getOriginalFilename().equals("") && !isSupportedExtension(FilenameUtils.getExtension(
-                mainImage.getOriginalFilename()))){
-            List<FieldError> fieldErrors = new ArrayList<>(1);
-            FieldError fieldError = new FieldError("Image format wrong","image","Некоректний тип файлу");
-            fieldErrors.add(fieldError);
-            return fieldErrors;
-        }
+    public @ResponseBody ResponseEntity<?> saveProduct(@Valid @ModelAttribute("product") ProductRequest product, @ValidFile @RequestParam(name = "mainImage", required = false) MultipartFile mainImage,
+                                                      @RequestParam("mainImageName") String mainImageName, @RequestParam(name = "adTypes", required = false) Long [] adTypes) throws IOException {
         productService.createAndSaveProduct(product,adTypes,mainImage,mainImageName);
-        return null;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/products/edit/{id}")
@@ -145,34 +128,9 @@ public class ProductController {
         return productService.getProductResponseById(id);
     }
     @PostMapping("/products/edit/editProduct")
-    public @ResponseBody List<FieldError> updateProduct(@Valid @ModelAttribute("product") ProductRequest product,BindingResult bindingResult,
-                                @RequestParam(name = "adTypes", required = false) Long [] adTypes,
-                                @RequestParam(name = "mainImage", required = false) MultipartFile mainImage, @RequestParam("mainImageName") String mainImageName) throws IOException {
-        if (bindingResult.hasErrors()) {
-            List<FieldError> fieldErrors = new ArrayList<>(bindingResult.getFieldErrors());
-            if(mainImage != null && !mainImage.getOriginalFilename().equals("") && !isSupportedExtension(FilenameUtils.getExtension(
-                    mainImage.getOriginalFilename()))) {
-                FieldError fieldError = new FieldError("Image format wrong","image","Некоректний тип файлу");
-                fieldErrors.add(fieldError);
-            }
-            return fieldErrors;
-        }
-
-        if(mainImage != null && !mainImage.getOriginalFilename().equals("") && !isSupportedExtension(FilenameUtils.getExtension(
-                mainImage.getOriginalFilename()))){
-            List<FieldError> fieldErrors = new ArrayList<>(1);
-            FieldError fieldError = new FieldError("Image format wrong","image","Некоректний тип файлу");
-            fieldErrors.add(fieldError);
-            return fieldErrors;
-        }
+    public @ResponseBody ResponseEntity<?> updateProduct(@Valid @ModelAttribute("product") ProductRequest product, @RequestParam(name = "adTypes", required = false) Long [] adTypes,
+                                                         @ValidFile @RequestParam(name = "mainImage", required = false) MultipartFile mainImage, @RequestParam("mainImageName") String mainImageName) throws IOException {
         productService.updateProduct(product,adTypes,mainImage,mainImageName);
-        return null;
-    }
-
-    private boolean isSupportedExtension(String extension) {
-        return extension != null && (
-                extension.equals("png")
-                        || extension.equals("jpg")
-                        || extension.equals("jpeg"));
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

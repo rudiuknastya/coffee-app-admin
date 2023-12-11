@@ -230,44 +230,41 @@ var root = myArray[3];
 					contentType: false,
 					processData: false,
 					success : function(response) {
-					console.log(typeof response)
-					  if(typeof response === "object"){
-                        for(er of response){
-                          if(er.field.localeCompare('name') == 0 ){
-                            $("#nameValidation").text(er.defaultMessage);
-                            $("#inputName").addClass("is-invalid");
-                          }
-                          if(er.field.localeCompare('price') == 0){
-                            $("#priceValidation").text(er.defaultMessage);
-                            $("#inputPrice").addClass("is-invalid");
-                          }
-                          if(er.field.localeCompare('description') == 0){
-                            $("#descriptionValidation").text(er.defaultMessage);
-                            $("#inputDescription").addClass("is-invalid");
-                          }
-                          if(er.field.localeCompare('categoryId') == 0){
-                            $("#categoryValidation").text(er.defaultMessage);
-                            $("#selectCategory").addClass("is-invalid");
-                          }
-                          if(er.field.localeCompare('image') == 0){
-                            $("#imageValidation").text(er.defaultMessage);
-                          }
-                        }
-                      } else {
                         window.location.href = '/'+root+'/products';
-                      }
-
 					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
+					error : function(XMLHttpRequest, textStatus, errorThrown) {
+                        const map = XMLHttpRequest.responseJSON;
+                        if(XMLHttpRequest.status == 400){
+                          for (const [key, value] of Object.entries(map)) {
+                            if(key.localeCompare('name') == 0 ){
+                              $("#nameValidation").text(value);
+                              $("#inputName").addClass("is-invalid");
+                            }
+                            if(key.localeCompare('price') == 0){
+                              $("#priceValidation").text(value);
+                              $("#inputPrice").addClass("is-invalid");
+                            }
+                            if(key.localeCompare('description') == 0){
+                              $("#descriptionValidation").text(value);
+                              $("#inputDescription").addClass("is-invalid");
+                            }
+                            if(key.localeCompare('categoryId') == 0){
+                              $("#categoryValidation").text(value);
+                              $("#selectCategory").addClass("is-invalid");
+                            }
+                            if(key.localeCompare('image') == 0){
+                              $("#imageValidation").text(value);
+                            }
+                          }
+                        } else {
+                          $("#error").removeClass("d-none");
                           setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
+                                  function () {
+                                    $("#error").addClass("d-none");
+                                  }, 4000);
+                        }
 					}
 				});
-
     }
 
     $('#inputMainImage').on("change", function() {

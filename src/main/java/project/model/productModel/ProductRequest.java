@@ -16,7 +16,7 @@ public class ProductRequest {
     @Digits(integer = 5, fraction = 0, message = "Розмір числа має бути не більше 5 символів")
     private BigDecimal price;
     @NotEmpty(message = "Поле не може бути порожнім")
-    @Size(max=200, message = "Розмір поля має бути не більше 200 символів")
+    @Size(max=500, message = "Розмір поля має бути не більше 500 символів")
     private String description;
     private Boolean status;
     @NotNull(message = "Поле не може бути порожнім")
