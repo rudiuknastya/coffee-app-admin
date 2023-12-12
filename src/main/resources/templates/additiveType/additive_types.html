@@ -129,6 +129,7 @@
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
 <script>
+    var page = 0;
     $(document).ready(function(){
         getAdditiveTypes(0);
     });
@@ -186,6 +187,7 @@
 	function buildPagination(response) {
 		totalPages = response.totalPages;
 		var pageNumber = response.pageable.pageNumber;
+        page = pageNumber;
         if(totalPages > 1){
 		var prev = '';
 
@@ -305,7 +307,7 @@
 					url : "deleteAdditiveType/"+additiveTypeId,
 					success : function(response) {
 					    $('#deleteModal').modal('hide');
-					    getAdditiveTypes(0);
+					    getAdditiveTypes(page);
 
 					},
 					error : function(err) {
@@ -361,7 +363,7 @@
                     },
 					success : function(response) {
                             $('#editModal').modal('hide');
-                            getAdditiveTypes(0);
+                            getAdditiveTypes(page);
 
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown) {
@@ -407,7 +409,7 @@
 					success : function(response) {
                             $('#saveForm')[0].reset();
                             $('#formModal').modal('hide');
-                            getAdditiveTypes(0);
+                            getAdditiveTypes(page);
 					},
 					error : function(XMLHttpRequest, textStatus, errorThrown) {
                         const map = XMLHttpRequest.responseJSON;

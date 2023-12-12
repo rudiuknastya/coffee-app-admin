@@ -3,7 +3,7 @@
       class="light-style layout-navbar-fixed layout-menu-fixed"
       dir="ltr"
       data-theme="theme-default"
-      data-template="vertical-menu-template-no-customizer" >
+      data-template="vertical-menu-template-no-customizer">
 <head th:replace="~{fragments :: head}"></head>
 <body>
 <div class="layout-wrapper layout-content-navbar">
@@ -18,57 +18,64 @@
                             <div class="col-md-6">
                                 <label for="inputQuantity" class="form-label">Кількість товарів</label>
                                 <input type="number" class="form-control" id="inputQuantity" maxlength="100">
-                                <div class="text-danger" id="quantityValidation"> </div>
+                                <div class="text-danger" id="quantityValidation"></div>
                             </div>
                         </form>
-                            <h5 class="mt-4">Додатки</h5>
-                            <div class="col-12 mb-3">
-                                <input class="form-control me-2" type="search" id="searchInput" placeholder="Пошук за типом додатку" aria-label="Search" maxlength="100">
-                            </div>
+                        <h5 class="mt-4">Додатки</h5>
+                        <div class="col-12 mb-3">
+                            <input class="form-control me-2" type="search" id="searchInput"
+                                   placeholder="Пошук за типом додатку" aria-label="Search" maxlength="100">
+                        </div>
 
-                            <div class="table-responsive">
-                                <table class="table table-bordered">
-                                    <thead>
-                                    <tr>
-                                        <th>Тип додатку</th>
-                                        <th>Додаток</th>
-                                        <th></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody id = "myTable">
-                                    </tbody>
-                                </table>
-                                <div class="d-flex justify-content-between">
-                                    <div class="col-4 mt-4" id="paginationElements"></div>
-                                    <ul class="pagination mt-4 justify-content-end"></ul>
-                                </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Тип додатку</th>
+                                    <th>Додаток</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody id="myTable">
+                                </tbody>
+                            </table>
+                            <div class="d-flex justify-content-between">
+                                <div class="col-4 mt-4" id="paginationElements"></div>
+                                <ul class="pagination mt-4 justify-content-end"></ul>
                             </div>
+                        </div>
 
-                            <div class="col-md-12 mt-5 d-flex justify-content-end">
-                                <button type="button" onclick="save()" class="btn btn-primary">Зберегти</button>
-                            </div>
-                        <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="col-md-12 mt-5 d-flex justify-content-end">
+                            <button type="button" onclick="save()" class="btn btn-primary">Зберегти</button>
+                        </div>
+                        <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false"
+                             tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <form class="row g-3">
-                                            <div class="col-md-6" >
+                                            <div class="col-md-6">
                                                 <div id="adType"></div>
                                             </div>
-                                            <div class="col-md-6" >
+                                            <div class="col-md-6">
                                                 <label for="selectAdType" class="form-label">Тип додатку</label>
-                                                <select class="form-select" id="selectAdType" >
+                                                <select class="form-select" id="selectAdType">
                                                 </select>
                                             </div>
 
                                         </form>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
-                                        <button type="button" class="btn btn-primary" id="updateButton" onclick="editAdditive()">Зберегти</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            Закрити
+                                        </button>
+                                        <button type="button" class="btn btn-primary" id="updateButton"
+                                                onclick="editAdditive()">Зберегти
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -92,45 +99,45 @@
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/i18n/uk.js"></script>
 <script th:inline="javascript">
-var orderId = [[${orderId}]];
-var url = window.location.pathname;
-var id = url.substring(url.lastIndexOf('/') + 1);
-const currentUrl = window.location.href;
-const myArray = currentUrl.split("/");
-var root = myArray[3];
-$(document).ready(function(){
-         $.ajax({
-			type : "GET",
-			url : "getOrderItem/"+id,
-			success : function(response) {
-			    $("#inputQuantity").val(response.quantity)
-			},
-			error : function(err) {
-				$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-			}
-		 });
+    var orderId = [[${orderId}]];
+    var url = window.location.pathname;
+    var id = url.substring(url.lastIndexOf('/') + 1);
+    const currentUrl = window.location.href;
+    const myArray = currentUrl.split("/");
+    var root = myArray[3];
+    var page = 0;
+    $(document).ready(function () {
+        $.ajax({
+            type: "GET",
+            url: "getOrderItem/" + id,
+            success: function (response) {
+                $("#inputQuantity").val(response.quantity)
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
         getOrderItemAdditives(0);
     });
 
-    function save(){
+    function save() {
         $.ajax({
-		    type : "POST",
-			url : "editOrderItem",
-			data: {
+            type: "POST",
+            url: "editOrderItem",
+            data: {
                 id: id,
                 quantity: $("#inputQuantity").val(),
             },
-			success : function(response) {
-                    window.location.href = "/"+root+'/orders/edit/'+orderId;
+            success: function (response) {
+                window.location.href = "/" + root + '/orders/edit/' + orderId;
             },
-			error : function(XMLHttpRequest, textStatus, errorThrown) {
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
                 const map = XMLHttpRequest.responseJSON;
-                if(XMLHttpRequest.status == 400) {
+                if (XMLHttpRequest.status == 400) {
                     for (const [key, value] of Object.entries(map)) {
                         $("#quantityValidation").text(value);
                         $("#inputQuantity").addClass("is-invalid");
@@ -142,286 +149,285 @@ $(document).ready(function(){
                             $("#error").addClass("d-none");
                         }, 4000);
                 }
-			}
-		});
+            }
+        });
     }
 
     var paginationType;
     var data = "";
-	function getOrderItemAdditives(currentPage) {
-		$.ajax({
-					type : "GET",
-					url : "/"+root+"/getOrderItemAdditives/"+id,
-					data: {
-                        page: currentPage
-                    },
-					success : function(response) {
-						$('.tr').remove();
-						$('ul.pagination li').remove();
-						data = response.content;
-						for (i = 0; i < data.length; i++) {
-							$("#myTable")
-									.append(
-											'<tr class="tr"> <td>'
-													+ data[i].additiveTypeName
-													+ '</td> <td>'
-													+ data[i].additiveName
-													+ '</td> <td><button type="button" class="btn btn-primary" onclick="openEditModal('
-													+ data[i].additiveId
-													+ ');"><i class="ti ti-pencil"></i></button></td> </tr>');
 
-						}
+    function getOrderItemAdditives(currentPage) {
+        $.ajax({
+            type: "GET",
+            url: "/" + root + "/getOrderItemAdditives/" + id,
+            data: {
+                page: currentPage
+            },
+            success: function (response) {
+                $('.tr').remove();
+                $('ul.pagination li').remove();
+                data = response.content;
+                for (i = 0; i < data.length; i++) {
+                    $("#myTable")
+                        .append(
+                            '<tr class="tr"> <td>'
+                            + data[i].additiveTypeName
+                            + '</td> <td>'
+                            + data[i].additiveName
+                            + '</td> <td><button type="button" class="btn btn-primary" onclick="openEditModal('
+                            + data[i].additiveId
+                            + ');"><i class="ti ti-pencil"></i></button></td> </tr>');
 
-                              paginationType = 1;
-                              buildPagination(response);
+                }
+
+                paginationType = 1;
+                buildPagination(response);
 
 
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
-	}
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
+    }
 
-	function buildPagination(response) {
-		totalPages = response.totalPages;
-		var pageNumber = response.pageable.pageNumber;
-        if(totalPages > 1){
-		var prev = '';
+    function buildPagination(response) {
+        totalPages = response.totalPages;
+        var pageNumber = response.pageable.pageNumber;
+        page = pageNumber;
+        if (totalPages > 1) {
+            var prev = '';
 
-			if(pageNumber !== 0) {
+            if (pageNumber !== 0) {
                 prev = '<li class="page-item prev"><a class="page-link waves-effect" id="prev" href="javascript:void(0);"><i class="ti ti-chevron-left ti-xs"></i></a></li>';
-			} else {
+            } else {
                 prev = '<li class="page-item prev disabled"><a class="page-link waves-effect" href="javascript:void(0);"><i class="ti ti-chevron-left ti-xs"></i></a></li>';
-		    }
+            }
 
 
-		var next = '';
+            var next = '';
 
-			if(pageNumber !== totalPages - 1) {
-				next = '<li class="page-item next"><a class="page-link waves-effect" id="next" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
-			} else {
+            if (pageNumber !== totalPages - 1) {
+                next = '<li class="page-item next"><a class="page-link waves-effect" id="next" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
+            } else {
                 next = '<li class="page-item next disabled"><a class="page-link waves-effect" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
-		    }
+            }
 
-       var pages = '';
-       var dots = '<li class="page-item disabled"><a class="page-link waves-effect" href="javascript:void(0);"> ... </a></li>';
-       if(pageNumber < 3){
-            for(var i = 1; i <= 5; i++){
-                if(i <= totalPages) {
-                    if(pageNumber+1 !== i){
-                        pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
-                    } else {
-                        pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+            var pages = '';
+            var dots = '<li class="page-item disabled"><a class="page-link waves-effect" href="javascript:void(0);"> ... </a></li>';
+            if (pageNumber < 3) {
+                for (var i = 1; i <= 5; i++) {
+                    if (i <= totalPages) {
+                        if (pageNumber + 1 !== i) {
+                            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        } else {
+                            pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        }
                     }
                 }
-            }
-            if(totalPages == 6){
-              pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ 6 +'</a></li>';
-            }
-            if(totalPages > 6){
-                pages += dots;
-                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+totalPages+'</a></li>';
-            }
+                if (totalPages == 6) {
+                    pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + 6 + '</a></li>';
+                }
+                if (totalPages > 6) {
+                    pages += dots;
+                    pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + totalPages + '</a></li>';
+                }
 
-       } else if (3 > totalPages - 1 - pageNumber) {
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
-            if(totalPages > 6){
+            } else if (3 > totalPages - 1 - pageNumber) {
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
+                if (totalPages > 6) {
+                    pages += dots
+                }
+                for (var i = totalPages - 4; i <= totalPages; i++) {
+                    if (i > 1) {
+                        if (pageNumber + 1 !== i) {
+                            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        } else {
+                            pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        }
+                    }
+                }
+
+            } else {
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
                 pages += dots
-            }
-            for(var i = totalPages - 4; i <= totalPages; i++){
-                if(i > 1 ){
-                    if(pageNumber+1 !== i){
-                        pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
-                    } else {
-                        pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
-                    }
-                }
+
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + pageNumber + '</a></li>';
+                pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">' + (pageNumber + 1) + '</a></li>';
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + (pageNumber + 2) + '</a></li>';
+
+                pages += dots;
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + totalPages + '</a></li>';
             }
 
-       } else {
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
-            pages += dots
-
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+pageNumber+'</a></li>';
-            pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+(pageNumber+1)+'</a></li>';
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+(pageNumber+2)+'</a></li>';
-
-            pages += dots;
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+totalPages+'</a></li>';
-       }
-
-		pages = prev + pages + next;
-		var from = (response.size * pageNumber)+1;
-		var to = from + response.numberOfElements - 1;
-        $("#paginationElements").text("Показано від "+from+" до "+to+" з "+response.totalElements+" елементів");
-		$("ul.pagination").append(pages);
-		} else {
+            pages = prev + pages + next;
+            var from = (response.size * pageNumber) + 1;
+            var to = from + response.numberOfElements - 1;
+            $("#paginationElements").text("Показано від " + from + " до " + to + " з " + response.totalElements + " елементів");
+            $("ul.pagination").append(pages);
+        } else {
             $("#paginationElements").text("")
-            if(response.numberOfElements == 0){
+            if (response.numberOfElements == 0) {
                 $("#myTable").append('<tr class="tr"><td colspan="3" class="text-center">Дані не знайдено</td>></tr>')
             }
-		}
-	}
+        }
+    }
 
 
-	$(document).on("click", "ul.pagination li a", function() {
-	    let val = $(this).text();
-	    let id = $(this).attr('id');
-        if(id === "prev"){
+    $(document).on("click", "ul.pagination li a", function () {
+        let val = $(this).text();
+        let id = $(this).attr('id');
+        if (id === "prev") {
             let activeValue = parseInt($("ul.pagination li.active").text());
-            if(paginationType === 1){
-                getOrderItemAdditives(activeValue-2);
+            if (paginationType === 1) {
+                getOrderItemAdditives(activeValue - 2);
             }
-            if(paginationType === 2){
-                search(activeValue-2);
+            if (paginationType === 2) {
+                search(activeValue - 2);
             }
-        } else if (id === "next"){
+        } else if (id === "next") {
             let activeValue = parseInt($("ul.pagination li.active").text());
-            if(paginationType === 1){
+            if (paginationType === 1) {
                 getOrderItemAdditives(activeValue);
             }
-            if(paginationType === 2){
+            if (paginationType === 2) {
                 search(activeValue);
             }
         } else {
             let currentPage = parseInt(val - 1);
-            if(paginationType === 1){
+            if (paginationType === 1) {
                 getOrderItemAdditives(currentPage);
             }
-            if(paginationType === 2){
+            if (paginationType === 2) {
                 search(currentPage);
             }
         }
-	});
+    });
 
-	var additiveId;
+    var additiveId;
 
-    function openEditModal(adId){
-    additiveId = adId;
+    function openEditModal(adId) {
+        additiveId = adId;
         $.ajax({
-					type : "GET",
-					url : "/"+root+"/getOrderAdditive/"+adId,
-					success : function(response) {
-					$("#adType").text(response.additiveTypeName);
-					    $('#selectAdType').select2({
-					        language: "uk",
-                            dropdownParent: $("#editModal"),
-                            maximumInputLength: 100,
-                            ajax: {
-                                type: "get",
-                                url: "/"+root+"/getAdditivesForAdditiveTypeForOrder/"+response.additiveTypeId,
-                                data: function (params) {
+            type: "GET",
+            url: "/" + root + "/getOrderAdditive/" + adId,
+            success: function (response) {
+                $("#adType").text(response.additiveTypeName);
+                $('#selectAdType').select2({
+                    language: "uk",
+                    dropdownParent: $("#editModal"),
+                    maximumInputLength: 100,
+                    ajax: {
+                        type: "get",
+                        url: "/" + root + "/getAdditivesForAdditiveTypeForOrder/" + response.additiveTypeId,
+                        data: function (params) {
+                            return {
+                                search: params.term,
+                                page: params.page || 1
+                            };
+                        },
+                        processResults: function (response) {
+                            return {
+                                results: $.map(response.content, function (item) {
                                     return {
-                                        search: params.term,
-                                        page: params.page || 1
-                                    };
-                                },
-                                processResults: function (response) {
-                                    return {
-                                        results: $.map(response.content, function (item) {
-                                            return {
-                                                text: item.name,
-                                                id: item.id
-                                            }
-                                        }),
-                                        pagination: {
-                                            more: (response.pageable.pageNumber+1)  < response.totalPages
-                                        }
-                                    };
+                                        text: item.name,
+                                        id: item.id
+                                    }
+                                }),
+                                pagination: {
+                                    more: (response.pageable.pageNumber + 1) < response.totalPages
                                 }
+                            };
+                        }
 
-                            }
-                        });
-                        var option = new Option(response.name, response.id, true, true);
-                        $('#selectAdType').append(option).trigger('change');
+                    }
+                });
+                var option = new Option(response.name, response.id, true, true);
+                $('#selectAdType').append(option).trigger('change');
 
-					    $('#editModal').modal('show');
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
+                $('#editModal').modal('show');
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
     }
 
-    function editAdditive(){
+    function editAdditive() {
         $.ajax({
-		    type : "POST",
-			url : "editOrderItemAdditive",
-			data: {
+            type: "POST",
+            url: "editOrderItemAdditive",
+            data: {
                 orderItemId: id,
                 additiveId: $('#selectAdType').val(),
                 oldAdditiveId: additiveId
             },
-			success : function(response) {
-			    $('#editModal').modal('hide');
-			    getOrderItemAdditives(0);
+            success: function (response) {
+                $('#editModal').modal('hide');
+                getOrderItemAdditives(page);
             },
-			error : function(err) {
-				$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-			}
-		});
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
     }
 
-	var searchValue;
-	$('#searchInput').on("change", function(){
-       searchValue = $(this).val();
-       search(0);
+    var searchValue;
+    $('#searchInput').on("change", function () {
+        searchValue = $(this).val();
+        search(0);
     });
-    function search(currentPage){
+
+    function search(currentPage) {
         $.ajax({
-					type : "GET",
-					url : "/"+root+"/searchOrderItemAdditives/"+id,
-					data: {
-					    page: currentPage,
-                        name: searchValue
-                    },
-					success : function(response) {
-					    $('.tr').remove();
-						$('ul.pagination li').remove();
-						data = response.content
-						for (i = 0; i < data.length; i++) {
-							$("#myTable")
-									.append(
-											'<tr class="tr"> <td>'
-													+ data[i].additiveTypeName
-													+ '</td> <td>'
-													+ data[i].additiveName
-													+ '</td> <td><button type="button" class="btn btn-primary" onclick="openEditModal('
-													+ data[i].additiveId
-													+ ');"><i class="ti ti-pencil"></i></button></td> </tr>');
+            type: "GET",
+            url: "/" + root + "/searchOrderItemAdditives/" + id,
+            data: {
+                page: currentPage,
+                name: searchValue
+            },
+            success: function (response) {
+                $('.tr').remove();
+                $('ul.pagination li').remove();
+                data = response.content
+                for (i = 0; i < data.length; i++) {
+                    $("#myTable")
+                        .append(
+                            '<tr class="tr"> <td>'
+                            + data[i].additiveTypeName
+                            + '</td> <td>'
+                            + data[i].additiveName
+                            + '</td> <td><button type="button" class="btn btn-primary" onclick="openEditModal('
+                            + data[i].additiveId
+                            + ');"><i class="ti ti-pencil"></i></button></td> </tr>');
 
-						}
+                }
 
-                              paginationType = 2;
-                              buildPagination(response);
+                paginationType = 2;
+                buildPagination(response);
 
 
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
     }
 </script>
 </body>

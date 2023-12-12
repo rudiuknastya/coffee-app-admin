@@ -3,7 +3,7 @@
       class="light-style layout-navbar-fixed layout-menu-fixed"
       dir="ltr"
       data-theme="theme-default"
-      data-template="vertical-menu-template-no-customizer" >
+      data-template="vertical-menu-template-no-customizer">
 <head th:replace="~{fragments :: head}"></head>
 <body>
 <div class="layout-wrapper layout-content-navbar">
@@ -17,27 +17,32 @@
                         <h4>Користувачі</h4>
                         <div class="row d-flex justify-content-between mb-4">
                             <div class="col-9">
-                                <input class="form-control me-2" type="search" id="searchInput" placeholder="Пошук за номером телефону" aria-label="Search" maxlength="100">
+                                <input class="form-control me-2" type="search" id="searchInput"
+                                       placeholder="Пошук за номером телефону" aria-label="Search" maxlength="100">
                             </div>
                             <div class="col-3">
                                 <select class="form-select" id="statusSelect">
                                     <option></option>
-                                    <option th:each="s : ${status}" th:value="${s}" th:text="${s.getStatusName()}"></option>
+                                    <option th:each="s : ${status}" th:value="${s}"
+                                            th:text="${s.getStatusName()}"></option>
                                 </select>
                             </div>
                         </div>
 
-                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                             aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <h4>Ви впевнені що хочете видалити цей елемент?</h4>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-danger" onclick="deleteUser()">Видалити</button>
+                                        <button type="button" class="btn btn-danger" onclick="deleteUser()">Видалити
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -55,7 +60,7 @@
                                     <th></th>
                                 </tr>
                                 </thead>
-                                <tbody id = "myTable">
+                                <tbody id="myTable">
                                 </tbody>
                             </table>
                             <div class="d-flex justify-content-between">
@@ -80,7 +85,8 @@
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
 <script th:src="@{/assets/vendor/libs/moment/moment.js}"></script>
 <script>
-    $(document).ready(function(){
+    var page = 0;
+    $(document).ready(function () {
         $('#statusSelect').select2({
             minimumResultsForSearch: -1,
             placeholder: "Оберіть статус",
@@ -90,243 +96,246 @@
     });
     var paginationType;
     var data = "";
-	function getUsers(currentPage) {
-		$.ajax({
-					type : "GET",
-					url : "getUsers",
-					data: {
-                        page: currentPage
-                    },
-					success : function(response) {
-						$('.tr').remove();
-						$('ul.pagination li').remove();
-						data = response.content
-						for (i = 0; i < data.length; i++) {
-						var date = moment(data[i].birthDate).format('DD.MM.YYYY');
-                            var d = date.toString();
-							$("#myTable")
-									.append(
-											'<tr class="tr"> <td>'
-													+ data[i].name
-													+ '</td> <td>'
-													+ d
-													+ '</td> <td>'
-													+ data[i].phoneNumber
-													+ '</td> <td> <span class="badge bg-label-primary">'
-													+ data[i].status
-													+ '</span></td> <td><a href="users/edit/'+data[i].id+'" type="button" title="Редагувати" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити"  onclick="openModal('
-													+ data[i].id
-													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 
-						}
+    function getUsers(currentPage) {
+        $.ajax({
+            type: "GET",
+            url: "getUsers",
+            data: {
+                page: currentPage
+            },
+            success: function (response) {
+                $('.tr').remove();
+                $('ul.pagination li').remove();
+                data = response.content
+                for (i = 0; i < data.length; i++) {
+                    var date = moment(data[i].birthDate).format('DD.MM.YYYY');
+                    var d = date.toString();
+                    $("#myTable")
+                        .append(
+                            '<tr class="tr"> <td>'
+                            + data[i].name
+                            + '</td> <td>'
+                            + d
+                            + '</td> <td>'
+                            + data[i].phoneNumber
+                            + '</td> <td> <span class="badge bg-label-primary">'
+                            + data[i].status
+                            + '</span></td> <td><a href="users/edit/' + data[i].id + '" type="button" title="Редагувати" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити"  onclick="openModal('
+                            + data[i].id
+                            + ');" ><i class="ti ti-trash"></button></td> </tr>');
 
-                              paginationType = 1;
-                              buildPagination(response);
+                }
+
+                paginationType = 1;
+                buildPagination(response);
 
 
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
-	}
-	function buildPagination(response) {
-		totalPages = response.totalPages;
-		var pageNumber = response.pageable.pageNumber;
-        if(totalPages > 1){
-		var prev = '';
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
+    }
 
-			if(pageNumber !== 0) {
+    function buildPagination(response) {
+        totalPages = response.totalPages;
+        var pageNumber = response.pageable.pageNumber;
+        page = pageNumber;
+        if (totalPages > 1) {
+            var prev = '';
+
+            if (pageNumber !== 0) {
                 prev = '<li class="page-item prev"><a class="page-link waves-effect" id="prev" href="javascript:void(0);"><i class="ti ti-chevron-left ti-xs"></i></a></li>';
-			} else {
+            } else {
                 prev = '<li class="page-item prev disabled"><a class="page-link waves-effect" href="javascript:void(0);"><i class="ti ti-chevron-left ti-xs"></i></a></li>';
-		    }
+            }
 
 
-		var next = '';
+            var next = '';
 
-			if(pageNumber !== totalPages - 1) {
-				next = '<li class="page-item next"><a class="page-link waves-effect" id="next" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
-			} else {
+            if (pageNumber !== totalPages - 1) {
+                next = '<li class="page-item next"><a class="page-link waves-effect" id="next" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
+            } else {
                 next = '<li class="page-item next disabled"><a class="page-link waves-effect" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
-		    }
+            }
 
-       var pages = '';
-       var dots = '<li class="page-item disabled"><a class="page-link waves-effect" href="javascript:void(0);"> ... </a></li>';
-       if(pageNumber < 3){
-            for(var i = 1; i <= 5; i++){
-                if(i <= totalPages) {
-                    if(pageNumber+1 !== i){
-                        pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
-                    } else {
-                        pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+            var pages = '';
+            var dots = '<li class="page-item disabled"><a class="page-link waves-effect" href="javascript:void(0);"> ... </a></li>';
+            if (pageNumber < 3) {
+                for (var i = 1; i <= 5; i++) {
+                    if (i <= totalPages) {
+                        if (pageNumber + 1 !== i) {
+                            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        } else {
+                            pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        }
                     }
                 }
-            }
-            if(totalPages == 6){
-              pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ 6 +'</a></li>';
-            }
-            if(totalPages > 6){
-                pages += dots;
-                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+totalPages+'</a></li>';
-            }
+                if (totalPages == 6) {
+                    pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + 6 + '</a></li>';
+                }
+                if (totalPages > 6) {
+                    pages += dots;
+                    pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + totalPages + '</a></li>';
+                }
 
-       } else if (3 > totalPages - 1 - pageNumber) {
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
-            if(totalPages > 6){
+            } else if (3 > totalPages - 1 - pageNumber) {
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
+                if (totalPages > 6) {
+                    pages += dots
+                }
+                for (var i = totalPages - 4; i <= totalPages; i++) {
+                    if (i > 1) {
+                        if (pageNumber + 1 !== i) {
+                            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        } else {
+                            pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        }
+                    }
+                }
+
+            } else {
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
                 pages += dots
-            }
-            for(var i = totalPages - 4; i <= totalPages; i++){
-                if(i > 1 ){
-                    if(pageNumber+1 !== i){
-                        pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
-                    } else {
-                        pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
-                    }
-                }
+
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + pageNumber + '</a></li>';
+                pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">' + (pageNumber + 1) + '</a></li>';
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + (pageNumber + 2) + '</a></li>';
+
+                pages += dots;
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + totalPages + '</a></li>';
             }
 
-       } else {
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
-            pages += dots
-
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+pageNumber+'</a></li>';
-            pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+(pageNumber+1)+'</a></li>';
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+(pageNumber+2)+'</a></li>';
-
-            pages += dots;
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+totalPages+'</a></li>';
-       }
-
-		pages = prev + pages + next;
-		var from = (response.size * pageNumber)+1;
-		var to = from + response.numberOfElements - 1;
-        $("#paginationElements").text("Показано від "+from+" до "+to+" з "+response.totalElements+" елементів");
-		$("ul.pagination").append(pages);
-		} else {
+            pages = prev + pages + next;
+            var from = (response.size * pageNumber) + 1;
+            var to = from + response.numberOfElements - 1;
+            $("#paginationElements").text("Показано від " + from + " до " + to + " з " + response.totalElements + " елементів");
+            $("ul.pagination").append(pages);
+        } else {
             $("#paginationElements").text("")
-            if(response.numberOfElements == 0){
+            if (response.numberOfElements == 0) {
                 $("#myTable").append('<tr class="tr"><td colspan="5" class="text-center">Дані не знайдено</td>></tr>')
             }
-		}
-	}
-	$(document).on("click", "ul.pagination li a", function() {
-	    let val = $(this).text();
-	    let id = $(this).attr('id');
-        if(id === "prev"){
+        }
+    }
+
+    $(document).on("click", "ul.pagination li a", function () {
+        let val = $(this).text();
+        let id = $(this).attr('id');
+        if (id === "prev") {
             let activeValue = parseInt($("ul.pagination li.active").text());
-            if(paginationType === 1){
-                getUsers(activeValue-2);
+            if (paginationType === 1) {
+                getUsers(activeValue - 2);
             }
-            if(paginationType === 2){
-                searchAndFilter(activeValue-2);
+            if (paginationType === 2) {
+                searchAndFilter(activeValue - 2);
             }
-        } else if (id === "next"){
+        } else if (id === "next") {
             let activeValue = parseInt($("ul.pagination li.active").text());
-            if(paginationType === 1){
+            if (paginationType === 1) {
                 getUsers(activeValue);
             }
-            if(paginationType === 2){
+            if (paginationType === 2) {
                 searchAndFilter(activeValue);
             }
         } else {
             let currentPage = parseInt(val - 1);
             console.log(currentPage)
-            if(paginationType === 1){
+            if (paginationType === 1) {
                 getUsers(currentPage);
             }
-            if(paginationType === 2){
+            if (paginationType === 2) {
                 searchAndFilter(currentPage);
             }
         }
-	});
+    });
     var userId;
-	function openModal(id){
-	    userId = id
-        $('#deleteModal').modal('show');
-	}
-	function deleteUser(){
-        $.ajax({
-					type : "GET",
-					url : "deleteUser/"+userId,
-					success : function(response) {
-					    $('#deleteModal').modal('hide');
-					    getUsers(0);
 
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
-	}
+    function openModal(id) {
+        userId = id
+        $('#deleteModal').modal('show');
+    }
+
+    function deleteUser() {
+        $.ajax({
+            type: "GET",
+            url: "deleteUser/" + userId,
+            success: function (response) {
+                $('#deleteModal').modal('hide');
+                getUsers(page);
+
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
+    }
 
     var searchValue;
-    $('#searchInput').on("change", function(){
+    $('#searchInput').on("change", function () {
         searchValue = $(this).val();
         searchAndFilter(0);
     });
     var selectValue;
-    $('#statusSelect').on("change", function(){
+    $('#statusSelect').on("change", function () {
         selectValue = $(this).val();
         searchAndFilter(0);
     });
 
-    function searchAndFilter(currentPage){
+    function searchAndFilter(currentPage) {
         $.ajax({
-					type : "GET",
-					url : "searchUsers",
-					data: {
-					    page: currentPage,
-                        searchValue: searchValue,
-                        status: selectValue
-                    },
-					success : function(response) {
-					    $('.tr').remove();
-						$('ul.pagination li').remove();
-						data = response.content
-						for (i = 0; i < data.length; i++) {
-						var date = moment(data[i].birthDate).format('DD.MM.YYYY');
-                            var d = date.toString();
-							$("#myTable")
-									.append(
-											'<tr class="tr"> <td>'
-													+ data[i].name
-													+ '</td> <td>'
-													+ d
-													+ '</td> <td>'
-													+ data[i].phoneNumber
-													+ '</td> <td> <span class="badge bg-label-primary">'
-													+ data[i].status
-													+ '</span> </td> <td><a href="users/edit/'+data[i].id+'" type="button" title="Редагувати" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openModal('
-													+ data[i].id
-													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
+            type: "GET",
+            url: "searchUsers",
+            data: {
+                page: currentPage,
+                searchValue: searchValue,
+                status: selectValue
+            },
+            success: function (response) {
+                $('.tr').remove();
+                $('ul.pagination li').remove();
+                data = response.content
+                for (i = 0; i < data.length; i++) {
+                    var date = moment(data[i].birthDate).format('DD.MM.YYYY');
+                    var d = date.toString();
+                    $("#myTable")
+                        .append(
+                            '<tr class="tr"> <td>'
+                            + data[i].name
+                            + '</td> <td>'
+                            + d
+                            + '</td> <td>'
+                            + data[i].phoneNumber
+                            + '</td> <td> <span class="badge bg-label-primary">'
+                            + data[i].status
+                            + '</span> </td> <td><a href="users/edit/' + data[i].id + '" type="button" title="Редагувати" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openModal('
+                            + data[i].id
+                            + ');" ><i class="ti ti-trash"></button></td> </tr>');
 
-						}
+                }
 
-                              paginationType = 2;
-                              buildPagination(response);
+                paginationType = 2;
+                buildPagination(response);
 
 
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
     }
 
 </script>

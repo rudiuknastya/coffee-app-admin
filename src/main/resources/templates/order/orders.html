@@ -169,6 +169,7 @@
 	function buildPagination(response) {
 		totalPages = response.totalPages;
 		var pageNumber = response.pageable.pageNumber;
+        page = pageNumber;
         if(totalPages > 1){
 		var prev = '';
 
@@ -291,7 +292,7 @@
                     },
 					success : function(response) {
 					    $('#deleteModal').modal('hide');
-					    getOrders(0);
+					    getOrders(page);
 
 					},
 					error : function(err) {

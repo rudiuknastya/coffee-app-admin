@@ -83,6 +83,7 @@
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
 <script th:inline="javascript">
 var email = [[${#authentication?.name}]];
+var page = 0;
 $(document).ready(function(){
         $('#roleSelect').select2({
             minimumResultsForSearch: -1,
@@ -141,6 +142,7 @@ $(document).ready(function(){
 	function buildPagination(response) {
 		totalPages = response.totalPages;
 		var pageNumber = response.pageable.pageNumber;
+        page = pageNumber;
         if(totalPages > 1){
 		var prev = '';
 
@@ -260,7 +262,7 @@ $(document).ready(function(){
 					url : "deleteAdmin/"+adminId,
 					success : function(response) {
 					    $('#deleteModal').modal('hide');
-					    getAdmins(0);
+					    getAdmins(page);
 
 					},
 					error : function(err) {

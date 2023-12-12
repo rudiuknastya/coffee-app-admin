@@ -99,6 +99,7 @@
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
 <script th:src="@{/assets/js/forms-selects.js}"></script>
 <script>
+    var page = 0;
     $(document).ready(function(){
         getAwards(0);
     });
@@ -150,6 +151,7 @@
 	function buildPagination(response) {
 		totalPages = response.totalPages;
 		var pageNumber = response.pageable.pageNumber;
+        page = pageNumber;
         if(totalPages > 1){
 		var prev = '';
 
@@ -275,7 +277,7 @@
                     },
 					success : function(response) {
 					    $('#deleteModal').modal('hide');
-					    getAwards(0);
+					    getAwards(page);
 
 					},
 					error : function(err) {
@@ -349,7 +351,7 @@
                     },
 					success : function(response) {
 					    $('#editModal').modal('hide');
-					    getAwards(0);
+					    getAwards(page);
 
 					},
 					error : function(err) {

@@ -3,99 +3,108 @@
       class="light-style layout-navbar-fixed layout-menu-fixed"
       dir="ltr"
       data-theme="theme-default"
-      data-template="vertical-menu-template-no-customizer" >
+      data-template="vertical-menu-template-no-customizer">
 <head th:replace="~{fragments :: head}"></head>
 <body>
 <div class="layout-wrapper layout-content-navbar">
-  <div class="layout-container">
-    <aside th:replace="~{fragments :: sidebar(${pageNum})}"></aside>
-    <div class="layout-page">
-      <nav th:replace="~{fragments :: navbar(${image})}"></nav>
-      <div class="content-wrapper">
-        <div class="container-xxl flex-grow-1 container-p-y">
-          <div class="card py-5 px-5">
-            <form class="row g-3" id="orderForm" style="color:black;">
-              <div class="col-md-6">
-                <label for="selectStatus" class="form-label">Статус</label>
-                <select class="form-select" aria-label=".form-select-lg example" id="selectStatus">
-                  <option></option>
-                </select>
-              </div>
-            </form>
-              <h5 class="mt-4">Замовленні товари</h5>
-                <div class="col-12 mb-3">
-                  <input class="form-control me-2" type="search" id="searchInput" placeholder="Пошук за назвою" aria-label="Search" maxlength="100">
+    <div class="layout-container">
+        <aside th:replace="~{fragments :: sidebar(${pageNum})}"></aside>
+        <div class="layout-page">
+            <nav th:replace="~{fragments :: navbar(${image})}"></nav>
+            <div class="content-wrapper">
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <div class="card py-5 px-5">
+                        <form class="row g-3" id="orderForm" style="color:black;">
+                            <div class="col-md-6">
+                                <label for="selectStatus" class="form-label">Статус</label>
+                                <select class="form-select" aria-label=".form-select-lg example" id="selectStatus">
+                                    <option></option>
+                                </select>
+                            </div>
+                        </form>
+                        <h5 class="mt-4">Замовленні товари</h5>
+                        <div class="col-12 mb-3">
+                            <input class="form-control me-2" type="search" id="searchInput"
+                                   placeholder="Пошук за назвою" aria-label="Search" maxlength="100">
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Назва</th>
+                                    <th>Кількість</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody id="myTable">
+                                </tbody>
+                            </table>
+                            <div class="d-flex justify-content-between">
+                                <div class="col-4 mt-4" id="paginationElements"></div>
+                                <ul class="pagination mt-4 justify-content-end"></ul>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 mt-5 d-flex justify-content-end">
+                            <button type="button" class="btn btn-primary" onclick="save()">Зберегти</button>
+                        </div>
+
+
+                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h4>Ви впевнені що хочете видалити цей елемент?</h4>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger" onclick="deleteOrderItem()">
+                                            Видалити
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <h4>Видаливши цей товар замовлення перейде у статус скасованого</h4>
+                                        <h4>Вкажіть у коментарі чому ви видаляєте даний товар</h4>
+                                        <form class="row g-3">
+                                            <div class="col-md-12">
+                                                <label for="autosize-demo" class="form-label">Коментар</label>
+                                                <textarea id="autosize-demo" rows="3" class="form-control"
+                                                          maxlength="300"></textarea>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger" onclick="cancelOrder()">Видалити
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3" style="position: absolute; top:10px; right: 50px;">
+                            <div class="alert alert-danger d-none" role="alert" id="error">Error happened</div>
+                        </div>
+                    </div>
                 </div>
-
-              <div class="table-responsive">
-                <table class="table table-bordered">
-                  <thead>
-                  <tr>
-                    <th>Назва</th>
-                    <th>Кількість</th>
-                    <th></th>
-                  </tr>
-                  </thead>
-                  <tbody id = "myTable">
-                  </tbody>
-                </table>
-                <div class="d-flex justify-content-between">
-                  <div class="col-4 mt-4" id="paginationElements"></div>
-                  <ul class="pagination mt-4 justify-content-end"></ul>
-                </div>
-              </div>
-
-              <div class="col-md-12 mt-5 d-flex justify-content-end">
-                <button type="button" class="btn btn-primary" onclick="save()">Зберегти</button>
-              </div>
-
-
-            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <h4>Ви впевнені що хочете видалити цей елемент?</h4>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" onclick="deleteOrderItem()">Видалити</button>
-                  </div>
-                </div>
-              </div>
             </div>
-
-            <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body">
-                    <h4>Видаливши цей товар замовлення перейде у статус скасованого</h4>
-                    <h4>Вкажіть у коментарі чому ви видаляєте даний товар</h4>
-                    <form class="row g-3">
-                      <div class="col-md-12" >
-                        <label for="autosize-demo" class="form-label">Коментар</label>
-                        <textarea id="autosize-demo" rows="3" class="form-control" maxlength="300"></textarea>
-                      </div>
-                    </form>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" onclick="cancelOrder()">Видалити</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-3" style="position: absolute; top:10px; right: 50px;">
-              <div class="alert alert-danger d-none" role="alert" id="error">Error happened</div>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 <script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
 <script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
@@ -112,13 +121,14 @@
 <script th:src="@{/assets/vendor/libs/moment/moment.js}"></script>
 <script src="https://npmcdn.com/flatpickr/dist/l10n/uk.js"></script>
 <script>
-var url = window.location.pathname;
-var id = url.substring(url.lastIndexOf('/') + 1);
-const currentUrl = window.location.href;
-const myArray = currentUrl.split("/");
-var root = myArray[3];
-var delivery = false;
-$(document).ready(function(){
+    var url = window.location.pathname;
+    var id = url.substring(url.lastIndexOf('/') + 1);
+    const currentUrl = window.location.href;
+    const myArray = currentUrl.split("/");
+    var root = myArray[3];
+    var delivery = false;
+    var page = 0;
+    $(document).ready(function () {
         $('#selectStatus').select2({
             language: "uk",
             minimumResultsForSearch: -1,
@@ -140,489 +150,487 @@ $(document).ready(function(){
         });
 
         $.ajax({
-					type : "GET",
-					url : "getOrder/"+id,
-					success : function(response) {
-                      if(response.delivery != null){
-                      delivery = true;
-                        $('#orderForm').append(
-                        '<div class="col-md-6">'+
-                          '<label for="inputName" class="form-label">Ім\'я</label>'+
-                          '<input class="form-control" id="inputName" maxlength="100">'+
-                          '<div class="text-danger" id="nameValidation"> </div>'+
-                        '</div>'+
-                        '<div class="col-md-6">'+
-                          '<label for="inputPhone" class="form-label">Номер телефону</label>'+
-                          '<input type="text" class="form-control" id="inputPhone" maxlength="20" >'+
-                          '<div class="text-danger" id="phoneValidation"></div>'+
-                        '</div>'+
-                        '<div class="col-md-6">'+
-                          '<label for="selectCity" class="form-label">Місто</label>'+
-                          '<select class="form-select" id="selectCity" >'+
-                            '<div class="text-danger" id="cityValidation"> </div>'+
-                          '</select>'+
-                        '</div>'+
-                        '<div class="col-md-6">'+
-                          '<label for="inputStreet" class="form-label">Вулиця</label>'+
-                          '<input class="form-control" id="inputStreet" maxlength="100">'+
-                          '<div class="text-danger" id="streetValidation"> </div>'+
-                        '</div>'+
-                          '<div class="col-md-6">'+
-                            '<label for="inputBuilding" class="form-label">Будинок</label>'+
-                            '<input class="form-control" id="inputBuilding" maxlength="100">'+
-                            '<div class="text-danger" id="buildingValidation"> </div>'+
-                          '</div>'+
-                          '<div class="col-md-6">'+
-                            '<label for="inputEntrance" class="form-label">Під\'їзд</label>'+
-                            '<input type="text" class="form-control" id="inputEntrance" maxlength="100">'+
-                            '<div class="text-danger" id="entranceValidation"></div>'+
-                          '</div>'+
-                          '<div class="col-md-6">'+
-                            '<label for="inputApartment" class="form-label">Квартира</label>'+
-                            '<input type="number" class="form-control" id="inputApartment" maxlength="20">'+
-                            '<div class="text-danger" id="apartmentValidation"></div>'+
-                          '</div>'+
-                          '<div class="col-md-6">'+
-                            '<label for="deliveryDate" class="form-label">Дата доставки</label>'+
-                            '<input id="deliveryDate" class="form-control" type="text">'+
-                            '<div class="text-danger" id="dateValidation"></div>'+
-                          '</div>'+
-                          '<div class="col-md-6">'+
-                            '<label for="deliveryTime" class="form-label">Час доставки</label>'+
-                            '<input id="deliveryTime" class="form-control" type="text">'+
-                            '<div class="text-danger" id="timeValidation"> </div>'+
-                          '</div>'
-                        );
+            type: "GET",
+            url: "getOrder/" + id,
+            success: function (response) {
+                if (response.delivery != null) {
+                    delivery = true;
+                    $('#orderForm').append(
+                        '<div class="col-md-6">' +
+                        '<label for="inputName" class="form-label">Ім\'я</label>' +
+                        '<input class="form-control" id="inputName" maxlength="100">' +
+                        '<div class="text-danger" id="nameValidation"> </div>' +
+                        '</div>' +
+                        '<div class="col-md-6">' +
+                        '<label for="inputPhone" class="form-label">Номер телефону</label>' +
+                        '<input type="text" class="form-control" id="inputPhone" maxlength="20" >' +
+                        '<div class="text-danger" id="phoneValidation"></div>' +
+                        '</div>' +
+                        '<div class="col-md-6">' +
+                        '<label for="selectCity" class="form-label">Місто</label>' +
+                        '<select class="form-select" id="selectCity" >' +
+                        '<div class="text-danger" id="cityValidation"> </div>' +
+                        '</select>' +
+                        '</div>' +
+                        '<div class="col-md-6">' +
+                        '<label for="inputStreet" class="form-label">Вулиця</label>' +
+                        '<input class="form-control" id="inputStreet" maxlength="100">' +
+                        '<div class="text-danger" id="streetValidation"> </div>' +
+                        '</div>' +
+                        '<div class="col-md-6">' +
+                        '<label for="inputBuilding" class="form-label">Будинок</label>' +
+                        '<input class="form-control" id="inputBuilding" maxlength="100">' +
+                        '<div class="text-danger" id="buildingValidation"> </div>' +
+                        '</div>' +
+                        '<div class="col-md-6">' +
+                        '<label for="inputEntrance" class="form-label">Під\'їзд</label>' +
+                        '<input type="text" class="form-control" id="inputEntrance" maxlength="100">' +
+                        '<div class="text-danger" id="entranceValidation"></div>' +
+                        '</div>' +
+                        '<div class="col-md-6">' +
+                        '<label for="inputApartment" class="form-label">Квартира</label>' +
+                        '<input type="number" class="form-control" id="inputApartment" maxlength="20">' +
+                        '<div class="text-danger" id="apartmentValidation"></div>' +
+                        '</div>' +
+                        '<div class="col-md-6">' +
+                        '<label for="deliveryDate" class="form-label">Дата доставки</label>' +
+                        '<input id="deliveryDate" class="form-control" type="text">' +
+                        '<div class="text-danger" id="dateValidation"></div>' +
+                        '</div>' +
+                        '<div class="col-md-6">' +
+                        '<label for="deliveryTime" class="form-label">Час доставки</label>' +
+                        '<input id="deliveryTime" class="form-control" type="text">' +
+                        '<div class="text-danger" id="timeValidation"> </div>' +
+                        '</div>'
+                    );
 
-                        $('#selectCity').select2({
-                          language: "uk",
-                          maximumInputLength: 100,
-                              ajax: {
-                                  type: "get",
-                                  url: "/"+root+"/getCitiesForLocations",
-                                  data: function (params) {
-                                      return {
-                                          search: params.term,
-                                          page: params.page || 1
-                                      };
-                                  },
-                                  processResults: function (response) {
-                                      return {
-                                          results: $.map(response.content, function (item) {
-                                              return {
-                                                  text: item.city,
-                                                  id: item.city
-                                              }
-                                          }),
-                                          pagination: {
-                                              more: (response.pageable.pageNumber+1)  < response.totalPages
-                                          }
-                                      };
-                                  }
+                    $('#selectCity').select2({
+                        language: "uk",
+                        maximumInputLength: 100,
+                        ajax: {
+                            type: "get",
+                            url: "/" + root + "/getCitiesForLocations",
+                            data: function (params) {
+                                return {
+                                    search: params.term,
+                                    page: params.page || 1
+                                };
+                            },
+                            processResults: function (response) {
+                                return {
+                                    results: $.map(response.content, function (item) {
+                                        return {
+                                            text: item.city,
+                                            id: item.city
+                                        }
+                                    }),
+                                    pagination: {
+                                        more: (response.pageable.pageNumber + 1) < response.totalPages
+                                    }
+                                };
+                            }
 
-                              }
-                          });
-                        $('#inputName').val(response.delivery.name);
-                        $('#inputPhone').val(response.delivery.phoneNumber);
-                        $('#inputStreet').val(response.delivery.street);
-                        $('#inputBuilding').val(response.delivery.building);
-                        $('#inputEntrance').val(response.delivery.entrance);
-                        $('#inputApartment').val(response.delivery.apartment);
-                        var option = new Option(response.delivery.city, response.delivery.city, true, true);
-                        $('#selectCity').append(option).trigger('change');
-                        $("#deliveryDate").flatpickr({
-					      locale: "uk",
-					      defaultDate: moment(response.delivery.deliveryDate, 'YYYY-MM-DD').format('DD.MM.YYYY'),
-					      dateFormat: "d.m.Y"
-                        });
-                        $("#deliveryTime").flatpickr({
-                          enableTime: true,
-                          noCalendar: true,
-					      locale: "uk",
-					      defaultDate: response.delivery.deliveryTime,
-					      dateFormat: "H:i"
-                        });
+                        }
+                    });
+                    $('#inputName').val(response.delivery.name);
+                    $('#inputPhone').val(response.delivery.phoneNumber);
+                    $('#inputStreet').val(response.delivery.street);
+                    $('#inputBuilding').val(response.delivery.building);
+                    $('#inputEntrance').val(response.delivery.entrance);
+                    $('#inputApartment').val(response.delivery.apartment);
+                    var option = new Option(response.delivery.city, response.delivery.city, true, true);
+                    $('#selectCity').append(option).trigger('change');
+                    $("#deliveryDate").flatpickr({
+                        locale: "uk",
+                        defaultDate: moment(response.delivery.deliveryDate, 'YYYY-MM-DD').format('DD.MM.YYYY'),
+                        dateFormat: "d.m.Y"
+                    });
+                    $("#deliveryTime").flatpickr({
+                        enableTime: true,
+                        noCalendar: true,
+                        locale: "uk",
+                        defaultDate: response.delivery.deliveryTime,
+                        dateFormat: "H:i"
+                    });
 
-                      }
-                      var option = new Option(response.status.name, response.status.orderStatus, true, true);
-                      $('#selectStatus').append(option).trigger('change');
+                }
+                var option = new Option(response.status.name, response.status.orderStatus, true, true);
+                $('#selectStatus').append(option).trigger('change');
 
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
 
 
         getOrderItems(0);
     });
     var paginationType;
     var data = "";
-	function getOrderItems(currentPage) {
-		$.ajax({
-					type : "GET",
-					url : "/"+root+"/getOrderItems/"+id,
-					data: {
-                        page: currentPage
-                    },
-					success : function(response) {
-						$('.tr').remove();
-						$('ul.pagination li').remove();
-						data = response.content;
-						for (i = 0; i < data.length; i++) {
-							$("#myTable")
-									.append(
-											'<tr class="tr"> <td>'
-													+ data[i].productName
-													+ '</td> <td>'
-													+ data[i].quantity
-													+ '</td> <td><a href="/'+root+'/orderItem/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
-													+ data[i].id
-													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 
-						}
+    function getOrderItems(currentPage) {
+        $.ajax({
+            type: "GET",
+            url: "/" + root + "/getOrderItems/" + id,
+            data: {
+                page: currentPage
+            },
+            success: function (response) {
+                $('.tr').remove();
+                $('ul.pagination li').remove();
+                data = response.content;
+                for (i = 0; i < data.length; i++) {
+                    $("#myTable")
+                        .append(
+                            '<tr class="tr"> <td>'
+                            + data[i].productName
+                            + '</td> <td>'
+                            + data[i].quantity
+                            + '</td> <td><a href="/' + root + '/orderItem/edit/' + data[i].id + '" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
+                            + data[i].id
+                            + ');" ><i class="ti ti-trash"></button></td> </tr>');
 
-                              paginationType = 1;
-                              buildPagination(response);
+                }
+
+                paginationType = 1;
+                buildPagination(response);
 
 
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
-	}
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
+    }
 
-	function buildPagination(response) {
-		totalPages = response.totalPages;
-		var pageNumber = response.pageable.pageNumber;
-        if(totalPages > 1){
-		var prev = '';
+    function buildPagination(response) {
+        totalPages = response.totalPages;
+        var pageNumber = response.pageable.pageNumber;
+        page = pageNumber;
+        if (totalPages > 1) {
+            var prev = '';
 
-			if(pageNumber !== 0) {
+            if (pageNumber !== 0) {
                 prev = '<li class="page-item prev"><a class="page-link waves-effect" id="prev" href="javascript:void(0);"><i class="ti ti-chevron-left ti-xs"></i></a></li>';
-			} else {
+            } else {
                 prev = '<li class="page-item prev disabled"><a class="page-link waves-effect" href="javascript:void(0);"><i class="ti ti-chevron-left ti-xs"></i></a></li>';
-		    }
+            }
 
 
-		var next = '';
+            var next = '';
 
-			if(pageNumber !== totalPages - 1) {
-				next = '<li class="page-item next"><a class="page-link waves-effect" id="next" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
-			} else {
+            if (pageNumber !== totalPages - 1) {
+                next = '<li class="page-item next"><a class="page-link waves-effect" id="next" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
+            } else {
                 next = '<li class="page-item next disabled"><a class="page-link waves-effect" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
-		    }
+            }
 
-       var pages = '';
-       var dots = '<li class="page-item disabled"><a class="page-link waves-effect" href="javascript:void(0);"> ... </a></li>';
-       if(pageNumber < 3){
-            for(var i = 1; i <= 5; i++){
-                if(i <= totalPages) {
-                    if(pageNumber+1 !== i){
-                        pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
-                    } else {
-                        pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+            var pages = '';
+            var dots = '<li class="page-item disabled"><a class="page-link waves-effect" href="javascript:void(0);"> ... </a></li>';
+            if (pageNumber < 3) {
+                for (var i = 1; i <= 5; i++) {
+                    if (i <= totalPages) {
+                        if (pageNumber + 1 !== i) {
+                            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        } else {
+                            pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        }
                     }
                 }
-            }
-            if(totalPages == 6){
-              pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ 6 +'</a></li>';
-            }
-            if(totalPages > 6){
-                pages += dots;
-                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+totalPages+'</a></li>';
-            }
+                if (totalPages == 6) {
+                    pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + 6 + '</a></li>';
+                }
+                if (totalPages > 6) {
+                    pages += dots;
+                    pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + totalPages + '</a></li>';
+                }
 
-       } else if (3 > totalPages - 1 - pageNumber) {
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
-            if(totalPages > 6){
+            } else if (3 > totalPages - 1 - pageNumber) {
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
+                if (totalPages > 6) {
+                    pages += dots
+                }
+                for (var i = totalPages - 4; i <= totalPages; i++) {
+                    if (i > 1) {
+                        if (pageNumber + 1 !== i) {
+                            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        } else {
+                            pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        }
+                    }
+                }
+
+            } else {
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
                 pages += dots
-            }
-            for(var i = totalPages - 4; i <= totalPages; i++){
-                if(i > 1 ){
-                    if(pageNumber+1 !== i){
-                        pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
-                    } else {
-                        pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
-                    }
-                }
+
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + pageNumber + '</a></li>';
+                pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">' + (pageNumber + 1) + '</a></li>';
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + (pageNumber + 2) + '</a></li>';
+
+                pages += dots;
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + totalPages + '</a></li>';
             }
 
-       } else {
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
-            pages += dots
-
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+pageNumber+'</a></li>';
-            pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+(pageNumber+1)+'</a></li>';
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+(pageNumber+2)+'</a></li>';
-
-            pages += dots;
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+totalPages+'</a></li>';
-       }
-
-		pages = prev + pages + next;
-		var from = (response.size * pageNumber)+1;
-		var to = from + response.numberOfElements - 1;
-        $("#paginationElements").text("Показано від "+from+" до "+to+" з "+response.totalElements+" елементів");
-		$("ul.pagination").append(pages);
-		} else {
+            pages = prev + pages + next;
+            var from = (response.size * pageNumber) + 1;
+            var to = from + response.numberOfElements - 1;
+            $("#paginationElements").text("Показано від " + from + " до " + to + " з " + response.totalElements + " елементів");
+            $("ul.pagination").append(pages);
+        } else {
             $("#paginationElements").text("")
-            if(response.numberOfElements == 0){
+            if (response.numberOfElements == 0) {
                 $("#myTable").append('<tr class="tr"><td colspan="3" class="text-center">Дані не знайдено</td>></tr>')
             }
-		}
-	}
+        }
+    }
 
 
-	$(document).on("click", "ul.pagination li a", function() {
-	    let val = $(this).text();
-	    let id = $(this).attr('id');
-        if(id === "prev"){
+    $(document).on("click", "ul.pagination li a", function () {
+        let val = $(this).text();
+        let id = $(this).attr('id');
+        if (id === "prev") {
             let activeValue = parseInt($("ul.pagination li.active").text());
-            if(paginationType === 1){
-                getOrderItems(activeValue-2);
+            if (paginationType === 1) {
+                getOrderItems(activeValue - 2);
             }
-            if(paginationType === 2){
-                search(activeValue-2);
+            if (paginationType === 2) {
+                search(activeValue - 2);
             }
-        } else if (id === "next"){
+        } else if (id === "next") {
             let activeValue = parseInt($("ul.pagination li.active").text());
-            if(paginationType === 1){
+            if (paginationType === 1) {
                 getOrderItems(activeValue);
             }
-            if(paginationType === 2){
+            if (paginationType === 2) {
                 search(activeValue);
             }
         } else {
             let currentPage = parseInt(val - 1);
-            if(paginationType === 1){
+            if (paginationType === 1) {
                 getOrderItems(currentPage);
             }
-            if(paginationType === 2){
+            if (paginationType === 2) {
                 search(currentPage);
             }
         }
-	});
+    });
 
-	var orderItemId;
-	function openDeleteModal(id){
-	    orderItemId = id
-	    $.ajax({
-			type : "GET",
-			url : "/"+root+"/checkOrderItem/"+orderItemId,
-			success : function(response) {
-			  if(response.localeCompare('wrong') == 0){
-                $('#cancelModal').modal('show');
-			  } else {
-			    $('#deleteModal').modal('show');
-			  }
+    var orderItemId;
 
-			},
-			error : function(err) {
-			  $("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-			}
-		});
-	}
-	function deleteOrderItem(){
+    function openDeleteModal(id) {
+        orderItemId = id
         $.ajax({
-			type : "GET",
-			url : "/"+root+"/deleteOrderItem/"+orderItemId,
-			success : function(response) {
-			  $('#deleteModal').modal('hide');
-			  getOrderItems(0);
+            type: "GET",
+            url: "/" + root + "/checkOrderItem/" + orderItemId,
+            success: function (response) {
+                if (response.localeCompare('wrong') == 0) {
+                    $('#cancelModal').modal('show');
+                } else {
+                    $('#deleteModal').modal('show');
+                }
 
-			},
-			error : function(err) {
-			  $("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-			}
-		});
-	}
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
+    }
 
-	function cancelOrder(){
-	  $.ajax({
-			type : "POST",
-			url : "/"+root+"/cancelOrder/"+orderItemId,
-			data: {
-			  comment: $('#autosize-demo').val()
-			},
-			success : function(response) {
-			  window.location.href = '/orders';
-			},
-			error : function(err) {
-			  $("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-			}
-		});
-	}
+    function deleteOrderItem() {
+        $.ajax({
+            type: "GET",
+            url: "/" + root + "/deleteOrderItem/" + orderItemId,
+            success: function (response) {
+                $('#deleteModal').modal('hide');
+                getOrderItems(page);
 
-	function save(){
-	  if(delivery == false){
-	  $.ajax({
-					type : "POST",
-					url : "editOrder",
-					data: {
-                        id: id,
-                        status: $('#selectStatus').val()
-                    },
-					success : function(response){
-                      window.location.href = "/"+root+'/orders';
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
+    }
+
+    function cancelOrder() {
+        $.ajax({
+            type: "POST",
+            url: "/" + root + "/cancelOrder/" + orderItemId,
+            data: {
+                comment: $('#autosize-demo').val()
+            },
+            success: function (response) {
+                window.location.href = '/orders';
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
+    }
+
+    function save() {
+        if (delivery == false) {
+            $.ajax({
+                type: "POST",
+                url: "editOrder",
+                data: {
+                    id: id,
+                    status: $('#selectStatus').val()
+                },
+                success: function (response) {
+                    window.location.href = "/" + root + '/orders';
+                },
+                error: function (err) {
+                    $("#error").removeClass("d-none");
+                    setTimeout(
+                        function () {
                             $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
-	  } else {
-	  if($("#deliveryDate").val().localeCompare('') == 0){
-        var d = null;
-      } else {
-        var d = moment($("#deliveryDate").val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
-      }
-			  $.ajax({
-					type : "POST",
-					url : "editOrderDelivery",
-					data: {
-                        id: id,
-                        status: $('#selectStatus').val(),
-                        name: $('#inputName').val(),
-                        city: $('#selectCity').val(),
-                        phoneNumber: $('#inputPhone').val(),
-                        street: $('#inputStreet').val(),
-                        building: $('#inputBuilding').val(),
-                        entrance: $('#inputEntrance').val(),
-                        apartment: $('#inputApartment').val(),
-                        deliveryDate: d,
-                        deliveryTime: $("#deliveryTime").val()
-                    },
-					success : function(response){
-                        window.location.href = "/"+root+'/orders';
-					},
-					error : function(XMLHttpRequest, textStatus, errorThrown) {
-                      const map = XMLHttpRequest.responseJSON;
-                      if(XMLHttpRequest.status == 400) {
+                        }, 4000);
+                }
+            });
+        } else {
+            if ($("#deliveryDate").val().localeCompare('') == 0) {
+                var d = null;
+            } else {
+                var d = moment($("#deliveryDate").val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
+            }
+            $.ajax({
+                type: "POST",
+                url: "editOrderDelivery",
+                data: {
+                    id: id,
+                    status: $('#selectStatus').val(),
+                    name: $('#inputName').val(),
+                    city: $('#selectCity').val(),
+                    phoneNumber: $('#inputPhone').val(),
+                    street: $('#inputStreet').val(),
+                    building: $('#inputBuilding').val(),
+                    entrance: $('#inputEntrance').val(),
+                    apartment: $('#inputApartment').val(),
+                    deliveryDate: d,
+                    deliveryTime: $("#deliveryTime").val()
+                },
+                success: function (response) {
+                    window.location.href = "/" + root + '/orders';
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    const map = XMLHttpRequest.responseJSON;
+                    if (XMLHttpRequest.status == 400) {
                         for (const [key, value] of Object.entries(map)) {
-                          if(key.localeCompare('name') == 0 ){
-                            $("#nameValidation").text(value);
-                            $("#inputName").addClass("is-invalid");
-                          }
-                          if(key.localeCompare('phoneNumber') == 0){
-                            $("#phoneValidation").text(value);
-                            $("#inputPhone").addClass("is-invalid");
-                          }
-                          if(key.localeCompare('city') == 0){
-                            $("#cityValidation").text(value);
-                            $("#selectCity").addClass("is-invalid");
-                          }
-                          if(key.localeCompare('building') == 0){
-                            $("#buildingValidation").text(value);
-                            $("#inputBuilding").addClass("is-invalid");
-                          }
-                          if(key.localeCompare('street') == 0){
-                            $("#streetValidation").text(value);
-                            $("#inputStreet").addClass("is-invalid");
-                          }
-                          if(key.localeCompare('entrance') == 0){
-                            $("#entranceValidation").text(value);
-                            $("#inputEntrance").addClass("is-invalid");
-                          }
-                          if(key.localeCompare('apartment') == 0){
-                            $("#apartmentValidation").text(value);
-                            $("#inputApartment").addClass("is-invalid");
-                          }
-                          if(key.localeCompare('deliveryDate') == 0){
-                            $("#dateValidation").text(value);
-                            $("#deliveryDate").addClass("is-invalid");
-                          }
-                          if(key.localeCompare('deliveryTime') == 0){
-                            $("#timeValidation").text(value);
-                            $("#deliveryTime").addClass("is-invalid");
-                          }
+                            if (key.localeCompare('name') == 0) {
+                                $("#nameValidation").text(value);
+                                $("#inputName").addClass("is-invalid");
+                            }
+                            if (key.localeCompare('phoneNumber') == 0) {
+                                $("#phoneValidation").text(value);
+                                $("#inputPhone").addClass("is-invalid");
+                            }
+                            if (key.localeCompare('city') == 0) {
+                                $("#cityValidation").text(value);
+                                $("#selectCity").addClass("is-invalid");
+                            }
+                            if (key.localeCompare('building') == 0) {
+                                $("#buildingValidation").text(value);
+                                $("#inputBuilding").addClass("is-invalid");
+                            }
+                            if (key.localeCompare('street') == 0) {
+                                $("#streetValidation").text(value);
+                                $("#inputStreet").addClass("is-invalid");
+                            }
+                            if (key.localeCompare('entrance') == 0) {
+                                $("#entranceValidation").text(value);
+                                $("#inputEntrance").addClass("is-invalid");
+                            }
+                            if (key.localeCompare('apartment') == 0) {
+                                $("#apartmentValidation").text(value);
+                                $("#inputApartment").addClass("is-invalid");
+                            }
+                            if (key.localeCompare('deliveryDate') == 0) {
+                                $("#dateValidation").text(value);
+                                $("#deliveryDate").addClass("is-invalid");
+                            }
+                            if (key.localeCompare('deliveryTime') == 0) {
+                                $("#timeValidation").text(value);
+                                $("#deliveryTime").addClass("is-invalid");
+                            }
                         }
-                      } else {
+                    } else {
                         $("#error").removeClass("d-none");
                         setTimeout(
-                                function () {
-                                  $("#error").addClass("d-none");
-                                }, 4000);
-                      }
-					}
-			  });
-	  }
-	}
+                            function () {
+                                $("#error").addClass("d-none");
+                            }, 4000);
+                    }
+                }
+            });
+        }
+    }
 
-	var searchValue;
-	$('#searchInput').on("change", function(){
-       searchValue = $(this).val();
-       search(0);
+    var searchValue;
+    $('#searchInput').on("change", function () {
+        searchValue = $(this).val();
+        search(0);
     });
-    function search(currentPage){
+
+    function search(currentPage) {
         $.ajax({
-					type : "GET",
-					url : "/"+root+"/searchOrderItems/"+id,
-					data: {
-					    page: currentPage,
-                        name: searchValue
-                    },
-					success : function(response) {
-					    $('.tr').remove();
-						$('ul.pagination li').remove();
-						data = response.content
-						for (i = 0; i < data.length; i++) {
-							$("#myTable")
-									.append(
-											'<tr class="tr"> <td>'
-													+ data[i].productName
-													+ '</td> <td>'
-													+ data[i].quantity
-													+ '</td> <td><a href="/'+root+'/orderItem/edit/'+data[i].id+'" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
-													+ data[i].id
-													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
+            type: "GET",
+            url: "/" + root + "/searchOrderItems/" + id,
+            data: {
+                page: currentPage,
+                name: searchValue
+            },
+            success: function (response) {
+                $('.tr').remove();
+                $('ul.pagination li').remove();
+                data = response.content
+                for (i = 0; i < data.length; i++) {
+                    $("#myTable")
+                        .append(
+                            '<tr class="tr"> <td>'
+                            + data[i].productName
+                            + '</td> <td>'
+                            + data[i].quantity
+                            + '</td> <td><a href="/' + root + '/orderItem/edit/' + data[i].id + '" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
+                            + data[i].id
+                            + ');" ><i class="ti ti-trash"></button></td> </tr>');
 
-						}
+                }
 
-                              paginationType = 2;
-                              buildPagination(response);
+                paginationType = 2;
+                buildPagination(response);
 
 
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
     }
 </script>
 </body>
