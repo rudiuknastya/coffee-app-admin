@@ -55,18 +55,24 @@ public class AdminController {
         return "admin/admins";
     }
     @GetMapping("/getAdmins")
-    public @ResponseBody Page<AdminDTO> getAdmins(@RequestParam("page")int page, @RequestParam("email")String email){
-        Pageable pageable = PageRequest.of(page, pageSize);
+    public @ResponseBody Page<AdminDTO> getAdmins(@RequestParam("page")int page,@RequestParam("size")int size){
+        Pageable pageable = PageRequest.of(page, size);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        String email = userDetails.getUsername();
         return adminService.getAdmins(pageable, email);
     }
     @GetMapping("/searchAdmins")
-    public @ResponseBody Page<AdminDTO> searchAdmins(@RequestParam("page")int page, @RequestParam(value = "searchValue", required = false)String input, @RequestParam(value = "role", required = false)Role role, @RequestParam("email")String email){
-        Pageable pageable = PageRequest.of(page, pageSize);
+    public @ResponseBody Page<AdminDTO> searchAdmins(@RequestParam("page")int page, @RequestParam("size")int size, @RequestParam(value = "searchValue", required = false)String input, @RequestParam(value = "role", required = false)Role role){
+        Pageable pageable = PageRequest.of(page, size);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        String email = userDetails.getUsername();
         return adminService.searchAdmins(input,role,email,pageable);
     }
     @GetMapping("/admins/getCities")
     public @ResponseBody Page<City> getCities(@RequestParam(value = "search", required = false)String name, @RequestParam("page")int page){
-        Pageable pageable = PageRequest.of(page-1, 2);
+        Pageable pageable = PageRequest.of(page-1, pageSize);
         return cityService.getCities(pageable, name);
     }
     @GetMapping("/deleteAdmin/{id}")
