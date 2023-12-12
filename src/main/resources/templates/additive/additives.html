@@ -703,8 +703,9 @@
             }
         });
     }
-    $('#entitySelect').on("change",function () {
-        if(search == true){
+
+    $('#entitySelect').on("change", function () {
+        if (search == true) {
             searchAndFilter(page);
         } else {
             getAdditives(page);
