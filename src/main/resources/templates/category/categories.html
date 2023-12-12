@@ -3,7 +3,7 @@
       class="light-style layout-navbar-fixed layout-menu-fixed"
       dir="ltr"
       data-theme="theme-default"
-      data-template="vertical-menu-template-no-customizer" >
+      data-template="vertical-menu-template-no-customizer">
 <head th:replace="~{fragments :: head}"></head>
 <body>
 <div class="layout-wrapper layout-content-navbar">
@@ -15,79 +15,110 @@
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <div class="card py-5 px-5">
                         <h4>Категорії</h4>
-                        <div class="row d-flex justify-content-between mb-4">
-                            <div class="col-9">
-                                <input class="form-control" type="search" id="searchInput" placeholder="Пошук за назвою" aria-label="Search" maxlength="100">
+                        <div class="row mb-4">
+                            <div class="col">
+                                <select class="form-select" id="entitySelect">
+                                    <option value="5">5</option>
+                                    <option value="10">10</option>
+                                    <option value="20">20</option>
+                                    <option value="50">50</option>
+                                </select>
                             </div>
-                            <button type="button" id="createButton" class="btn btn-label-primary col-3"><i class="ti ti-plus"></i>Створити категорію</button>
+                            <div class="row col-11">
+                                <div class="col ps-0 pe-2">
+                                    <input class="form-control" type="search" id="searchInput" placeholder="Пошук за назвою"
+                                           aria-label="Search" maxlength="100">
+                                </div>
+                                <button type="button" id="createButton" class="btn btn-label-primary col-4 me-3"><i
+                                    class="ti ti-plus"></i>Створити категорію
+                                </button>
+                            </div>
                         </div>
 
-                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                             aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <h4>Ви впевнені що хочете видалити цей елемент?</h4>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-danger" onclick="deleteLocation()">Видалити</button>
+                                        <button type="button" class="btn btn-danger" onclick="deleteLocation()">
+                                            Видалити
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="modal fade" id="formModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal fade" id="formModal" data-bs-backdrop="static" data-bs-keyboard="false"
+                             tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <form id="categoryForm" class="row g-3">
-                                            <div class="col-md-6" >
+                                            <div class="col-md-6">
                                                 <label for="inputName" class="form-label">Назва</label>
                                                 <input type="text" class="form-control" id="inputName" maxlength="100">
                                                 <div id="saveValidation" class="text-danger"></div>
                                             </div>
                                             <div class="form-check form-switch col-md-6 d-flex flex-column">
                                                 <label class="form-check-label" for="status"> Статус</label>
-                                                <input class="form-check-input mx-1 mt-2" type="checkbox" role="switch" id="status">
+                                                <input class="form-check-input mx-1 mt-2" type="checkbox" role="switch"
+                                                       id="status">
                                             </div>
                                         </form>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
-                                        <button type="button" class="btn btn-primary" id="saveButton" onclick="save()">Зберегти</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            Закрити
+                                        </button>
+                                        <button type="button" class="btn btn-primary" id="saveButton" onclick="save()">
+                                            Зберегти
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
 
-                        <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false"
+                             tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <form class="row g-3">
-                                            <div class="col-md-6" >
+                                            <div class="col-md-6">
                                                 <label for="inputName" class="form-label">Назва</label>
                                                 <input type="text" class="form-control" id="editName" maxlength="100">
                                                 <div id="editValidation" class="text-danger"></div>
                                             </div>
                                             <div class="form-check form-switch col-md-6 d-flex flex-column">
                                                 <label class="form-check-label" for="status"> Статус</label>
-                                                <input class="form-check-input mx-1 mt-2" type="checkbox" role="switch" id="editStatus">
+                                                <input class="form-check-input mx-1 mt-2" type="checkbox" role="switch"
+                                                       id="editStatus">
                                             </div>
                                         </form>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
-                                        <button type="button" class="btn btn-primary" id="updateButton" onclick="edit()">Зберегти</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            Закрити
+                                        </button>
+                                        <button type="button" class="btn btn-primary" id="updateButton"
+                                                onclick="edit()">Зберегти
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -103,7 +134,7 @@
                                     <th></th>
                                 </tr>
                                 </thead>
-                                <tbody id = "myTable">
+                                <tbody id="myTable">
                                 </tbody>
                             </table>
                             <div class="d-flex justify-content-between">
@@ -128,361 +159,380 @@
 <script th:src="@{/assets/vendor/libs/hammer/hammer.js}"></script>
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
+<script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
 <script>
     var page = 0;
-    $(document).ready(function(){
+    var toSearch = false;
+    $(document).ready(function () {
+        $('#entitySelect').select2({
+            minimumResultsForSearch: -1,
+            allowClear: false
+        });
         getCategories(0);
     });
     var paginationType;
     var data = "";
-	function getCategories(currentPage) {
-		$.ajax({
-					type : "GET",
-					url : "getCategories",
-					data: {
-                        page: currentPage
-                    },
-					success : function(response) {
-						$('.tr').remove();
-						$('ul.pagination li').remove();
-						data = response.content
-						for (i = 0; i < data.length; i++) {
-						var st;
-						if(data[i].status == true){
-						    st = 'Увім'
-						} else {
-						    st = 'Вимк'
-						}
-							$("#myTable")
-									.append(
-											'<tr class="tr"> <td>'
-													+ data[i].name
-													+ '</td> <td>'
-													+ data[i].goodsQuantity
-													+ '</td> <td>'
-													+ st
-													+ '</td> <td><button type="button" class="btn btn-primary" title="Редагувати" onclick="openEditModal('
-													+ data[i].id
-													+ ');"><i class="ti ti-pencil"></i></button> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
-													+ data[i].id
-													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 
-						}
+    function getCategories(currentPage) {
+        $.ajax({
+            type: "GET",
+            url: "getCategories",
+            data: {
+                page: currentPage,
+                size: $('#entitySelect').val()
+            },
+            success: function (response) {
+                $('.tr').remove();
+                $('ul.pagination li').remove();
+                data = response.content
+                for (i = 0; i < data.length; i++) {
+                    var st;
+                    if (data[i].status == true) {
+                        st = 'Увім'
+                    } else {
+                        st = 'Вимк'
+                    }
+                    $("#myTable")
+                        .append(
+                            '<tr class="tr"> <td>'
+                            + data[i].name
+                            + '</td> <td>'
+                            + data[i].goodsQuantity
+                            + '</td> <td>'
+                            + st
+                            + '</td> <td><button type="button" class="btn btn-primary" title="Редагувати" onclick="openEditModal('
+                            + data[i].id
+                            + ');"><i class="ti ti-pencil"></i></button> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
+                            + data[i].id
+                            + ');" ><i class="ti ti-trash"></button></td> </tr>');
 
-                              paginationType = 1;
-                              buildPagination(response);
+                }
+
+                paginationType = 1;
+                buildPagination(response);
 
 
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
-	}
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
+    }
 
-	function buildPagination(response) {
-		totalPages = response.totalPages;
-		var pageNumber = response.pageable.pageNumber;
+    function buildPagination(response) {
+        totalPages = response.totalPages;
+        var pageNumber = response.pageable.pageNumber;
         page = pageNumber;
-        if(totalPages > 1){
-		var prev = '';
+        if (totalPages > 1) {
+            var prev = '';
 
-			if(pageNumber !== 0) {
+            if (pageNumber !== 0) {
                 prev = '<li class="page-item prev"><a class="page-link waves-effect" id="prev" href="javascript:void(0);"><i class="ti ti-chevron-left ti-xs"></i></a></li>';
-			} else {
+            } else {
                 prev = '<li class="page-item prev disabled"><a class="page-link waves-effect" href="javascript:void(0);"><i class="ti ti-chevron-left ti-xs"></i></a></li>';
-		    }
+            }
 
 
-		var next = '';
+            var next = '';
 
-			if(pageNumber !== totalPages - 1) {
-				next = '<li class="page-item next"><a class="page-link waves-effect" id="next" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
-			} else {
+            if (pageNumber !== totalPages - 1) {
+                next = '<li class="page-item next"><a class="page-link waves-effect" id="next" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
+            } else {
                 next = '<li class="page-item next disabled"><a class="page-link waves-effect" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
-		    }
+            }
 
-       var pages = '';
-       var dots = '<li class="page-item disabled"><a class="page-link waves-effect" href="javascript:void(0);"> ... </a></li>';
-       if(pageNumber < 3){
-            for(var i = 1; i <= 5; i++){
-                if(i <= totalPages) {
-                    if(pageNumber+1 !== i){
-                        pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
-                    } else {
-                        pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+            var pages = '';
+            var dots = '<li class="page-item disabled"><a class="page-link waves-effect" href="javascript:void(0);"> ... </a></li>';
+            if (pageNumber < 3) {
+                for (var i = 1; i <= 5; i++) {
+                    if (i <= totalPages) {
+                        if (pageNumber + 1 !== i) {
+                            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        } else {
+                            pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        }
                     }
                 }
-            }
-            if(totalPages == 6){
-              pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ 6 +'</a></li>';
-            }
-            if(totalPages > 6){
-                pages += dots;
-                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+totalPages+'</a></li>';
-            }
+                if (totalPages == 6) {
+                    pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + 6 + '</a></li>';
+                }
+                if (totalPages > 6) {
+                    pages += dots;
+                    pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + totalPages + '</a></li>';
+                }
 
-       } else if (3 > totalPages - 1 - pageNumber) {
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
-            if(totalPages > 6){
+            } else if (3 > totalPages - 1 - pageNumber) {
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
+                if (totalPages > 6) {
+                    pages += dots
+                }
+                for (var i = totalPages - 4; i <= totalPages; i++) {
+                    if (i > 1) {
+                        if (pageNumber + 1 !== i) {
+                            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        } else {
+                            pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        }
+                    }
+                }
+
+            } else {
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
                 pages += dots
-            }
-            for(var i = totalPages - 4; i <= totalPages; i++){
-                if(i > 1 ){
-                    if(pageNumber+1 !== i){
-                        pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
-                    } else {
-                        pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
-                    }
-                }
+
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + pageNumber + '</a></li>';
+                pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">' + (pageNumber + 1) + '</a></li>';
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + (pageNumber + 2) + '</a></li>';
+
+                pages += dots;
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + totalPages + '</a></li>';
             }
 
-       } else {
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
-            pages += dots
-
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+pageNumber+'</a></li>';
-            pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+(pageNumber+1)+'</a></li>';
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+(pageNumber+2)+'</a></li>';
-
-            pages += dots;
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+totalPages+'</a></li>';
-       }
-
-		pages = prev + pages + next;
-		var from = (response.size * pageNumber)+1;
-		var to = from + response.numberOfElements - 1;
-        $("#paginationElements").text("Показано від "+from+" до "+to+" з "+response.totalElements+" елементів");
-		$("ul.pagination").append(pages);
-		} else {
+            pages = prev + pages + next;
+            var from = (response.size * pageNumber) + 1;
+            var to = from + response.numberOfElements - 1;
+            $("#paginationElements").text("Показано від " + from + " до " + to + " з " + response.totalElements + " елементів");
+            $("ul.pagination").append(pages);
+        } else {
             $("#paginationElements").text("")
-            if(response.numberOfElements == 0){
+            if (response.numberOfElements == 0) {
                 $("#myTable").append('<tr class="tr"><td colspan="4" class="text-center">Дані не знайдено</td>></tr>')
             }
-		}
-	}
+        }
+    }
 
-	$(document).on("click", "ul.pagination li a", function() {
-	    let val = $(this).text();
-	    let id = $(this).attr('id');
-        if(id === "prev"){
+    $(document).on("click", "ul.pagination li a", function () {
+        let val = $(this).text();
+        let id = $(this).attr('id');
+        if (id === "prev") {
             let activeValue = parseInt($("ul.pagination li.active").text());
-            if(paginationType === 1){
-                getCategories(activeValue-2);
+            if (paginationType === 1) {
+                getCategories(activeValue - 2);
             }
-            if(paginationType === 2){
-                search(activeValue-2);
+            if (paginationType === 2) {
+                search(activeValue - 2);
             }
-        } else if (id === "next"){
+        } else if (id === "next") {
             let activeValue = parseInt($("ul.pagination li.active").text());
-            if(paginationType === 1){
+            if (paginationType === 1) {
                 getCategories(activeValue);
             }
-            if(paginationType === 2){
+            if (paginationType === 2) {
                 search(activeValue);
             }
         } else {
             let currentPage = parseInt(val - 1);
-            if(paginationType === 1){
+            if (paginationType === 1) {
                 getCategories(currentPage);
             }
-            if(paginationType === 2){
+            if (paginationType === 2) {
                 search(currentPage);
             }
         }
-	});
+    });
 
-	var categoryId;
-	function openDeleteModal(id){
-	    categoryId = id
+    var categoryId;
+
+    function openDeleteModal(id) {
+        categoryId = id
         $('#deleteModal').modal('show');
-	}
-	function deleteLocation(){
-        $.ajax({
-					type : "GET",
-					url : "deleteCategory/"+categoryId,
-					success : function(response) {
-					    $('#deleteModal').modal('hide');
-					    getCategories(page);
-
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
-	}
-
-    function openEditModal(id){
-    $("#editValidation").text("");
-    $("#editName").removeClass("is-invalid");
-    categoryId = id;
-        $.ajax({
-					type : "GET",
-					url : "editCategory/"+id,
-					success : function(response) {
-					    $('#editName').val(response.name);
-					    $( "#editStatus" ).prop( "checked", response.status );
-					    $('#editModal').modal('show');
-
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
     }
+
+    function deleteLocation() {
+        $.ajax({
+            type: "GET",
+            url: "deleteCategory/" + categoryId,
+            success: function (response) {
+                $('#deleteModal').modal('hide');
+                getCategories(page);
+
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
+    }
+
+    function openEditModal(id) {
+        $("#editValidation").text("");
+        $("#editName").removeClass("is-invalid");
+        categoryId = id;
+        $.ajax({
+            type: "GET",
+            url: "editCategory/" + id,
+            success: function (response) {
+                $('#editName').val(response.name);
+                $("#editStatus").prop("checked", response.status);
+                $('#editModal').modal('show');
+
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
+    }
+
     function edit() {
-    $("#editValidation").text("");
-    $("#editName").removeClass("is-invalid");
-    var stat;
-    if($("#editStatus").is(':checked')){
-        stat = true;
-    } else {
-        stat = false;
-    }
+        $("#editValidation").text("");
+        $("#editName").removeClass("is-invalid");
+        var stat;
+        if ($("#editStatus").is(':checked')) {
+            stat = true;
+        } else {
+            stat = false;
+        }
         $.ajax({
-					type : "POST",
-					url : "editCategory",
-					data: {
-                        name: $('#editName').val(),
-                        status: stat,
-                        id: categoryId
-                    },
-					success : function(response) {
-                            $('#editModal').modal('hide');
-                            getCategories(page);
-					},
-					error : function(XMLHttpRequest, textStatus, errorThrown) {
-                        const map = XMLHttpRequest.responseJSON;
-                        if(XMLHttpRequest.status == 400) {
-                            for (const [key, value] of Object.entries(map)) {
-                                $("#editValidation").text(value);
-                                $("#editName").addClass("is-invalid");
-                            }
-                        } else {
-                            $("#error").removeClass("d-none");
-                            setTimeout(
-                                function () {
-                                    $("#error").addClass("d-none");
-                                }, 4000);
-                        }
-					}
-				});
+            type: "POST",
+            url: "editCategory",
+            data: {
+                name: $('#editName').val(),
+                status: stat,
+                id: categoryId
+            },
+            success: function (response) {
+                $('#editModal').modal('hide');
+                getCategories(page);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                const map = XMLHttpRequest.responseJSON;
+                if (XMLHttpRequest.status == 400) {
+                    for (const [key, value] of Object.entries(map)) {
+                        $("#editValidation").text(value);
+                        $("#editName").addClass("is-invalid");
+                    }
+                } else {
+                    $("#error").removeClass("d-none");
+                    setTimeout(
+                        function () {
+                            $("#error").addClass("d-none");
+                        }, 4000);
+                }
+            }
+        });
     }
 
-    $('#createButton').on("click", function(){
+    $('#createButton').on("click", function () {
         $("#saveValidation").text("");
         $("#inputName").removeClass("is-invalid");
         $('#categoryForm')[0].reset();
         $('#formModal').modal('show');
     });
+
     function save() {
-    $("#saveValidation").text("");
-    $("#inputName").removeClass("is-invalid");
-    var stat;
-    if($("#status").is(':checked')){
-        stat = true;
-    } else {
-        stat = false;
-    }
+        $("#saveValidation").text("");
+        $("#inputName").removeClass("is-invalid");
+        var stat;
+        if ($("#status").is(':checked')) {
+            stat = true;
+        } else {
+            stat = false;
+        }
         $.ajax({
-					type : "POST",
-					url : "saveCategory",
-					data: {
-                        name: $('#inputName').val(),
-                        status: stat
-                    },
-					success : function(response) {
-                            $('#categoryForm')[0].reset();
-                            $('#formModal').modal('hide');
-                            getCategories(page);
-					},
-					error : function(XMLHttpRequest, textStatus, errorThrown) {
-                        const map = XMLHttpRequest.responseJSON;
-                        if(XMLHttpRequest.status == 400) {
-                            for (const [key, value] of Object.entries(map)) {
-                                $("#saveValidation").text(value);
-                                $("#inputName").addClass("is-invalid");
-                            }
-                        } else {
-                            $("#error").removeClass("d-none");
-                            setTimeout(
-                                function () {
-                                    $("#error").addClass("d-none");
-                                }, 4000);
-                        }
-					}
-				});
-	}
+            type: "POST",
+            url: "saveCategory",
+            data: {
+                name: $('#inputName').val(),
+                status: stat
+            },
+            success: function (response) {
+                $('#categoryForm')[0].reset();
+                $('#formModal').modal('hide');
+                getCategories(page);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                const map = XMLHttpRequest.responseJSON;
+                if (XMLHttpRequest.status == 400) {
+                    for (const [key, value] of Object.entries(map)) {
+                        $("#saveValidation").text(value);
+                        $("#inputName").addClass("is-invalid");
+                    }
+                } else {
+                    $("#error").removeClass("d-none");
+                    setTimeout(
+                        function () {
+                            $("#error").addClass("d-none");
+                        }, 4000);
+                }
+            }
+        });
+    }
+
     var searchValue
-    $('#searchInput').on("change", function(){
+    $('#searchInput').on("change", function () {
         searchValue = $(this).val();
         search(0);
     });
-    function search(currentPage){
+
+    function search(currentPage) {
+        toSearch = true;
         $.ajax({
-					type : "GET",
-					url : "searchCategories",
-					data: {
-					    page: currentPage,
-                        name: searchValue
-                    },
-					success : function(response) {
-					    $('.tr').remove();
-						$('ul.pagination li').remove();
-						data = response.content
-						for (i = 0; i < data.length; i++) {
-						var st;
-						if(data[i].status == true){
-						    st = 'Увім'
-						} else {
-						    st = 'Вимк'
-						}
-							$("#myTable")
-									.append(
-											'<tr class="tr"> <td>'
-													+ data[i].name
-													+ '</td> <td>'
-													+ data[i].goodsQuantity
-													+ '</td> <td>'
-													+ st
-													+ '</td> <td><button type="button" class="btn btn-primary" title="Редагувати" onclick="openEditModal('
-													+ data[i].id
-													+ ');"><i class="ti ti-pencil"></i></button> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
-													+ data[i].id
-													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
+            type: "GET",
+            url: "searchCategories",
+            data: {
+                page: currentPage,
+                size: $('#entitySelect').val(),
+                name: searchValue
+            },
+            success: function (response) {
+                $('.tr').remove();
+                $('ul.pagination li').remove();
+                data = response.content
+                for (i = 0; i < data.length; i++) {
+                    var st;
+                    if (data[i].status == true) {
+                        st = 'Увім'
+                    } else {
+                        st = 'Вимк'
+                    }
+                    $("#myTable")
+                        .append(
+                            '<tr class="tr"> <td>'
+                            + data[i].name
+                            + '</td> <td>'
+                            + data[i].goodsQuantity
+                            + '</td> <td>'
+                            + st
+                            + '</td> <td><button type="button" class="btn btn-primary" title="Редагувати" onclick="openEditModal('
+                            + data[i].id
+                            + ');"><i class="ti ti-pencil"></i></button> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
+                            + data[i].id
+                            + ');" ><i class="ti ti-trash"></button></td> </tr>');
 
-						}
+                }
 
-                              paginationType = 2;
-                              buildPagination(response);
+                paginationType = 2;
+                buildPagination(response);
 
 
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
     }
+    $('#entitySelect').on("change", function () {
+        if (toSearch == true) {
+            search(page);
+        } else {
+            getCategories(page);
+        }
+    })
 
 
 </script>

@@ -33,8 +33,6 @@ public class CategoryController {
         this.categoryService = categoryService;
         this.adminService = adminService;
     }
-
-    private int pageSize = 5;
     @GetMapping("/categories")
     public String categories(Model model){
         model.addAttribute("pageNum", 2);
@@ -46,8 +44,8 @@ public class CategoryController {
         return "category/categories";
     }
     @GetMapping("/getCategories")
-    public @ResponseBody Page<CategoryDTO> getCategories(@RequestParam("page")int page){
-        Pageable pageable = PageRequest.of(page,pageSize);
+    public @ResponseBody Page<CategoryDTO> getCategories(@RequestParam("page")int page,@RequestParam("size")int size){
+        Pageable pageable = PageRequest.of(page,size);
         return categoryService.getAllCategories(pageable);
     }
     @PostMapping("/saveCategory")
@@ -66,8 +64,8 @@ public class CategoryController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/searchCategories")
-    public @ResponseBody Page<CategoryDTO> searchCategories(@RequestParam("page")int page, @RequestParam("name")String name){
-        Pageable pageable = PageRequest.of(page,pageSize);
+    public @ResponseBody Page<CategoryDTO> searchCategories(@RequestParam("page")int page,@RequestParam("size")int size, @RequestParam("name")String name){
+        Pageable pageable = PageRequest.of(page,size);
         return categoryService.searchCategories(name, pageable);
     }
     @GetMapping("/deleteCategory/{id}")
