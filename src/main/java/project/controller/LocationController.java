@@ -50,8 +50,8 @@ public class LocationController {
         return "location/locations";
     }
     @GetMapping("/getLocations")
-    public @ResponseBody Page<Location> getAllLocations(@RequestParam("page")int page){
-        Pageable pageable = PageRequest.of(page,pageSize);
+    public @ResponseBody Page<Location> getAllLocations(@RequestParam("page")int page,@RequestParam("size")int size){
+        Pageable pageable = PageRequest.of(page,size);
         return locationService.getLocationsByPage(pageable);
     }
     @GetMapping("/getCitiesForLocations")
@@ -71,8 +71,8 @@ public class LocationController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/searchLocation")
-    public @ResponseBody Page<Location> searchLocation(@RequestParam("page")int page, @RequestParam(name="address", required = false) String address, @RequestParam(name="city", required = false) String city){
-        Pageable pageable = PageRequest.of(page,pageSize);
+    public @ResponseBody Page<Location> searchLocation(@RequestParam("page")int page,@RequestParam("size")int size, @RequestParam(name="address", required = false) String address, @RequestParam(name="city", required = false) String city){
+        Pageable pageable = PageRequest.of(page,size);
         return locationService.getLocationsByAddressAndCity(address, city, pageable);
     }
 
