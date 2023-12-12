@@ -40,7 +40,6 @@ public class OrderController {
         this.adminService = adminService;
     }
 
-    private int pageSize = 5;
     private Long orderId;
     @GetMapping("/orders")
     public String orders(Model model){
@@ -54,13 +53,13 @@ public class OrderController {
         return "order/orders";
     }
     @GetMapping("/getOrders")
-    public @ResponseBody Page<OrderDTO> getOrders(@RequestParam("page")int page){
-        Pageable pageable = PageRequest.of(page, pageSize);
+    public @ResponseBody Page<OrderDTO> getOrders(@RequestParam("page")int page, @RequestParam("size")int size){
+        Pageable pageable = PageRequest.of(page, size);
         return orderService.getOrders(pageable);
     }
     @GetMapping("/searchOrders")
-    public @ResponseBody Page<OrderDTO> searchOrders(@RequestParam("page")int page, @RequestParam(value = "address", required = false)String address, @RequestParam(value = "status", required = false)OrderStatus status, @RequestParam(value = "date", required = false) LocalDate date){
-        Pageable pageable = PageRequest.of(page, pageSize);
+    public @ResponseBody Page<OrderDTO> searchOrders(@RequestParam("page")int page,@RequestParam("size")int size, @RequestParam(value = "address", required = false)String address, @RequestParam(value = "status", required = false)OrderStatus status, @RequestParam(value = "date", required = false) LocalDate date){
+        Pageable pageable = PageRequest.of(page, size);
         return orderService.searchOrders(pageable, address,status, date);
     }
     @PostMapping("/deleteOrder/{id}")
