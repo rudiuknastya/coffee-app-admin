@@ -3,7 +3,7 @@
       class="light-style layout-navbar-fixed layout-menu-fixed"
       dir="ltr"
       data-theme="theme-default"
-      data-template="vertical-menu-template-no-customizer" >
+      data-template="vertical-menu-template-no-customizer">
 <head th:replace="~{fragments :: head}"></head>
 <body>
 <div class="layout-wrapper layout-content-navbar">
@@ -26,38 +26,45 @@
                             </div>
                             <div class="row col-11">
                                 <div class="col-5 ps-0 pe-2">
-                                    <input class="form-control" type="search" id="searchInput" placeholder="Пошук за адресою філіалу" aria-label="Search" maxlength="100">
+                                    <input class="form-control" type="search" id="searchInput"
+                                           placeholder="Пошук за адресою філіалу" aria-label="Search" maxlength="100">
                                 </div>
                                 <div class="col ps-0 pe-2">
-                                    <input  id="orderDate" placeholder="Оберіть дату"  class="form-control" type="text" autocomplete="off">
+                                    <input id="orderDate" placeholder="Оберіть дату" class="form-control" type="text"
+                                           autocomplete="off">
                                 </div>
                                 <div class="col-3">
                                     <select class="form-select" id="statusSelect" aria-label="Default select example">
                                         <option></option>
-                                        <option th:each="s : ${status}" th:value="${s}" th:text="${s.getStatusName()}"></option>
+                                        <option th:each="s : ${status}" th:value="${s}"
+                                                th:text="${s.getStatusName()}"></option>
                                     </select>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                             aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <h4>Замовлення перейде у статус скасованого</h4>
                                         <h4>Вкажіть у коментарі чому ви видаляєте це замовлення</h4>
                                         <form class="row g-3">
-                                            <div class="col-md-12" >
+                                            <div class="col-md-12">
                                                 <label for="autosize-demo" class="form-label">Коментар</label>
-                                                <textarea id="autosize-demo" rows="3" class="form-control" maxlength="300"></textarea>
+                                                <textarea id="autosize-demo" rows="3" class="form-control"
+                                                          maxlength="300"></textarea>
                                             </div>
                                         </form>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-danger" onclick="deleteOrder()">Видалити</button>
+                                        <button type="button" class="btn btn-danger" onclick="deleteOrder()">Видалити
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -76,7 +83,7 @@
                                     <th></th>
                                 </tr>
                                 </thead>
-                                <tbody id = "myTable">
+                                <tbody id="myTable">
                                 </tbody>
                             </table>
                             <div class="d-flex justify-content-between">
@@ -110,7 +117,7 @@
 <script src="https://npmcdn.com/flatpickr/dist/l10n/uk.js"></script>
 <script>
     var toSearch = false;
-    $(document).ready(function(){
+    $(document).ready(function () {
         $('#entitySelect').select2({
             minimumResultsForSearch: -1,
             allowClear: false
@@ -122,282 +129,282 @@
             allowClear: true
         });
         $("#orderDate").flatpickr({
-		    locale: "uk",
-			dateFormat: "d.m.Y"
+            locale: "uk",
+            dateFormat: "d.m.Y"
         });
         getOrders(0);
     });
     var paginationType;
     var data = "";
-	function getOrders(currentPage) {
-		$.ajax({
-					type : "GET",
-					url : "getOrders",
-					data: {
-                        page: currentPage,
-                        size: $('#entitySelect').val()
-                    },
-					success : function(response) {
-						$('.tr').remove();
-						$('ul.pagination li').remove();
-						data = response.content
-						for (i = 0; i < data.length; i++) {
-                            var date = moment(data[i].orderDate).format('DD.MM.YYYY');
-                            if(data[i].status.localeCompare('Відмінено') != 0){
-                                var canc = '<a href="orders/edit/'+data[i].id+'" role="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
-													+ data[i].id
-													+ ');" ><i class="ti ti-trash"></i></button>'
-                            } else {
-                                var canc = '';
-                            }
-							$("#myTable")
-									.append(
-											'<tr class="tr"> <td>'
-													+ data[i].name
-													+ '</td> <td>'
-													+ data[i].locationAddress
-													+ '</td> <td>'
-													+ date
-													+ '</td> <td>'
-													+ data[i].orderTime
-													+ '</td> <td>'
-													+ data[i].status
-													+ '</td> <td>'+canc+'<a href="orders/orderHistory/'+data[i].id+'" role="button" class="btn btn-warning" title="Історія замовлень" style="color: white"><i class="ti ti-list"></i></a> </td> </tr>');
 
-						}
+    function getOrders(currentPage) {
+        $.ajax({
+            type: "GET",
+            url: "getOrders",
+            data: {
+                page: currentPage,
+                size: $('#entitySelect').val()
+            },
+            success: function (response) {
+                $('.tr').remove();
+                $('ul.pagination li').remove();
+                data = response.content
+                for (i = 0; i < data.length; i++) {
+                    var date = moment(data[i].orderDate).format('DD.MM.YYYY');
+                    if (data[i].status.localeCompare('Відмінено') != 0) {
+                        var canc = '<a href="orders/edit/' + data[i].id + '" role="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
+                            + data[i].id
+                            + ');" ><i class="ti ti-trash"></i></button>'
+                    } else {
+                        var canc = '';
+                    }
+                    $("#myTable")
+                        .append(
+                            '<tr class="tr"> <td>'
+                            + data[i].name
+                            + '</td> <td>'
+                            + data[i].locationAddress
+                            + '</td> <td>'
+                            + date
+                            + '</td> <td>'
+                            + data[i].orderTime
+                            + '</td> <td>'
+                            + data[i].status
+                            + '</td> <td>' + canc + '<a href="orders/orderHistory/' + data[i].id + '" role="button" class="btn btn-warning" title="Історія замовлень" style="color: white"><i class="ti ti-list"></i></a> </td> </tr>');
 
-                              paginationType = 1;
-                              buildPagination(response);
+                }
+
+                paginationType = 1;
+                buildPagination(response);
 
 
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
-	}
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
+    }
 
-	function buildPagination(response) {
-		totalPages = response.totalPages;
-		var pageNumber = response.pageable.pageNumber;
+    function buildPagination(response) {
+        totalPages = response.totalPages;
+        var pageNumber = response.pageable.pageNumber;
         page = pageNumber;
-        if(totalPages > 1){
-		var prev = '';
+        if (totalPages > 1) {
+            var prev = '';
 
-			if(pageNumber !== 0) {
+            if (pageNumber !== 0) {
                 prev = '<li class="page-item prev"><a class="page-link waves-effect" id="prev" href="javascript:void(0);"><i class="ti ti-chevron-left ti-xs"></i></a></li>';
-			} else {
+            } else {
                 prev = '<li class="page-item prev disabled"><a class="page-link waves-effect" href="javascript:void(0);"><i class="ti ti-chevron-left ti-xs"></i></a></li>';
-		    }
+            }
 
 
-		var next = '';
+            var next = '';
 
-			if(pageNumber !== totalPages - 1) {
-				next = '<li class="page-item next"><a class="page-link waves-effect" id="next" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
-			} else {
+            if (pageNumber !== totalPages - 1) {
+                next = '<li class="page-item next"><a class="page-link waves-effect" id="next" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
+            } else {
                 next = '<li class="page-item next disabled"><a class="page-link waves-effect" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
-		    }
+            }
 
-       var pages = '';
-       var dots = '<li class="page-item disabled"><a class="page-link waves-effect" href="javascript:void(0);"> ... </a></li>';
-       if(pageNumber < 3){
-            for(var i = 1; i <= 5; i++){
-                if(i <= totalPages) {
-                    if(pageNumber+1 !== i){
-                        pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
-                    } else {
-                        pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+            var pages = '';
+            var dots = '<li class="page-item disabled"><a class="page-link waves-effect" href="javascript:void(0);"> ... </a></li>';
+            if (pageNumber < 3) {
+                for (var i = 1; i <= 5; i++) {
+                    if (i <= totalPages) {
+                        if (pageNumber + 1 !== i) {
+                            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        } else {
+                            pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        }
                     }
                 }
-            }
-            if(totalPages == 6){
-              pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ 6 +'</a></li>';
-            }
-            if(totalPages > 6){
-                pages += dots;
-                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+totalPages+'</a></li>';
-            }
+                if (totalPages == 6) {
+                    pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + 6 + '</a></li>';
+                }
+                if (totalPages > 6) {
+                    pages += dots;
+                    pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + totalPages + '</a></li>';
+                }
 
-       } else if (3 > totalPages - 1 - pageNumber) {
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
-            if(totalPages > 6){
+            } else if (3 > totalPages - 1 - pageNumber) {
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
+                if (totalPages > 6) {
+                    pages += dots
+                }
+                for (var i = totalPages - 4; i <= totalPages; i++) {
+                    if (i > 1) {
+                        if (pageNumber + 1 !== i) {
+                            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        } else {
+                            pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        }
+                    }
+                }
+
+            } else {
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
                 pages += dots
-            }
-            for(var i = totalPages - 4; i <= totalPages; i++){
-                if(i > 1 ){
-                    if(pageNumber+1 !== i){
-                        pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
-                    } else {
-                        pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
-                    }
-                }
+
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + pageNumber + '</a></li>';
+                pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">' + (pageNumber + 1) + '</a></li>';
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + (pageNumber + 2) + '</a></li>';
+
+                pages += dots;
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + totalPages + '</a></li>';
             }
 
-       } else {
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
-            pages += dots
-
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+pageNumber+'</a></li>';
-            pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+(pageNumber+1)+'</a></li>';
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+(pageNumber+2)+'</a></li>';
-
-            pages += dots;
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+totalPages+'</a></li>';
-       }
-
-		pages = prev + pages + next;
-		var from = (response.size * pageNumber)+1;
-		var to = from + response.numberOfElements - 1;
-        $("#paginationElements").text("Показано від "+from+" до "+to+" з "+response.totalElements+" елементів");
-		$("ul.pagination").append(pages);
-		} else {
+            pages = prev + pages + next;
+            var from = (response.size * pageNumber) + 1;
+            var to = from + response.numberOfElements - 1;
+            $("#paginationElements").text("Показано від " + from + " до " + to + " з " + response.totalElements + " елементів");
+            $("ul.pagination").append(pages);
+        } else {
             $("#paginationElements").text("")
-            if(response.numberOfElements == 0){
+            if (response.numberOfElements == 0) {
                 $("#myTable").append('<tr class="tr"><td colspan="6" class="text-center">Дані не знайдено</td>></tr>')
             }
-		}
-	}
+        }
+    }
 
-	$(document).on("click", "ul.pagination li a", function() {
-	    let val = $(this).text();
-	    let id = $(this).attr('id');
-        if(id === "prev"){
+    $(document).on("click", "ul.pagination li a", function () {
+        let val = $(this).text();
+        let id = $(this).attr('id');
+        if (id === "prev") {
             let activeValue = parseInt($("ul.pagination li.active").text());
-            if(paginationType === 1){
-                getOrders(activeValue-2);
+            if (paginationType === 1) {
+                getOrders(activeValue - 2);
             }
-            if(paginationType === 2){
-                searchAndFilter(activeValue-2);
+            if (paginationType === 2) {
+                searchAndFilter(activeValue - 2);
             }
-        } else if (id === "next"){
+        } else if (id === "next") {
             let activeValue = parseInt($("ul.pagination li.active").text());
-            if(paginationType === 1){
+            if (paginationType === 1) {
                 getOrders(activeValue);
             }
-            if(paginationType === 2){
+            if (paginationType === 2) {
                 searchAndFilter(activeValue);
             }
         } else {
             let currentPage = parseInt(val - 1);
-            if(paginationType === 1){
+            if (paginationType === 1) {
                 getOrders(currentPage);
             }
-            if(paginationType === 2){
+            if (paginationType === 2) {
                 searchAndFilter(currentPage);
             }
         }
-	});
+    });
 
-	var orderId;
-	function openDeleteModal(id){
-	    orderId = id
+    var orderId;
+
+    function openDeleteModal(id) {
+        orderId = id
         $('#deleteModal').modal('show');
-	}
-	function deleteOrder(){
-        $.ajax({
-					type : "POST",
-					url : "deleteOrder/"+orderId,
-					data: {
-                      comment: $('#autosize-demo').val()
-                    },
-					success : function(response) {
-					    $('#deleteModal').modal('hide');
-					    getOrders(page);
+    }
 
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
-	}
+    function deleteOrder() {
+        $.ajax({
+            type: "POST",
+            url: "deleteOrder/" + orderId,
+            data: {
+                comment: $('#autosize-demo').val()
+            },
+            success: function (response) {
+                $('#deleteModal').modal('hide');
+                getOrders(page);
+
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
+    }
 
 
     var searchValue;
-    $('#searchInput').on("change", function(){
+    $('#searchInput').on("change", function () {
         searchValue = $(this).val();
         searchAndFilter(0);
     });
     var selectValue;
-    $('#statusSelect').on("change", function(){
+    $('#statusSelect').on("change", function () {
         selectValue = $(this).val();
         searchAndFilter(0);
     });
     var dateValue;
-    $('#orderDate').on("change", function(){
-        if($(this).val().localeCompare('') == 0){
-          dateValue = null;
+    $('#orderDate').on("change", function () {
+        if ($(this).val().localeCompare('') == 0) {
+            dateValue = null;
         } else {
-          dateValue = moment($(this).val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
+            dateValue = moment($(this).val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
         }
         searchAndFilter(0);
     });
 
-    function searchAndFilter(currentPage){
+    function searchAndFilter(currentPage) {
         toSearch = true;
         $.ajax({
-					type : "GET",
-					url : "searchOrders",
-					data: {
-					    page: currentPage,
-                        size: $('#entitySelect').val(),
-                        address: searchValue,
-                        status: selectValue,
-                        date: dateValue
-                    },
-					success : function(response) {
-                        $('.tr').remove();
-                        $('ul.pagination li').remove();
-                        data = response.content
-                        for (i = 0; i < data.length; i++) {
-                            var date = moment(data[i].orderDate).format('DD.MM.YYYY');
-                            if(data[i].status.localeCompare('Відмінено') != 0){
-                                var canc = '<a href="orders/edit/'+data[i].id+'" role="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
-                                    + data[i].id
-                                    + ');" ><i class="ti ti-trash"></i></button>'
-                            } else {
-                                var canc = '';
-                            }
-                            $("#myTable")
-                                .append(
-                                    '<tr class="tr"> <td>'
-                                    + data[i].name
-                                    + '</td> <td>'
-                                    + data[i].locationAddress
-                                    + '</td> <td>'
-                                    + date
-                                    + '</td> <td>'
-                                    + data[i].orderTime
-                                    + '</td> <td>'
-                                    + data[i].status
-                                    + '</td> <td>'+canc+'<a href="orders/orderHistory/'+data[i].id+'" role="button" class="btn btn-warning" title="Історія замовлень" style="color: white"><i class="ti ti-list"></i></a> </td> </tr>');
+            type: "GET",
+            url: "searchOrders",
+            data: {
+                page: currentPage,
+                size: $('#entitySelect').val(),
+                address: searchValue,
+                status: selectValue,
+                date: dateValue
+            },
+            success: function (response) {
+                $('.tr').remove();
+                $('ul.pagination li').remove();
+                data = response.content
+                for (i = 0; i < data.length; i++) {
+                    var date = moment(data[i].orderDate).format('DD.MM.YYYY');
+                    if (data[i].status.localeCompare('Відмінено') != 0) {
+                        var canc = '<a href="orders/edit/' + data[i].id + '" role="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
+                            + data[i].id
+                            + ');" ><i class="ti ti-trash"></i></button>'
+                    } else {
+                        var canc = '';
+                    }
+                    $("#myTable")
+                        .append(
+                            '<tr class="tr"> <td>'
+                            + data[i].name
+                            + '</td> <td>'
+                            + data[i].locationAddress
+                            + '</td> <td>'
+                            + date
+                            + '</td> <td>'
+                            + data[i].orderTime
+                            + '</td> <td>'
+                            + data[i].status
+                            + '</td> <td>' + canc + '<a href="orders/orderHistory/' + data[i].id + '" role="button" class="btn btn-warning" title="Історія замовлень" style="color: white"><i class="ti ti-list"></i></a> </td> </tr>');
 
-                        }
+                }
 
-                              paginationType = 2;
-                              buildPagination(response);
+                paginationType = 2;
+                buildPagination(response);
 
 
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
     }
 
     $('#entitySelect').on("change", function () {

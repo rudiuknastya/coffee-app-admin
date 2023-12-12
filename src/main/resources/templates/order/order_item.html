@@ -22,9 +22,21 @@
                             </div>
                         </form>
                         <h5 class="mt-4">Додатки</h5>
-                        <div class="col-12 mb-3">
-                            <input class="form-control me-2" type="search" id="searchInput"
-                                   placeholder="Пошук за типом додатку" aria-label="Search" maxlength="100">
+                        <div class="row d-flex justify-content-between mb-4">
+                            <div class="col">
+                                <select class="form-select" id="entitySelect">
+                                    <option value="5">5</option>
+                                    <option value="10">10</option>
+                                    <option value="20">20</option>
+                                    <option value="50">50</option>
+                                </select>
+                            </div>
+                            <div class="row col-11">
+                                <div class="col">
+                                    <input class="form-control me-2" type="search" id="searchInput"
+                                           placeholder="Пошук за типом додатку" aria-label="Search" maxlength="100">
+                                </div>
+                            </div>
                         </div>
 
                         <div class="table-responsive">
@@ -106,7 +118,12 @@
     const myArray = currentUrl.split("/");
     var root = myArray[3];
     var page = 0;
+    var toSearch = false;
     $(document).ready(function () {
+        $('#entitySelect').select2({
+            minimumResultsForSearch: -1,
+            allowClear: false
+        });
         $.ajax({
             type: "GET",
             url: "getOrderItem/" + id,
@@ -161,7 +178,8 @@
             type: "GET",
             url: "/" + root + "/getOrderItemAdditives/" + id,
             data: {
-                page: currentPage
+                page: currentPage,
+                size: $('#entitySelect').val()
             },
             success: function (response) {
                 $('.tr').remove();
@@ -391,11 +409,13 @@
     });
 
     function search(currentPage) {
+        toSearch = true;
         $.ajax({
             type: "GET",
             url: "/" + root + "/searchOrderItemAdditives/" + id,
             data: {
                 page: currentPage,
+                size: $('#entitySelect').val(),
                 name: searchValue
             },
             success: function (response) {
@@ -429,6 +449,13 @@
             }
         });
     }
+    $('#entitySelect').on("change", function () {
+        if (toSearch == true) {
+            search(page);
+        } else {
+            getOrderItemAdditives(page);
+        }
+    })
 </script>
 </body>
 </html>

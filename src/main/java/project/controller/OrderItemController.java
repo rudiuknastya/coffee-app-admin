@@ -41,13 +41,13 @@ public class OrderItemController {
     }
 
     @GetMapping("/getOrderItems/{id}")
-    public @ResponseBody Page<OrderItemDTO> getOrderItems(@PathVariable Long id, @RequestParam("page")int page){
-        Pageable pageable = PageRequest.of(page, pageSize);
+    public @ResponseBody Page<OrderItemDTO> getOrderItems(@PathVariable Long id, @RequestParam("page")int page,@RequestParam("size")int size){
+        Pageable pageable = PageRequest.of(page, size);
         return orderItemService.getOrderItemDTOs(pageable, id);
     }
     @GetMapping("/searchOrderItems/{id}")
-    public @ResponseBody Page<OrderItemDTO> searchOrderItems(@PathVariable Long id, @RequestParam("page")int page, @RequestParam(value = "name", required = false)String name){
-        Pageable pageable = PageRequest.of(page, pageSize);
+    public @ResponseBody Page<OrderItemDTO> searchOrderItems(@PathVariable Long id, @RequestParam("page")int page,@RequestParam("size")int size, @RequestParam(value = "name", required = false)String name){
+        Pageable pageable = PageRequest.of(page, size);
         return orderItemService.searchOrderItemDTOs(pageable, id, name);
     }
     @PostMapping("/cancelOrder/{id}")
@@ -83,13 +83,13 @@ public class OrderItemController {
         return orderItemService.getOrderItemResponseById(id);
     }
     @GetMapping("/getOrderItemAdditives/{orderItemId}")
-    public @ResponseBody Page<OrderAdditive> getOrderItemAdditives(@PathVariable Long orderItemId, @RequestParam("page")int page){
-        Pageable pageable = PageRequest.of(page, pageSize);
+    public @ResponseBody Page<OrderAdditive> getOrderItemAdditives(@PathVariable Long orderItemId, @RequestParam("page")int page,@RequestParam("size")int size){
+        Pageable pageable = PageRequest.of(page, size);
         return orderItemService.getOrderAdditives(orderItemId, pageable);
     }
     @GetMapping("/searchOrderItemAdditives/{orderItemId}")
-    public @ResponseBody Page<OrderAdditive> searchOrderItemAdditives(@PathVariable Long orderItemId, @RequestParam("page")int page, @RequestParam(value = "name", required = false)String name){
-        Pageable pageable = PageRequest.of(page, pageSize);
+    public @ResponseBody Page<OrderAdditive> searchOrderItemAdditives(@PathVariable Long orderItemId, @RequestParam("page")int page,@RequestParam("size")int size, @RequestParam(value = "name", required = false)String name){
+        Pageable pageable = PageRequest.of(page, size);
         return orderItemService.searchOrderAdditives(orderItemId, name, pageable);
     }
     @PostMapping("/orderItem/edit/editOrderItem")
