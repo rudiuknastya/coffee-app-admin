@@ -51,8 +51,8 @@ public class AdditiveController {
     }
 
     @GetMapping("/getAdditives")
-    public @ResponseBody Page<AdditiveDTO> getAdditives(@RequestParam("page")int page){
-        Pageable pageable = PageRequest.of(page, pageSize);
+    public @ResponseBody Page<AdditiveDTO> getAdditives(@RequestParam("page")int page, @RequestParam("size")int size){
+        Pageable pageable = PageRequest.of(page, size);
         return additiveService.getAllAdditives(pageable);
     }
     @GetMapping("/getAdTypesForAdditives")
@@ -87,8 +87,8 @@ public class AdditiveController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/searchAdditive")
-    public @ResponseBody Page<AdditiveDTO> searchAdditive(@RequestParam("page")int page, @RequestParam(name="searchValue", required = false) String input, @RequestParam(name="additiveType", required = false) Long additiveType){
-        Pageable pageable = PageRequest.of(page,pageSize);
+    public @ResponseBody Page<AdditiveDTO> searchAdditive(@RequestParam("page")int page,@RequestParam("size")int size, @RequestParam(name="searchValue", required = false) String input, @RequestParam(name="additiveType", required = false) Long additiveType){
+        Pageable pageable = PageRequest.of(page,size);
         return additiveService.searchAdditive(input, additiveType, pageable);
     }
 }
