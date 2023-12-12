@@ -16,8 +16,18 @@
                     <div class="card py-5 px-5">
                         <h4>Нагороди</h4>
                         <div class="row d-flex justify-content-between mb-4">
-                            <div class="col-12">
+                            <div class="col">
+                                <select class="form-select" id="entitySelect">
+                                    <option value="1">5</option>
+                                    <option value="2">10</option>
+                                    <option value="20">20</option>
+                                    <option value="50">50</option>
+                                </select>
+                            </div>
+                            <div class="row col-11">
+                                <div class="col">
                                 <input class="form-control" type="search" id="searchInput" placeholder="Пошук за номером телефону" aria-label="Search" maxlength="100">
+                                </div>
                             </div>
                         </div>
 
@@ -48,7 +58,6 @@
                                             <div class="col-md-6" >
                                                 <label for="selectProduct" class="form-label">Товар</label>
                                                 <select class="select2 form-select" name="editSelectAdType" id="selectProduct">
-<!--                                                    <option th:each="p : ${products}" th:value="${p.id}" th:text="${p.name}"></option>-->
                                                 </select>
                                             </div>
                                         </form>
@@ -100,7 +109,12 @@
 <script th:src="@{/assets/js/forms-selects.js}"></script>
 <script>
     var page = 0;
+    var toSearch = false;
     $(document).ready(function(){
+        $('#entitySelect').select2({
+            minimumResultsForSearch: -1,
+            allowClear: false
+        });
         getAwards(0);
     });
     var paginationType;
@@ -110,7 +124,8 @@
 					type : "GET",
 					url : "getAwards",
 					data: {
-                        page: currentPage
+                        page: currentPage,
+                        size: $('#entitySelect').val()
                     },
 					success : function(response) {
 						$('.tr').remove();
@@ -371,11 +386,13 @@
        search(0);
     });
     function search(currentPage){
+        toSearch = true;
         $.ajax({
 					type : "GET",
 					url : "searchAwards",
 					data: {
 					    page: currentPage,
+                        size: $('#entitySelect').val(),
                         phone: searchValue
                     },
 					success : function(response) {
@@ -414,6 +431,13 @@
 					}
 				});
     }
+    $('#entitySelect').on("change", function () {
+        if (toSearch == true) {
+            search(page);
+        } else {
+            getAwards(page);
+        }
+    })
 
 </script>
 </html>

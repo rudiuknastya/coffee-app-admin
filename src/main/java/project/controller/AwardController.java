@@ -48,13 +48,13 @@ public class AwardController {
         return "award/awards";
     }
     @GetMapping("/getAwards")
-    public @ResponseBody Page<AwardDTO> getAwards(@RequestParam("page")int page){
-        Pageable pageable = PageRequest.of(page, pageSize);
+    public @ResponseBody Page<AwardDTO> getAwards(@RequestParam("page")int page,@RequestParam("size")int size){
+        Pageable pageable = PageRequest.of(page, size);
         return awardService.getAwards(pageable);
     }
     @GetMapping("/searchAwards")
-    public @ResponseBody Page<AwardDTO> searchAwards(@RequestParam("page")int page, @RequestParam("phone")String phone){
-        Pageable pageable = PageRequest.of(page, pageSize);
+    public @ResponseBody Page<AwardDTO> searchAwards(@RequestParam("page")int page,@RequestParam("size")int size, @RequestParam("phone")String phone){
+        Pageable pageable = PageRequest.of(page, size);
         return awardService.searchAwards(phone, pageable);
     }
     @GetMapping("/deleteAward")
