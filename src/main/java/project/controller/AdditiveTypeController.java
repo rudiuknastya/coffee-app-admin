@@ -50,8 +50,8 @@ public class AdditiveTypeController {
     }
 
     @GetMapping("/getAdditiveTypes")
-    public @ResponseBody Page<AdditiveTypeDTO> getAdditiveTypes(@RequestParam("page")int page){
-        Pageable pageable = PageRequest.of(page,pageSize);
+    public @ResponseBody Page<AdditiveTypeDTO> getAdditiveTypes(@RequestParam("page")int page,@RequestParam("size")int size){
+        Pageable pageable = PageRequest.of(page,size);
         return additiveTypeService.getAdditiveTypes(pageable);
     }
 
@@ -76,8 +76,8 @@ public class AdditiveTypeController {
     }
 
     @GetMapping("/searchAdditiveTypes")
-    public @ResponseBody Page<AdditiveTypeDTO> searchAdditiveTypes(@RequestParam("page")int page, @RequestParam("name")String name){
-        Pageable pageable = PageRequest.of(page,1);
+    public @ResponseBody Page<AdditiveTypeDTO> searchAdditiveTypes(@RequestParam("page")int page,@RequestParam("size")int size, @RequestParam("name")String name){
+        Pageable pageable = PageRequest.of(page,size);
         return additiveTypeService.searchAdditiveTypes(name, pageable);
     }
 }
