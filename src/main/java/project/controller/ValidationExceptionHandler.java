@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 @ControllerAdvice
@@ -29,6 +30,9 @@ public class ValidationExceptionHandler {
                 }
             }
             String errorMessage = error.getDefaultMessage();
+            if(errorMessage.contains("BigDecimal")){
+                errorMessage = "Некоректний тип";
+            }
             errors.put(fieldName, errorMessage);
         });
 
