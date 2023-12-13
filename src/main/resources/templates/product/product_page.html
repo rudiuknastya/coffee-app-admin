@@ -85,6 +85,7 @@
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
+<script th:src="@{/assets/vendor/libs/autosize/autosize.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/i18n/uk.js"></script>
 <script th:inline="javascript">
 var link = [[${link}]];
@@ -93,6 +94,7 @@ const currentUrl = window.location.href;
 const myArray = currentUrl.split("/");
 var root = myArray[3];
   $(document).ready(function(){
+    autosize($("#inputDescription"));
         $('#selectCategory').select2({
             language: "uk",
             placeholder: "Оберіть категорію",

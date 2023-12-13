@@ -105,6 +105,7 @@
 <script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
 <script th:src="@{/assets/vendor/libs/flatpickr/flatpickr.js}"></script>
+<script th:src="@{/assets/vendor/libs/autosize/autosize.js}"></script>
 <script src="https://npmcdn.com/flatpickr/dist/l10n/uk.js"></script>
 <script>
     var url = window.location.pathname;
@@ -112,6 +113,7 @@
     var page = 0;
     var toSearch = false;
     $(document).ready(function () {
+        autosize($("#inputComment"));
         $('#entitySelect').select2({
             minimumResultsForSearch: -1,
             allowClear: false
