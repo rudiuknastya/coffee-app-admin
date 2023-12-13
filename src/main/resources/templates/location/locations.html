@@ -80,6 +80,7 @@
                         <div class="col-3" style="position: absolute; top:10px; right: 50px;">
                             <div class="alert alert-danger d-none" role="alert" id="error">Error happened</div>
                         </div>
+                        <div th:replace="~{fragments :: logoutModal}"></div>
                     </div>
                 </div>
             </div>
@@ -90,10 +91,10 @@
 <script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
 <script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
 <script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
-<!--<script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>-->
 <script th:src="@{/assets/vendor/libs/hammer/hammer.js}"></script>
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
+<script th:src="@{/assets/functions/logout.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
 <script>
     var page = 0;

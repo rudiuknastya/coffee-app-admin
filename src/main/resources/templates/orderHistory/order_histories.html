@@ -88,6 +88,7 @@
                         <div class="col-3" style="position: absolute; top:10px; right: 50px;">
                             <div class="alert alert-danger d-none" role="alert" id="error">Error happened</div>
                         </div>
+                        <div th:replace="~{fragments :: logoutModal}"></div>
                     </div>
                 </div>
             </div>
@@ -103,6 +104,7 @@
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/vendor/libs/moment/moment.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
+<script th:src="@{/assets/functions/logout.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
 <script th:src="@{/assets/vendor/libs/flatpickr/flatpickr.js}"></script>
 <script th:src="@{/assets/vendor/libs/autosize/autosize.js}"></script>
