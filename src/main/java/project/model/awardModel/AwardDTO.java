@@ -1,4 +1,4 @@
-package project.model;
+package project.model.awardModel;
 
 public interface AwardDTO {
     Long getUserId();

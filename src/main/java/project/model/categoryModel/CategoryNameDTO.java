@@ -1,4 +1,4 @@
-package project.model;
+package project.model.categoryModel;
 
 public class CategoryNameDTO {
     Long id;

@@ -3,7 +3,7 @@ package project.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import project.entity.Category;
-import project.model.CategoryNameDTO;
+import project.model.categoryModel.CategoryNameDTO;
 
 import java.util.List;
 

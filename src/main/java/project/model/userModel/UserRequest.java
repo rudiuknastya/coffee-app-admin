@@ -4,6 +4,7 @@ import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import project.entity.Language;
 import project.entity.UserStatus;
+import project.validators.dateValidator.MaxDate;
 import project.validators.emailValidation.UserEmailExist;
 import project.validators.phoneNumberValidation.PhoneNumberExist;
 
@@ -25,6 +26,7 @@ public class UserRequest {
     @Size(max=13, message = "Розмір номеру має бути не більше 12 символів")
     @Pattern(regexp = "\\+?380(50)?(66)?(95)?(99)?(67)?(68)?(96)?(97)?(98)?(63)?(93)?(73)?[0-9]{7}", message = "Невірний формат номеру")
     private String phoneNumber;
+    @MaxDate
     @NotNull(message = "Поле не може бути порожнім")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;

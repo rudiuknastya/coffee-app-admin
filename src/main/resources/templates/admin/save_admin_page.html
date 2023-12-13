@@ -95,6 +95,7 @@ var root = myArray[3];
   $(document).ready(function(){
         $("#birthdate").flatpickr({
             locale: "uk",
+            maxDate: moment().subtract(17, 'years').format('DD.MM.YYYY'),
 		    dateFormat: "d.m.Y"
          });
         $('#roleSelect').select2({

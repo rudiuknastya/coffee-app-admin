@@ -8,14 +8,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import project.entity.Product;
 import project.entity.User;
-import project.model.AwardDTO;
+import project.model.awardModel.AwardDTO;
 import project.repository.ProductRepository;
 import project.repository.UserRepository;
 import project.service.AwardService;
-
-import static org.springframework.data.jpa.domain.Specification.where;
-import static project.specifications.UserSpecification.*;
-import static project.specifications.UserSpecification.byDeleted;
 
 @Service
 public class AwardServiceImpl implements AwardService {

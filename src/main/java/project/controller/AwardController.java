@@ -11,17 +11,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import project.entity.Admin;
-import project.model.AwardDTO;
+import project.model.awardModel.AwardDTO;
 import project.model.productModel.ProductNameDTO;
-import project.entity.Product;
-import project.entity.User;
 import project.service.AdminService;
 import project.service.AwardService;
 import project.service.ProductService;
-import project.service.UserService;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Controller

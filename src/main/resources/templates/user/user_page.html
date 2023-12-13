@@ -129,7 +129,6 @@ var root = myArray[3];
 
             }
         });
-
     $.ajax({
 					type : "GET",
 					url : "getUser/"+id,
@@ -139,6 +138,7 @@ var root = myArray[3];
 					    $("#inputEmail").val(response.email);
 					    $("#birthdate").flatpickr({
 					      locale: "uk",
+                          maxDate: moment().subtract(17, 'years').format('DD.MM.YYYY'),
 					      defaultDate: moment(response.birthDate, 'YYYY-MM-DD').format('DD.MM.YYYY'),
 					      dateFormat: "d.m.Y"
                         });

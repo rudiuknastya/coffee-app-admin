@@ -4,6 +4,7 @@ import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import project.entity.Role;
 import project.validators.confirmPassword.PasswordMatching;
+import project.validators.dateValidator.MaxDate;
 import project.validators.emailValidation.EmailExist;
 import project.validators.emailValidation.FieldEmailExist;
 
@@ -25,6 +26,7 @@ public class SaveAdminRequest {
     @Size(max=200, message = "Розмір поля має бути не більше 200 символів")
     @Email(regexp = "[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\\.[a-z]{2,3}", message = "Невірний формат email")
     private String email;
+    @MaxDate
     @NotNull(message = "Поле не може бути порожнім")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;

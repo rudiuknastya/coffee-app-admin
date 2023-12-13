@@ -2,11 +2,9 @@ package project.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import project.model.CategoryDTO;
-import project.model.CategoryNameDTO;
+import project.model.categoryModel.CategoryDTO;
+import project.model.categoryModel.CategoryNameDTO;
 import project.entity.Category;
-
-import java.util.List;
 
 public interface CategoryService {
     Page<CategoryDTO> getAllCategories(Pageable pageable);
