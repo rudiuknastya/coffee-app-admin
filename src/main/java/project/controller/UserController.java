@@ -35,8 +35,6 @@ public class UserController {
         this.userService = userService;
         this.adminService = adminService;
     }
-
-    private int pageSize = 5;
     @GetMapping("/users")
     public String showUsers(Model model){
         model.addAttribute("pageNum", 10);
@@ -49,13 +47,13 @@ public class UserController {
         return "user/users";
     }
     @GetMapping("/getUsers")
-    public @ResponseBody Page<UserDTO> getUsers(@RequestParam("page")int page){
-        Pageable pageable = PageRequest.of(page, pageSize);
+    public @ResponseBody Page<UserDTO> getUsers(@RequestParam("page")int page,@RequestParam("size")int size){
+        Pageable pageable = PageRequest.of(page, size);
         return userService.getUsers(pageable);
     }
     @GetMapping("/searchUsers")
-    public @ResponseBody Page<UserDTO> searchUsers(@RequestParam("page")int page, @RequestParam(name="searchValue", required = false) String phone, @RequestParam(name="status", required = false) UserStatus status){
-        Pageable pageable = PageRequest.of(page, pageSize);
+    public @ResponseBody Page<UserDTO> searchUsers(@RequestParam("page")int page,@RequestParam("size")int size, @RequestParam(name="searchValue", required = false) String phone, @RequestParam(name="status", required = false) UserStatus status){
+        Pageable pageable = PageRequest.of(page, size);
         return userService.searchUser(phone, status, pageable);
     }
     @GetMapping("/deleteUser/{id}")
