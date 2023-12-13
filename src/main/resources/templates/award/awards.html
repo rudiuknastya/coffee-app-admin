@@ -25,9 +25,13 @@
                                 </select>
                             </div>
                             <div class="row col-11">
-                                <div class="col">
+                                <div class="col-9">
                                     <input class="form-control" type="search" id="searchInput"
                                            placeholder="Пошук за номером телефону" aria-label="Search" maxlength="100">
+                                </div>
+                                <div class="col-3">
+                                    <select class="form-select" id="productSelect">
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -118,7 +122,7 @@
 <script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/functions/logout.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
-<script th:src="@{/assets/js/forms-selects.js}"></script>
+
 <script>
     var page = 0;
     var toSearch = false;
@@ -126,6 +130,35 @@
         $('#entitySelect').select2({
             minimumResultsForSearch: -1,
             allowClear: false
+        });
+        $('#productSelect').select2({
+            placeholder: "Оберіть продукт",
+            allowClear: true,
+            maximumInputLength: 100,
+            ajax: {
+                type: "get",
+                url: "getProductsForAward",
+                data: function (params) {
+                    return {
+                        search: params.term,
+                        page: params.page || 1
+                    };
+                },
+                processResults: function (response) {
+                    return {
+                        results: $.map(response.content, function (item) {
+                            return {
+                                text: item.name,
+                                id: item.id
+                            }
+                        }),
+                        pagination: {
+                            more: (response.pageable.pageNumber + 1) < response.totalPages
+                        }
+                    };
+                }
+
+            }
         });
         getAwards(0);
     });
@@ -402,6 +435,11 @@
         searchValue = $(this).val();
         search(0);
     });
+    var selectValue;
+    $('#productSelect').on("change", function () {
+        selectValue = $(this).val();
+        search(0);
+    });
 
     function search(currentPage) {
         toSearch = true;
@@ -411,7 +449,8 @@
             data: {
                 page: currentPage,
                 size: $('#entitySelect').val(),
-                phone: searchValue
+                phone: searchValue,
+                product: selectValue
             },
             success: function (response) {
                 $('.tr').remove();

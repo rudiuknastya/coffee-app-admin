@@ -12,6 +12,11 @@ import project.model.AwardDTO;
 import project.repository.ProductRepository;
 import project.repository.UserRepository;
 import project.service.AwardService;
+
+import static org.springframework.data.jpa.domain.Specification.where;
+import static project.specifications.UserSpecification.*;
+import static project.specifications.UserSpecification.byDeleted;
+
 @Service
 public class AwardServiceImpl implements AwardService {
     private final UserRepository userRepository;
@@ -32,9 +37,18 @@ public class AwardServiceImpl implements AwardService {
     }
 
     @Override
-    public Page<AwardDTO> searchAwards(String phone, Pageable pageable) {
+    public Page<AwardDTO> searchAwards(String phone, Long productId, Pageable pageable) {
         logger.info("searchAwards() - Finding awards for user with phone number "+ phone);
-        Page<AwardDTO> awardDTOS = userRepository.findUserAwardsByUserPhoneNumber("%"+phone.toUpperCase()+"%",pageable);
+        Page<AwardDTO> awardDTOS;
+        if(productId != null  &&  (phone == null || phone.equals(""))) {
+            awardDTOS = userRepository.findUserAwardsByProductId(productId,pageable);
+        } else if((phone != null && !phone.equals(""))  && productId == null){
+            awardDTOS = userRepository.findUserAwardsByUserPhoneNumber("%"+phone.toUpperCase()+"%",pageable);
+        } else if((phone != null && !phone.equals("")) && productId != null) {
+            awardDTOS = userRepository.findUserAwardsByProductIdAndUserPhoneNumber(productId,"%"+phone.toUpperCase()+"%",pageable);
+        } else {
+            awardDTOS = userRepository.findUserAwards(pageable);
+        }
         logger.info("getAwards() - Awards were found");
         return awardDTOS;
     }

@@ -17,6 +17,10 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
 
     @Query(value = "select award.user_id as userId, user.name as userName, user.phone_number as phoneNumber, award.product_id as productId, product.name as productName from user join award on user.id = award.user_id join product on award.product_id = product.id where upper(user.phone_number) like :phone", nativeQuery = true)
     Page<AwardDTO> findUserAwardsByUserPhoneNumber(@Param("phone")String phone, Pageable pageable);
+    @Query(value = "select award.user_id as userId, user.name as userName, user.phone_number as phoneNumber, award.product_id as productId, product.name as productName from user join award on user.id = award.user_id join product on award.product_id = product.id where product_id = :productId", nativeQuery = true)
+    Page<AwardDTO> findUserAwardsByProductId(@Param("productId")Long productId, Pageable pageable);
+    @Query(value = "select award.user_id as userId, user.name as userName, user.phone_number as phoneNumber, award.product_id as productId, product.name as productName from user join award on user.id = award.user_id join product on award.product_id = product.id where product_id = :productId and upper(user.phone_number) like :phone", nativeQuery = true)
+    Page<AwardDTO> findUserAwardsByProductIdAndUserPhoneNumber(@Param("productId")Long productId, @Param("phone")String phone, Pageable pageable);
     @Query(value = "SELECT u FROM User u INNER JOIN FETCH u.products p WHERE u.deleted=false AND u.id= :id")
     User findUserWithProductsById(@Param("id")Long id);
     Optional<User> findByPhoneNumber(String phoneNumber);

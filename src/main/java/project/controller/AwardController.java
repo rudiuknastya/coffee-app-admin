@@ -53,9 +53,9 @@ public class AwardController {
         return awardService.getAwards(pageable);
     }
     @GetMapping("/searchAwards")
-    public @ResponseBody Page<AwardDTO> searchAwards(@RequestParam("page")int page,@RequestParam("size")int size, @RequestParam("phone")String phone){
+    public @ResponseBody Page<AwardDTO> searchAwards(@RequestParam("page")int page,@RequestParam("size")int size, @RequestParam(value = "phone",required = false)String phone, @RequestParam(value = "product",required = false)Long productId){
         Pageable pageable = PageRequest.of(page, size);
-        return awardService.searchAwards(phone, pageable);
+        return awardService.searchAwards(phone,productId, pageable);
     }
     @GetMapping("/deleteAward")
     public @ResponseBody ResponseEntity deleteAward(@RequestParam("userId") Long userId, @RequestParam("productId") Long productId){
