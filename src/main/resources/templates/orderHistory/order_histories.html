@@ -16,13 +16,23 @@
                     <div class="card py-5 px-5">
                         <h4>Історія замовлень</h4>
                         <div class="row d-flex justify-content-between mb-4">
-                            <div class="col-9">
-                                <input class="form-control" type="search" id="searchInput" placeholder="Пошук за подією"
-                                       aria-label="Search" maxlength="100">
+                            <div class="col">
+                                <select class="form-select" id="entitySelect">
+                                    <option value="5">5</option>
+                                    <option value="10">10</option>
+                                    <option value="20">20</option>
+                                    <option value="50">50</option>
+                                </select>
                             </div>
-                            <div class="col-3">
-                                <input id="orderDate" placeholder="Оберіть дату" class="form-control" type="text"
-                                       autocomplete="off">
+                            <div class="row col-11">
+                                <div class="col-9">
+                                    <input class="form-control" type="search" id="searchInput" placeholder="Пошук за подією"
+                                           aria-label="Search" maxlength="100">
+                                </div>
+                                <div class="col-3">
+                                    <input id="orderDate" placeholder="Оберіть дату" class="form-control" type="text"
+                                           autocomplete="off">
+                                </div>
                             </div>
                         </div>
 
@@ -93,13 +103,19 @@
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/vendor/libs/moment/moment.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
+<script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
 <script th:src="@{/assets/vendor/libs/flatpickr/flatpickr.js}"></script>
 <script src="https://npmcdn.com/flatpickr/dist/l10n/uk.js"></script>
 <script>
     var url = window.location.pathname;
     var id = url.substring(url.lastIndexOf('/') + 1);
     var page = 0;
+    var toSearch = false;
     $(document).ready(function () {
+        $('#entitySelect').select2({
+            minimumResultsForSearch: -1,
+            allowClear: false
+        });
         $("#orderDate").flatpickr({
             locale: "uk",
             dateFormat: "d.m.Y"
@@ -114,7 +130,8 @@
             type: "GET",
             url: "getOrderHistories/" + id,
             data: {
-                page: currentPage
+                page: currentPage,
+                size: $('#entitySelect').val()
             },
             success: function (response) {
                 $('.tr').remove();
@@ -288,11 +305,13 @@
     });
 
     function searchAndFilter(currentPage) {
+        toSearch = true;
         $.ajax({
             type: "GET",
             url: "searchOrderHistories",
             data: {
                 page: currentPage,
+                size: $('#entitySelect').val(),
                 event: searchValue,
                 date: dateValue,
                 id: id
@@ -390,6 +409,14 @@
             }
         });
     }
+
+    $('#entitySelect').on("change", function () {
+        if (toSearch == true) {
+            searchAndFilter(page);
+        } else {
+            getOrderHistories(page);
+        }
+    })
 
 </script>
 </html>

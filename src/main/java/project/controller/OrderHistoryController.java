@@ -30,8 +30,6 @@ public class OrderHistoryController {
         this.orderHistoryService = orderHistoryService;
         this.adminService = adminService;
     }
-
-    private int pageSize = 5;
     @GetMapping("/orders/orderHistory/{id}")
     public String orderHistories(Model model){
         model.addAttribute("pageNum", 6);
@@ -43,8 +41,8 @@ public class OrderHistoryController {
         return "orderHistory/order_histories";
     }
     @GetMapping("/orders/orderHistory/getOrderHistories/{id}")
-    public @ResponseBody Page<OrderHistoryResponse> getOrderHistories(@PathVariable Long id, @RequestParam("page")int page){
-        Pageable pageable = PageRequest.of(page, pageSize);
+    public @ResponseBody Page<OrderHistoryResponse> getOrderHistories(@PathVariable Long id, @RequestParam("page")int page, @RequestParam("size")int size){
+        Pageable pageable = PageRequest.of(page, size);
         return orderHistoryService.getOrderHistoriesByOrderId(id,pageable);
     }
     @GetMapping("/orders/orderHistory/getOrderHistory/{id}")
@@ -59,8 +57,8 @@ public class OrderHistoryController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/orders/orderHistory/searchOrderHistories")
-    public @ResponseBody Page<OrderHistoryResponse> searchOrderHistories(@RequestParam("page")int page, @RequestParam(value = "event", required = false)String event, @RequestParam(value = "date", required = false) LocalDate date, @RequestParam("id") Long id){
-        Pageable pageable = PageRequest.of(page, pageSize);
+    public @ResponseBody Page<OrderHistoryResponse> searchOrderHistories(@RequestParam("page")int page,@RequestParam("size")int size, @RequestParam(value = "event", required = false)String event, @RequestParam(value = "date", required = false) LocalDate date, @RequestParam("id") Long id){
+        Pageable pageable = PageRequest.of(page, size);
         return orderHistoryService.searchOrderHistories(id,event,date, pageable);
     }
 }
