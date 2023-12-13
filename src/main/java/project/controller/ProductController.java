@@ -61,8 +61,8 @@ public class ProductController {
         return "product/products";
     }
     @GetMapping("/getProducts")
-    public @ResponseBody Page<ProductDTO> getProducts(@RequestParam("page")int page){
-        Pageable pageable = PageRequest.of(page, pageSize);
+    public @ResponseBody Page<ProductDTO> getProducts(@RequestParam("page")int page,@RequestParam("size")int size){
+        Pageable pageable = PageRequest.of(page, size);
         return productService.getProducts(pageable);
     }
     @GetMapping("/getCategoriesForProducts")
@@ -75,8 +75,8 @@ public class ProductController {
         return categoryService.getCategoryNameDTOById(id);
     }
     @GetMapping("/searchProduct")
-    public @ResponseBody Page<ProductDTO> searchProduct(@RequestParam("page")int page, @RequestParam(name="searchValue", required = false)String input, @RequestParam(name="categoryId", required = false)Long categoryId){
-        Pageable pageable = PageRequest.of(page, pageSize);
+    public @ResponseBody Page<ProductDTO> searchProduct(@RequestParam("page")int page,@RequestParam("size")int size, @RequestParam(name="searchValue", required = false)String input, @RequestParam(name="categoryId", required = false)Long categoryId){
+        Pageable pageable = PageRequest.of(page, size);
         return productService.searchProducts(input, categoryId, pageable);
     }
 
