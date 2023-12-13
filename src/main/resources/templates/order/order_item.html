@@ -43,6 +43,7 @@
                             <table class="table table-bordered">
                                 <thead>
                                 <tr>
+                                    <th>№</th>
                                     <th>Тип додатку</th>
                                     <th>Додаток</th>
                                     <th></th>
@@ -187,17 +188,20 @@
                 $('.tr').remove();
                 $('ul.pagination li').remove();
                 data = response.content;
+                var count = response.pageable.pageNumber*response.size+1;
                 for (i = 0; i < data.length; i++) {
                     $("#myTable")
                         .append(
                             '<tr class="tr"> <td>'
+                            + count
+                            + '</td> <td>'
                             + data[i].additiveTypeName
                             + '</td> <td>'
                             + data[i].additiveName
                             + '</td> <td><button type="button" class="btn btn-primary" onclick="openEditModal('
                             + data[i].additiveId
                             + ');"><i class="ti ti-pencil"></i></button></td> </tr>');
-
+                count++;
                 }
 
                 paginationType = 1;
@@ -292,7 +296,7 @@
         } else {
             $("#paginationElements").text("")
             if (response.numberOfElements == 0) {
-                $("#myTable").append('<tr class="tr"><td colspan="3" class="text-center">Дані не знайдено</td>></tr>')
+                $("#myTable").append('<tr class="tr"><td colspan="4" class="text-center">Дані не знайдено</td>></tr>')
             }
         }
     }

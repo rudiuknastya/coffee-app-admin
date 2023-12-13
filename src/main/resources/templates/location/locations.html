@@ -63,6 +63,7 @@
                             <table class="table table-bordered">
                                 <thead>
                                 <tr>
+                                    <th>№</th>
                                     <th>Місто</th>
                                     <th>Адреса</th>
                                     <th>Номер телефону</th>
@@ -149,11 +150,14 @@
             success: function (response) {
                 $('.tr').remove();
                 $('ul.pagination li').remove();
-                data = response.content
+                data = response.content;
+                var count = response.pageable.pageNumber*response.size+1;
                 for (i = 0; i < data.length; i++) {
                     $("#locationsTable")
                         .append(
                             '<tr class="tr"> <td>'
+                            + count
+                            + '</td> <td>'
                             + data[i].city
                             + '</td> <td>'
                             + data[i].address
@@ -163,6 +167,7 @@
                             + data[i].id
                             + ');" ><i class="ti ti-trash"></button></td> </tr>');
 
+                count++;
                 }
 
                 paginationType = 1;
@@ -257,7 +262,7 @@
         } else {
             $("#paginationElements").text("")
             if (response.numberOfElements == 0) {
-                $("#locationsTable").append('<tr class="tr"><td colspan="4" class="text-center">Дані не знайдено</td>></tr>')
+                $("#locationsTable").append('<tr class="tr"><td colspan="5" class="text-center">Дані не знайдено</td>></tr>')
             }
         }
     }

@@ -3,7 +3,7 @@
       class="light-style layout-navbar-fixed layout-menu-fixed"
       dir="ltr"
       data-theme="theme-default"
-      data-template="vertical-menu-template-no-customizer" >
+      data-template="vertical-menu-template-no-customizer">
 <head th:replace="~{fragments :: head}"></head>
 <body>
 <div class="layout-wrapper layout-content-navbar">
@@ -26,44 +26,53 @@
                             </div>
                             <div class="row col-11">
                                 <div class="col">
-                                <input class="form-control" type="search" id="searchInput" placeholder="Пошук за номером телефону" aria-label="Search" maxlength="100">
+                                    <input class="form-control" type="search" id="searchInput"
+                                           placeholder="Пошук за номером телефону" aria-label="Search" maxlength="100">
                                 </div>
                             </div>
                         </div>
 
-                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                             aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <h4>Ви впевнені що хочете видалити цей елемент?</h4>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-danger" onclick="deleteAward()">Видалити</button>
+                                        <button type="button" class="btn btn-danger" onclick="deleteAward()">Видалити
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal fade" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false"
+                             tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <form id="editForm" class="row g-3">
-                                            <div class="col-md-6" >
+                                            <div class="col-md-6">
                                                 <label for="selectProduct" class="form-label">Товар</label>
-                                                <select class="select2 form-select" name="editSelectAdType" id="selectProduct">
+                                                <select class="select2 form-select" name="editSelectAdType"
+                                                        id="selectProduct">
                                                 </select>
                                             </div>
                                         </form>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            Закрити
+                                        </button>
                                         <button type="button" class="btn btn-primary" onclick="edit()">Зберегти</button>
                                     </div>
                                 </div>
@@ -74,13 +83,14 @@
                             <table class="table table-bordered">
                                 <thead>
                                 <tr>
+                                    <th>№</th>
                                     <th>Ім'я</th>
                                     <th>Номер телефону</th>
                                     <th>Товар</th>
                                     <th></th>
                                 </tr>
                                 </thead>
-                                <tbody id = "myTable">
+                                <tbody id="myTable">
                                 </tbody>
                             </table>
                             <div class="d-flex justify-content-between">
@@ -112,7 +122,7 @@
 <script>
     var page = 0;
     var toSearch = false;
-    $(document).ready(function(){
+    $(document).ready(function () {
         $('#entitySelect').select2({
             minimumResultsForSearch: -1,
             allowClear: false
@@ -121,197 +131,202 @@
     });
     var paginationType;
     var data = "";
-	function getAwards(currentPage) {
-		$.ajax({
-					type : "GET",
-					url : "getAwards",
-					data: {
-                        page: currentPage,
-                        size: $('#entitySelect').val()
-                    },
-					success : function(response) {
-						$('.tr').remove();
-						$('ul.pagination li').remove();
-						data = response.content
-						for (i = 0; i < data.length; i++) {
-							$("#myTable")
-									.append(
-											'<tr class="tr"> <td>'
-													+ data[i].userName
-													+ '</td> <td>'
-													+ data[i].phoneNumber
-													+ '</td> <td>'
-													+ data[i].productName
-													+ '</td> <td><button type="button" class="btn btn-primary" title="Редагувати" onclick="openEditModal('
-													+ data[i].userId +','+ data[i].productId
-													+ ');"><i class="ti ti-pencil"></i></button> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
-													+ data[i].userId +','+ data[i].productId
-													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
 
-						}
+    function getAwards(currentPage) {
+        $.ajax({
+            type: "GET",
+            url: "getAwards",
+            data: {
+                page: currentPage,
+                size: $('#entitySelect').val()
+            },
+            success: function (response) {
+                $('.tr').remove();
+                $('ul.pagination li').remove();
+                data = response.content;
+                var count = response.pageable.pageNumber * response.size + 1;
+                for (i = 0; i < data.length; i++) {
+                    $("#myTable")
+                        .append(
+                            '<tr class="tr"> <td>'
+                            + count
+                            + '</td> <td>'
+                            + data[i].userName
+                            + '</td> <td>'
+                            + data[i].phoneNumber
+                            + '</td> <td>'
+                            + data[i].productName
+                            + '</td> <td><button type="button" class="btn btn-primary" title="Редагувати" onclick="openEditModal('
+                            + data[i].userId + ',' + data[i].productId
+                            + ');"><i class="ti ti-pencil"></i></button> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
+                            + data[i].userId + ',' + data[i].productId
+                            + ');" ><i class="ti ti-trash"></button></td> </tr>');
 
-                              paginationType = 1;
-                              buildPagination(response);
+                count++;
+                }
+
+                paginationType = 1;
+                buildPagination(response);
 
 
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
-	}
-	function buildPagination(response) {
-		totalPages = response.totalPages;
-		var pageNumber = response.pageable.pageNumber;
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
+    }
+
+    function buildPagination(response) {
+        totalPages = response.totalPages;
+        var pageNumber = response.pageable.pageNumber;
         page = pageNumber;
-        if(totalPages > 1){
-		var prev = '';
+        if (totalPages > 1) {
+            var prev = '';
 
-			if(pageNumber !== 0) {
+            if (pageNumber !== 0) {
                 prev = '<li class="page-item prev"><a class="page-link waves-effect" id="prev" href="javascript:void(0);"><i class="ti ti-chevron-left ti-xs"></i></a></li>';
-			} else {
+            } else {
                 prev = '<li class="page-item prev disabled"><a class="page-link waves-effect" href="javascript:void(0);"><i class="ti ti-chevron-left ti-xs"></i></a></li>';
-		    }
+            }
 
 
-		var next = '';
+            var next = '';
 
-			if(pageNumber !== totalPages - 1) {
-				next = '<li class="page-item next"><a class="page-link waves-effect" id="next" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
-			} else {
+            if (pageNumber !== totalPages - 1) {
+                next = '<li class="page-item next"><a class="page-link waves-effect" id="next" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
+            } else {
                 next = '<li class="page-item next disabled"><a class="page-link waves-effect" href="javascript:void(0);"><i class="ti ti-chevron-right ti-xs"></i></a></li>';
-		    }
+            }
 
-       var pages = '';
-       var dots = '<li class="page-item disabled"><a class="page-link waves-effect" href="javascript:void(0);"> ... </a></li>';
-       if(pageNumber < 3){
-            for(var i = 1; i <= 5; i++){
-                if(i <= totalPages) {
-                    if(pageNumber+1 !== i){
-                        pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
-                    } else {
-                        pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
+            var pages = '';
+            var dots = '<li class="page-item disabled"><a class="page-link waves-effect" href="javascript:void(0);"> ... </a></li>';
+            if (pageNumber < 3) {
+                for (var i = 1; i <= 5; i++) {
+                    if (i <= totalPages) {
+                        if (pageNumber + 1 !== i) {
+                            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        } else {
+                            pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        }
                     }
                 }
-            }
-            if(totalPages == 6){
-              pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ 6 +'</a></li>';
-            }
-            if(totalPages > 6){
-                pages += dots;
-                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+totalPages+'</a></li>';
-            }
+                if (totalPages == 6) {
+                    pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + 6 + '</a></li>';
+                }
+                if (totalPages > 6) {
+                    pages += dots;
+                    pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + totalPages + '</a></li>';
+                }
 
-       } else if (3 > totalPages - 1 - pageNumber) {
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
-            if(totalPages > 6){
+            } else if (3 > totalPages - 1 - pageNumber) {
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
+                if (totalPages > 6) {
+                    pages += dots
+                }
+                for (var i = totalPages - 4; i <= totalPages; i++) {
+                    if (i > 1) {
+                        if (pageNumber + 1 !== i) {
+                            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        } else {
+                            pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">' + i + '</a></li>';
+                        }
+                    }
+                }
+
+            } else {
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
                 pages += dots
-            }
-            for(var i = totalPages - 4; i <= totalPages; i++){
-                if(i > 1 ){
-                    if(pageNumber+1 !== i){
-                        pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
-                    } else {
-                        pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+ i +'</a></li>';
-                    }
-                }
+
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + pageNumber + '</a></li>';
+                pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">' + (pageNumber + 1) + '</a></li>';
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + (pageNumber + 2) + '</a></li>';
+
+                pages += dots;
+                pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">' + totalPages + '</a></li>';
             }
 
-       } else {
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">1</a></li>';
-            pages += dots
-
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+pageNumber+'</a></li>';
-            pages += '<li class="page-item active"><a class="page-link waves-effect" href="javascript:void(0);">'+(pageNumber+1)+'</a></li>';
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+(pageNumber+2)+'</a></li>';
-
-            pages += dots;
-            pages += '<li class="page-item"><a class="page-link waves-effect" href="javascript:void(0);">'+totalPages+'</a></li>';
-       }
-
-		pages = prev + pages + next;
-		var from = (response.size * pageNumber)+1;
-		var to = from + response.numberOfElements - 1;
-        $("#paginationElements").text("Показано від "+from+" до "+to+" з "+response.totalElements+" елементів");
-		$("ul.pagination").append(pages);
-		} else {
+            pages = prev + pages + next;
+            var from = (response.size * pageNumber) + 1;
+            var to = from + response.numberOfElements - 1;
+            $("#paginationElements").text("Показано від " + from + " до " + to + " з " + response.totalElements + " елементів");
+            $("ul.pagination").append(pages);
+        } else {
             $("#paginationElements").text("")
-            if(response.numberOfElements == 0){
-                $("#myTable").append('<tr class="tr"><td colspan="4" class="text-center">Дані не знайдено</td>></tr>')
+            if (response.numberOfElements == 0) {
+                $("#myTable").append('<tr class="tr"><td colspan="5" class="text-center">Дані не знайдено</td>></tr>')
             }
-		}
-	}
+        }
+    }
 
-	$(document).on("click", "ul.pagination li a", function() {
-	    let val = $(this).text();
-	    let id = $(this).attr('id');
-        if(id === "prev"){
+    $(document).on("click", "ul.pagination li a", function () {
+        let val = $(this).text();
+        let id = $(this).attr('id');
+        if (id === "prev") {
             let activeValue = parseInt($("ul.pagination li.active").text());
-            if(paginationType === 1){
-                getAwards(activeValue-2);
+            if (paginationType === 1) {
+                getAwards(activeValue - 2);
             }
-            if(paginationType === 2){
-                search(activeValue-2);
+            if (paginationType === 2) {
+                search(activeValue - 2);
             }
-        } else if (id === "next"){
+        } else if (id === "next") {
             let activeValue = parseInt($("ul.pagination li.active").text());
-            if(paginationType === 1){
+            if (paginationType === 1) {
                 getAwards(activeValue);
             }
-            if(paginationType === 2){
+            if (paginationType === 2) {
                 search(activeValue);
             }
         } else {
             let currentPage = parseInt(val - 1);
-            if(paginationType === 1){
+            if (paginationType === 1) {
                 getAwards(currentPage);
             }
-            if(paginationType === 2){
+            if (paginationType === 2) {
                 search(currentPage);
             }
         }
-	});
+    });
     var user;
     var product;
 
-	function openDeleteModal(userId, productId){
-	    user = userId;
+    function openDeleteModal(userId, productId) {
+        user = userId;
         product = productId;
         $('#deleteModal').modal('show');
-	}
-	function deleteAward(){
+    }
+
+    function deleteAward() {
         $.ajax({
-					type : "GET",
-					url : "deleteAward",
-					data: {
-                        userId: user,
-                        productId: product
-                    },
-					success : function(response) {
-					    $('#deleteModal').modal('hide');
-					    getAwards(page);
+            type: "GET",
+            url: "deleteAward",
+            data: {
+                userId: user,
+                productId: product
+            },
+            success: function (response) {
+                $('#deleteModal').modal('hide');
+                getAwards(page);
 
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
-	}
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
+    }
 
-	function openEditModal(userId, productId){
-    user = userId;
-    product = productId;
-    $('#selectProduct').select2({
+    function openEditModal(userId, productId) {
+        user = userId;
+        product = productId;
+        $('#selectProduct').select2({
             dropdownParent: $("#editModal"),
             maximumInputLength: 100,
             ajax: {
@@ -326,14 +341,14 @@
                 processResults: function (response) {
                     return {
                         results: $.map(response.content, function (item, i) {
-                        console.log(i)
+                            console.log(i)
                             return {
                                 text: item.name,
                                 id: item.id,
                             }
                         }),
                         pagination: {
-                            more: (response.pageable.pageNumber+1)  < response.totalPages
+                            more: (response.pageable.pageNumber + 1) < response.totalPages
                         }
                     };
                 }
@@ -357,82 +372,83 @@
         });
         $('#editModal').modal('show');
     }
-    function edit(){
-        $.ajax({
-					type : "POST",
-					url : "editAward",
-					data: {
-                        userId: user,
-                        newProductId: $('#selectProduct').val(),
-                        oldProductId: product
-                    },
-					success : function(response) {
-					    $('#editModal').modal('hide');
-					    getAwards(page);
 
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
+    function edit() {
+        $.ajax({
+            type: "POST",
+            url: "editAward",
+            data: {
+                userId: user,
+                newProductId: $('#selectProduct').val(),
+                oldProductId: product
+            },
+            success: function (response) {
+                $('#editModal').modal('hide');
+                getAwards(page);
+
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
     }
 
     var searchValue;
-	$('#searchInput').on("change", function(){
-       searchValue = $(this).val();
-       search(0);
+    $('#searchInput').on("change", function () {
+        searchValue = $(this).val();
+        search(0);
     });
-    function search(currentPage){
+
+    function search(currentPage) {
         toSearch = true;
         $.ajax({
-					type : "GET",
-					url : "searchAwards",
-					data: {
-					    page: currentPage,
-                        size: $('#entitySelect').val(),
-                        phone: searchValue
-                    },
-					success : function(response) {
-					    $('.tr').remove();
-						$('ul.pagination li').remove();
-						data = response.content
-						for (i = 0; i < data.length; i++) {
-							$("#myTable")
-									.append(
-											'<tr class="tr"> <td>'
-													+ data[i].userName
-													+ '</td> <td>'
-													+ data[i].phoneNumber
-													+ '</td> <td>'
-													+ data[i].productName
-													+ '</td> <td><button type="button" class="btn btn-primary" title="Редагувати" onclick="openEditModal('
-													+ data[i].userId +','+ data[i].productId
-													+ ');"><i class="ti ti-pencil"></i></button> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
-													+ data[i].userId +','+ data[i].productId
-													+ ');" ><i class="ti ti-trash"></button></td> </tr>');
+            type: "GET",
+            url: "searchAwards",
+            data: {
+                page: currentPage,
+                size: $('#entitySelect').val(),
+                phone: searchValue
+            },
+            success: function (response) {
+                $('.tr').remove();
+                $('ul.pagination li').remove();
+                data = response.content
+                for (i = 0; i < data.length; i++) {
+                    $("#myTable")
+                        .append(
+                            '<tr class="tr"> <td>'
+                            + data[i].userName
+                            + '</td> <td>'
+                            + data[i].phoneNumber
+                            + '</td> <td>'
+                            + data[i].productName
+                            + '</td> <td><button type="button" class="btn btn-primary" title="Редагувати" onclick="openEditModal('
+                            + data[i].userId + ',' + data[i].productId
+                            + ');"><i class="ti ti-pencil"></i></button> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
+                            + data[i].userId + ',' + data[i].productId
+                            + ');" ><i class="ti ti-trash"></button></td> </tr>');
 
-						}
+                }
 
-                              paginationType = 2;
-                              buildPagination(response);
+                paginationType = 2;
+                buildPagination(response);
 
 
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
     }
+
     $('#entitySelect').on("change", function () {
         if (toSearch == true) {
             search(page);

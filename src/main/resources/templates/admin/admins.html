@@ -65,6 +65,7 @@
                             <table class="table table-bordered">
                                 <thead>
                                 <tr>
+                                    <th>№</th>
                                     <th>Ім'я</th>
                                     <th>Прізвище</th>
                                     <th>E-mail</th>
@@ -129,11 +130,14 @@
             success: function (response) {
                 $('.tr').remove();
                 $('ul.pagination li').remove();
-                data = response.content
+                data = response.content;
+                var count = response.pageable.pageNumber*response.size+1;
                 for (i = 0; i < data.length; i++) {
                     $("#myTable")
                         .append(
                             '<tr class="tr"> <td>'
+                            + count
+                            + '</td> <td>'
                             + data[i].firstName
                             + '</td> <td>'
                             + data[i].lastName
@@ -145,6 +149,7 @@
                             + data[i].id
                             + ');" ><i class="ti ti-trash"></button></td> </tr>');
 
+                count++;
                 }
 
                 paginationType = 1;
@@ -239,7 +244,7 @@
         } else {
             $("#paginationElements").text("")
             if (response.numberOfElements == 0) {
-                $("#myTable").append('<tr class="tr"><td colspan="5" class="text-center">Дані не знайдено</td>></tr>')
+                $("#myTable").append('<tr class="tr"><td colspan="6" class="text-center">Дані не знайдено</td>></tr>')
             }
         }
     }

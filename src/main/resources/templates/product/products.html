@@ -64,6 +64,7 @@
                             <table class="table table-bordered">
                                 <thead>
                                 <tr>
+                                    <th>№</th>
                                     <th>Назва</th>
                                     <th>Ціна</th>
                                     <th>Категорія</th>
@@ -152,7 +153,8 @@
             success: function (response) {
                 $('.tr').remove();
                 $('ul.pagination li').remove();
-                data = response.content
+                data = response.content;
+                var count = response.pageable.pageNumber*response.size+1;
                 for (i = 0; i < data.length; i++) {
                     var st;
                     if (data[i].status == true) {
@@ -163,6 +165,8 @@
                     $("#myTable")
                         .append(
                             '<tr class="tr"> <td>'
+                            + count
+                            + '</td> <td>'
                             + data[i].name
                             + '</td> <td>'
                             + data[i].price
@@ -173,7 +177,7 @@
                             + '</td> <td><a href="products/edit/' + data[i].id + '" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
                             + data[i].id
                             + ');" ><i class="ti ti-trash"></button></td> </tr>');
-
+                    count++;
                 }
 
                 paginationType = 1;
@@ -268,7 +272,7 @@
         } else {
             $("#paginationElements").text("")
             if (response.numberOfElements == 0) {
-                $("#myTable").append('<tr class="tr"><td colspan="5" class="text-center">Дані не знайдено</td>></tr>')
+                $("#myTable").append('<tr class="tr"><td colspan="6" class="text-center">Дані не знайдено</td>></tr>')
             }
         }
     }
