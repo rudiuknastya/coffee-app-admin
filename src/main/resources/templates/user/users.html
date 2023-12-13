@@ -134,6 +134,14 @@
                 for (i = 0; i < data.length; i++) {
                     var date = moment(data[i].birthDate).format('DD.MM.YYYY');
                     var d = date.toString();
+                    var statusTd;
+                    if(data[i].status.localeCompare('Новий') == 0){
+                        statusTd = '</td> <td> <span class="badge bg-label-info">';
+                    } else if(data[i].status.localeCompare('Активний') == 0){
+                        statusTd = '</td> <td> <span class="badge bg-label-primary">';
+                    } else {
+                        statusTd = '</td> <td> <span class="badge bg-label-danger">';
+                    }
                     $("#myTable")
                         .append(
                             '<tr class="tr"> <td>'
@@ -144,7 +152,7 @@
                             + d
                             + '</td> <td>'
                             + data[i].phoneNumber
-                            + '</td> <td> <span class="badge bg-label-primary">'
+                            + statusTd
                             + data[i].status
                             + '</span></td> <td><a href="users/edit/' + data[i].id + '" type="button" title="Редагувати" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити"  onclick="openModal('
                             + data[i].id
@@ -334,6 +342,14 @@
                 for (i = 0; i < data.length; i++) {
                     var date = moment(data[i].birthDate).format('DD.MM.YYYY');
                     var d = date.toString();
+                    var statusTd;
+                    if(data[i].status.localeCompare('Новий') == 0){
+                        statusTd = '</td> <td> <span class="badge bg-label-info">';
+                    } else if(data[i].status.localeCompare('Активний') == 0){
+                        statusTd = '</td> <td> <span class="badge bg-label-primary">';
+                    } else {
+                        statusTd = '</td> <td> <span class="badge bg-label-danger">';
+                    }
                     $("#myTable")
                         .append(
                             '<tr class="tr"> <td>'
@@ -342,7 +358,7 @@
                             + d
                             + '</td> <td>'
                             + data[i].phoneNumber
-                            + '</td> <td> <span class="badge bg-label-primary">'
+                            + statusTd
                             + data[i].status
                             + '</span> </td> <td><a href="users/edit/' + data[i].id + '" type="button" title="Редагувати" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openModal('
                             + data[i].id

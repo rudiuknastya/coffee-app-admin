@@ -133,6 +133,12 @@
                 data = response.content;
                 var count = response.pageable.pageNumber*response.size+1;
                 for (i = 0; i < data.length; i++) {
+                    var statusTd;
+                    if(data[i].role.localeCompare('Адмін') == 0){
+                        statusTd = '</td> <td> <span class="badge bg-label-primary">';
+                    } else {
+                        statusTd = '</td> <td> <span class="badge bg-label-info">';
+                    }
                     $("#myTable")
                         .append(
                             '<tr class="tr"> <td>'
@@ -143,7 +149,7 @@
                             + data[i].lastName
                             + '</td> <td>'
                             + data[i].email
-                            + '</td> <td> <span class="badge bg-label-primary">'
+                            + statusTd
                             + data[i].role
                             + '</span> </td> <td><a href="admins/edit/' + data[i].id + '" role="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
                             + data[i].id
@@ -336,6 +342,12 @@
                 $('ul.pagination li').remove();
                 data = response.content
                 for (i = 0; i < data.length; i++) {
+                    var statusTd;
+                    if(data[i].role.localeCompare('Адмін') == 0){
+                        statusTd = '</td> <td> <span class="badge bg-label-primary">';
+                    } else {
+                        statusTd = '</td> <td> <span class="badge bg-label-info">';
+                    }
                     $("#myTable")
                         .append(
                             '<tr class="tr"> <td>'
@@ -344,7 +356,7 @@
                             + data[i].lastName
                             + '</td> <td>'
                             + data[i].email
-                            + '</td> <td> <span class="badge bg-label-primary">'
+                            + statusTd
                             + data[i].role
                             + '</span> </td> <td><a href="admins/edit/' + data[i].id + '" role="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
                             + data[i].id

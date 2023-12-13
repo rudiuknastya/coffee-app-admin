@@ -162,6 +162,18 @@
                     } else {
                         var canc = '';
                     }
+                    var statusTd;
+                    if(data[i].status.localeCompare('Передзвонити') == 0){
+                        statusTd = '</td> <td> <span class="badge bg-label-info">';
+                    } else if(data[i].status.localeCompare('Замовлено') == 0){
+                        statusTd = '</td> <td> <span class="badge bg-label-primary">';
+                    } else if (data[i].status.localeCompare('Готово') == 0){
+                        statusTd = '</td> <td> <span class="badge bg-label-warning">';
+                    }else if (data[i].status.localeCompare('Доставлено') == 0){
+                        statusTd = '</td> <td> <span class="badge bg-label-success">';
+                    } else {
+                        statusTd = '</td> <td> <span class="badge bg-label-danger">';
+                    }
                     $("#myTable")
                         .append(
                             '<tr class="tr"> <td>'
@@ -174,9 +186,9 @@
                             + date
                             + '</td> <td>'
                             + data[i].orderTime
-                            + '</td> <td>'
+                            + statusTd
                             + data[i].status
-                            + '</td> <td>' + canc + '<a href="orders/orderHistory/' + data[i].id + '" role="button" class="btn btn-warning" title="Історія замовлень" style="color: white"><i class="ti ti-list"></i></a> </td> </tr>');
+                            + '</span></td> <td>' + canc + '<a href="orders/orderHistory/' + data[i].id + '" role="button" class="btn btn-warning" title="Історія замовлень" style="color: white"><i class="ti ti-list"></i></a> </td> </tr>');
                 count++;
                 }
 
@@ -382,6 +394,18 @@
                     } else {
                         var canc = '';
                     }
+                    var statusTd;
+                    if(data[i].status.localeCompare('Передзвонити') == 0){
+                        statusTd = '</td> <td> <span class="badge bg-label-info">';
+                    } else if(data[i].status.localeCompare('Замовлено') == 0){
+                        statusTd = '</td> <td> <span class="badge bg-label-primary">';
+                    } else if (data[i].status.localeCompare('Готово') == 0){
+                        statusTd = '</td> <td> <span class="badge bg-label-warning">';
+                    }else if (data[i].status.localeCompare('Доставлено') == 0){
+                        statusTd = '</td> <td> <span class="badge bg-label-success">';
+                    } else {
+                        statusTd = '</td> <td> <span class="badge bg-label-danger">';
+                    }
                     $("#myTable")
                         .append(
                             '<tr class="tr"> <td>'
@@ -392,9 +416,9 @@
                             + date
                             + '</td> <td>'
                             + data[i].orderTime
-                            + '</td> <td>'
+                            + statusTd
                             + data[i].status
-                            + '</td> <td>' + canc + '<a href="orders/orderHistory/' + data[i].id + '" role="button" class="btn btn-warning" title="Історія замовлень" style="color: white"><i class="ti ti-list"></i></a> </td> </tr>');
+                            + '</span></td> <td>' + canc + '<a href="orders/orderHistory/' + data[i].id + '" role="button" class="btn btn-warning" title="Історія замовлень" style="color: white"><i class="ti ti-list"></i></a> </td> </tr>');
 
                 }
 
