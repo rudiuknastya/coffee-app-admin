@@ -25,7 +25,7 @@
                                 </select>
                             </div>
                             <div class="row col-11">
-                                <div class="col-5 ps-0 pe-2">
+                                <div class="col-6 ps-0 pe-2">
                                     <input class="form-control me-2" type="search" id="searchInput"
                                            placeholder="Пошук за адресою" aria-label="Search" maxlength="100">
                                 </div>
@@ -101,13 +101,15 @@
     var page = 0;
     var toSearch = false;
     $(document).ready(function () {
-        $('#entitySelect').select2({
+        $('#entitySelect').wrap('<div class="position-relative"></div>').select2({
             minimumResultsForSearch: -1,
+            dropdownParent: $('#entitySelect').parent(),
             allowClear: false
         });
-        $('#selectCity').select2({
+        $('#selectCity').wrap('<div class="position-relative"></div>').select2({
             placeholder: "Оберіть місто",
             allowClear: true,
+            dropdownParent: $('#selectCity').parent(),
             maximumInputLength: 100,
             ajax: {
                 type: "get",

@@ -104,12 +104,14 @@
     var page = 0;
     var toSearch = false;
     $(document).ready(function () {
-        $('#entitySelect').select2({
+        $('#entitySelect').wrap('<div class="position-relative"></div>').select2({
             minimumResultsForSearch: -1,
+            dropdownParent: $('#entitySelect').parent(),
             allowClear: false
         });
-        $('#categorySelect').select2({
+        $('#categorySelect').wrap('<div class="position-relative"></div>').select2({
             placeholder: "Оберіть категорію",
+            dropdownParent: $('#categorySelect').parent(),
             allowClear: true,
             maximumInputLength: 100,
             ajax: {

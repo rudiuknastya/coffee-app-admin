@@ -3,7 +3,7 @@
       class="light-style layout-navbar-fixed layout-menu-fixed"
       dir="ltr"
       data-theme="theme-default"
-      data-template="vertical-menu-template-no-customizer" >
+      data-template="vertical-menu-template-no-customizer">
 <head th:replace="~{fragments :: head}"></head>
 <body>
 <div class="layout-wrapper layout-content-navbar">
@@ -15,30 +15,30 @@
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <div class="card py-5 px-5">
                         <form class="row g-3" style="color:black;">
-                            <div class="col-md-6" >
+                            <div class="col-md-6">
                                 <label for="inputName" class="form-label">Ім'я</label>
                                 <input type="text" class="form-control" id="inputName" maxlength="100">
                                 <div class="text-danger" id="nameValidation"></div>
                             </div>
-                            <div class="col-md-6" >
+                            <div class="col-md-6">
                                 <label for="inputLastName" class="form-label">Прізвище</label>
                                 <input type="text" class="form-control" id="inputLastName">
                                 <div class="text-danger" id="lastNameValidation"></div>
                             </div>
 
-                            <div class="col-md-6" >
+                            <div class="col-md-6">
                                 <label for="selectCity" class="form-label">Місто</label>
                                 <select class="form-select" id="selectCity">
                                 </select>
-                                <div class="text-danger" id="cityValidation"> </div>
+                                <div class="text-danger" id="cityValidation"></div>
                             </div>
                             <div class="col-md-6">
                                 <label for="birthdate" class="form-label">Дата народження</label>
                                 <input id="birthdate" class="form-control flatpickr" type="text">
-                                <div class="text-danger" id="birthDateValidation"> </div>
+                                <div class="text-danger" id="birthDateValidation"></div>
                             </div>
 
-                            <div class="col-md-6" >
+                            <div class="col-md-6">
                                 <label for="inputEmail" class="form-label">E-mail</label>
                                 <input type="text" class="form-control" id="inputEmail" maxlength="100">
                                 <div class="text-danger" id="emailValidation"></div>
@@ -47,16 +47,17 @@
                                 <label for="roleSelect" class="form-label">Роль</label>
                                 <select class="form-select" id="roleSelect">
                                 </select>
-                                <div class="text-danger" id="roleValidation"> </div>
+                                <div class="text-danger" id="roleValidation"></div>
                             </div>
                             <div class="col-md-6">
                                 <input id="newPassword" class="form-control" type="password" placeholder="Пароль">
-                                <div class="text-danger" id="newPasswordValidation"> </div>
+                                <div class="text-danger" id="newPasswordValidation"></div>
                             </div>
                             <div class="col-md-6"></div>
                             <div class="col-md-6">
-                                <input id="confirmNewPassword" class="form-control" type="password" placeholder="Підтвердити пароль">
-                                <div class="text-danger" id="confirmNewPasswordValidation"> </div>
+                                <input id="confirmNewPassword" class="form-control" type="password"
+                                       placeholder="Підтвердити пароль">
+                                <div class="text-danger" id="confirmNewPasswordValidation"></div>
                             </div>
 
                             <div class="col-md-12 mt-5 d-flex justify-content-end">
@@ -87,19 +88,20 @@
 <script th:src="@{/assets/vendor/libs/moment/moment.js}"></script>
 <script src="https://npmcdn.com/flatpickr/dist/l10n/uk.js"></script>
 <script>
-var url = window.location.pathname;
-var id = url.substring(url.lastIndexOf('/') + 1);
-const currentUrl = window.location.href;
-const myArray = currentUrl.split("/");
-var root = myArray[3];
-  $(document).ready(function(){
+    var url = window.location.pathname;
+    var id = url.substring(url.lastIndexOf('/') + 1);
+    const currentUrl = window.location.href;
+    const myArray = currentUrl.split("/");
+    var root = myArray[3];
+    $(document).ready(function () {
         $("#birthdate").flatpickr({
             locale: "uk",
             maxDate: moment().subtract(17, 'years').format('DD.MM.YYYY'),
-		    dateFormat: "d.m.Y"
-         });
-        $('#roleSelect').select2({
+            dateFormat: "d.m.Y"
+        });
+        $('#roleSelect').wrap('<div class="position-relative"></div>').select2({
             language: "uk",
+            dropdownParent: $('#roleSelect').parent(),
             minimumResultsForSearch: -1,
             ajax: {
                 type: "GET",
@@ -116,9 +118,10 @@ var root = myArray[3];
                 }
             }
         });
-        $('#selectCity').select2({
-        language: "uk",
-        maximumInputLength: 100,
+        $('#selectCity').wrap('<div class="position-relative"></div>').select2({
+            language: "uk",
+            dropdownParent: $('#selectCity').parent(),
+            maximumInputLength: 100,
             ajax: {
                 type: "get",
                 url: "getCities",
@@ -137,7 +140,7 @@ var root = myArray[3];
                             }
                         }),
                         pagination: {
-                            more: (response.pageable.pageNumber+1)  < response.totalPages
+                            more: (response.pageable.pageNumber + 1) < response.totalPages
                         }
                     };
                 }
@@ -147,92 +150,92 @@ var root = myArray[3];
 
     });
 
-    function save(){
-    $("#nameValidation").text("");
-	$("#inputName").removeClass("is-invalid");
-	$("#lastNameValidation").text("");
-	$("#inputLastName").removeClass("is-invalid");
-	$("#birthDateValidation").text("");
-	$("#birthdate").removeClass("is-invalid");
-	$("#emailValidation").text("");
-	$("#inputEmail").removeClass("is-invalid");
-	$("#newPasswordValidation").text("");
-	$("#newPassword").removeClass("is-invalid");
-	$("#confirmNewPasswordValidation").text("");
-	$("#confirmNewPassword").removeClass("is-invalid");
-	$("#cityValidation").text("");
-	$("#selectCity").removeClass("is-invalid");
-	$("#roleValidation").text("");
-	$("#roleSelect").removeClass("is-invalid");
-	if($("#birthdate").val().localeCompare('') == 0){
-	  var d = null;
-	} else {
-	  var d = moment($("#birthdate").val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
-	}
+    function save() {
+        $("#nameValidation").text("");
+        $("#inputName").removeClass("is-invalid");
+        $("#lastNameValidation").text("");
+        $("#inputLastName").removeClass("is-invalid");
+        $("#birthDateValidation").text("");
+        $("#birthdate").removeClass("is-invalid");
+        $("#emailValidation").text("");
+        $("#inputEmail").removeClass("is-invalid");
+        $("#newPasswordValidation").text("");
+        $("#newPassword").removeClass("is-invalid");
+        $("#confirmNewPasswordValidation").text("");
+        $("#confirmNewPassword").removeClass("is-invalid");
+        $("#cityValidation").text("");
+        $("#selectCity").removeClass("is-invalid");
+        $("#roleValidation").text("");
+        $("#roleSelect").removeClass("is-invalid");
+        if ($("#birthdate").val().localeCompare('') == 0) {
+            var d = null;
+        } else {
+            var d = moment($("#birthdate").val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
+        }
 
-      $.ajax({
-					type : "POST",
-					url : "saveAdmin",
-					data: {
-                        firstName: $("#inputName").val(),
-                        lastName: $("#inputLastName").val(),
-                        email: $("#inputEmail").val(),
-                        birthDate: d,
-                        city: $('#selectCity').val(),
-                        role: $('#roleSelect').val(),
-                        newPassword: $("#newPassword").val(),
-                        confirmNewPassword: $("#confirmNewPassword").val()
-                    },
-					success : function(response) {
-                        window.location.href = '/'+root+'/admins';
+        $.ajax({
+            type: "POST",
+            url: "saveAdmin",
+            data: {
+                firstName: $("#inputName").val(),
+                lastName: $("#inputLastName").val(),
+                email: $("#inputEmail").val(),
+                birthDate: d,
+                city: $('#selectCity').val(),
+                role: $('#roleSelect').val(),
+                newPassword: $("#newPassword").val(),
+                confirmNewPassword: $("#confirmNewPassword").val()
+            },
+            success: function (response) {
+                window.location.href = '/' + root + '/admins';
 
-					},
-					error : function(XMLHttpRequest, textStatus, errorThrown) {
-                        const map = XMLHttpRequest.responseJSON;
-                        if(XMLHttpRequest.status == 400) {
-                            for (const [key, value] of Object.entries(map)) {
-                                if(key.localeCompare('firstName') == 0 ){
-                                    $("#nameValidation").text(value);
-                                    $("#inputName").addClass("is-invalid");
-                                }
-                                if(key.localeCompare('lastName') == 0){
-                                    $("#lastNameValidation").text(value);
-                                    $("#inputLastName").addClass("is-invalid");
-                                }
-                                if(key.localeCompare('birthDate') == 0){
-                                    $("#birthDateValidation").text(value);
-                                    $("#birthdate").addClass("is-invalid");
-                                }
-                                if(key.localeCompare('email') == 0){
-                                    $("#emailValidation").text(value);
-                                    $("#inputEmail").addClass("is-invalid");
-                                }
-                                if(key.localeCompare('newPassword') == 0){
-                                    $("#newPasswordValidation").text(value);
-                                    $("#newPassword").addClass("is-invalid");
-                                }
-                                if(key.localeCompare('confirmNewPassword') == 0){
-                                    $("#confirmNewPasswordValidation").text(value);
-                                    $("#confirmNewPassword").addClass("is-invalid");
-                                }
-                                if(key.localeCompare('role') == 0){
-                                    $("#roleValidation").text(value);
-                                    $("#roleSelect").addClass("is-invalid");
-                                }
-                                if(key.localeCompare('city') == 0){
-                                    $("#cityValidation").text(value);
-                                    $("#selectCity").addClass("is-invalid");
-                                }
-                            }
-                        } else {
-                            $("#error").removeClass("d-none");
-                            setTimeout(
-                                function () {
-                                    $("#error").addClass("d-none");
-                                }, 4000);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                const map = XMLHttpRequest.responseJSON;
+                if (XMLHttpRequest.status == 400) {
+                    for (const [key, value] of Object.entries(map)) {
+                        if (key.localeCompare('firstName') == 0) {
+                            $("#nameValidation").text(value);
+                            $("#inputName").addClass("is-invalid");
                         }
-					}
-				});
+                        if (key.localeCompare('lastName') == 0) {
+                            $("#lastNameValidation").text(value);
+                            $("#inputLastName").addClass("is-invalid");
+                        }
+                        if (key.localeCompare('birthDate') == 0) {
+                            $("#birthDateValidation").text(value);
+                            $("#birthdate").addClass("is-invalid");
+                        }
+                        if (key.localeCompare('email') == 0) {
+                            $("#emailValidation").text(value);
+                            $("#inputEmail").addClass("is-invalid");
+                        }
+                        if (key.localeCompare('newPassword') == 0) {
+                            $("#newPasswordValidation").text(value);
+                            $("#newPassword").addClass("is-invalid");
+                        }
+                        if (key.localeCompare('confirmNewPassword') == 0) {
+                            $("#confirmNewPasswordValidation").text(value);
+                            $("#confirmNewPassword").addClass("is-invalid");
+                        }
+                        if (key.localeCompare('role') == 0) {
+                            $("#roleValidation").text(value);
+                            $("#roleSelect").addClass("is-invalid");
+                        }
+                        if (key.localeCompare('city') == 0) {
+                            $("#cityValidation").text(value);
+                            $("#selectCity").addClass("is-invalid");
+                        }
+                    }
+                } else {
+                    $("#error").removeClass("d-none");
+                    setTimeout(
+                        function () {
+                            $("#error").addClass("d-none");
+                        }, 4000);
+                }
+            }
+        });
     }
 
 </script>

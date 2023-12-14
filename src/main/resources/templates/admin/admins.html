@@ -105,13 +105,15 @@
     var page = 0;
     var toSearch = false;
     $(document).ready(function () {
-        $('#roleSelect').select2({
+        $('#roleSelect').wrap('<div class="position-relative"></div>').select2({
             minimumResultsForSearch: -1,
+            dropdownParent: $('#roleSelect').parent(),
             placeholder: "Оберіть роль",
             allowClear: true
         });
-        $('#entitySelect').select2({
+        $('#entitySelect').wrap('<div class="position-relative"></div>').select2({
             minimumResultsForSearch: -1,
+            dropdownParent: $('#entitySelect').parent(),
             allowClear: false
         });
         getAdmins(0);

@@ -121,14 +121,16 @@
 <script>
     var toSearch = false;
     $(document).ready(function () {
-        $('#entitySelect').select2({
+        $('#entitySelect').wrap('<div class="position-relative"></div>').select2({
             minimumResultsForSearch: -1,
+            dropdownParent: $('#entitySelect').parent(),
             allowClear: false
         });
-        $('#statusSelect').select2({
+        $('#statusSelect').wrap('<div class="position-relative"></div>').select2({
             language: "uk",
             minimumResultsForSearch: -1,
             placeholder: "Оберіть статус",
+            dropdownParent: $('#statusSelect').parent(),
             allowClear: true
         });
         $("#orderDate").flatpickr({

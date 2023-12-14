@@ -3,7 +3,7 @@
       class="light-style layout-navbar-fixed layout-menu-fixed"
       dir="ltr"
       data-theme="theme-default"
-      data-template="vertical-menu-template-no-customizer" >
+      data-template="vertical-menu-template-no-customizer">
 <head th:replace="~{fragments :: head}"></head>
 <body>
 <div class="layout-wrapper layout-content-navbar">
@@ -15,16 +15,19 @@
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <div class="card py-5 px-5">
                         <form class="row g-3" style="color:black;">
-                            <div class="col-md-6 row g-3 align-items-center me-2" >
+                            <div class="col-md-6 row g-3 align-items-center me-2">
                                 <div class="col-auto">
-                                    <img  src="https://static.vecteezy.com/system/resources/previews/004/141/669/non_2x/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg" style="width:120px; height:120px;" id="main_image">
-                                    <input type="file" accept="image/jpeg, image/jpg, image/png" class="form-control d-none"  id="inputMainImage" name="profileImage">
+                                    <img src="https://static.vecteezy.com/system/resources/previews/004/141/669/non_2x/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg"
+                                         style="width:120px; height:120px;" id="main_image">
+                                    <input type="file" accept="image/jpeg, image/jpg, image/png"
+                                           class="form-control d-none" id="inputMainImage" name="profileImage">
                                 </div>
                                 <div class="col-auto">
-                                    <label class="input-group-text col-form-label" for="inputMainImage" style="color:black;">Додати фото</label>
+                                    <label class="input-group-text col-form-label" for="inputMainImage"
+                                           style="color:black;">Додати фото</label>
                                 </div>
                             </div>
-                            <div class="col-md-6" >
+                            <div class="col-md-6">
                                 <label for="inputName" class="form-label">Ім'я</label>
                                 <input type="text" class="form-control" id="inputName" maxlength="100">
                                 <div class="text-danger" id="nameValidation"></div>
@@ -34,7 +37,7 @@
                                 <div class="text-danger" id="lastNameValidation"></div>
                             </div>
 
-                            <div class="col-md-6" >
+                            <div class="col-md-6">
                                 <label for="inputEmail" class="form-label">E-mail</label>
                                 <input type="text" class="form-control" id="inputEmail" maxlength="100">
                                 <div class="text-danger" id="emailValidation"></div>
@@ -42,26 +45,28 @@
                             <div class="col-md-6">
                                 <label for="birthdate" class="form-label">Дата народження</label>
                                 <input id="birthdate" class="form-control flatpickr" type="text">
-                                <div class="text-danger" id="birthDateValidation"> </div>
+                                <div class="text-danger" id="birthDateValidation"></div>
                             </div>
                             <div class="col-md-6">
                                 <label for="oldPassword" class="form-label">Змінити пароль</label>
-                                <input id="oldPassword" class="form-control" type="password" placeholder="Старий пароль">
-                                <div class="text-danger" id="oldPasswordValidation"> </div>
+                                <input id="oldPassword" class="form-control" type="password"
+                                       placeholder="Старий пароль">
+                                <div class="text-danger" id="oldPasswordValidation"></div>
                             </div>
-                            <div class="col-md-6" >
+                            <div class="col-md-6">
                                 <label for="selectCity" class="form-label">Місто</label>
                                 <select class="form-select" id="selectCity">
                                 </select>
                             </div>
                             <div class="col-md-6">
                                 <input id="newPassword" class="form-control" type="password" placeholder="Новий пароль">
-                                <div class="text-danger" id="newPasswordValidation"> </div>
+                                <div class="text-danger" id="newPasswordValidation"></div>
                             </div>
                             <div class="col-md-6"></div>
                             <div class="col-md-6">
-                                <input id="confirmNewPassword" class="form-control" type="password" placeholder="Підтвердити новий пароль">
-                                <div class="text-danger" id="confirmNewPasswordValidation"> </div>
+                                <input id="confirmNewPassword" class="form-control" type="password"
+                                       placeholder="Підтвердити новий пароль">
+                                <div class="text-danger" id="confirmNewPasswordValidation"></div>
                             </div>
 
                             <div class="col-md-12 mt-5 d-flex justify-content-end">
@@ -92,18 +97,19 @@
 <script th:src="@{/assets/vendor/libs/moment/moment.js}"></script>
 <script src="https://npmcdn.com/flatpickr/dist/l10n/uk.js"></script>
 <script th:inline="javascript">
-var email = [[${#authentication?.name}]];
-var id;
-const currentUrl = window.location.href;
-const myArray = currentUrl.split("/");
-var root = myArray[3];
-  $(document).ready(function(){
-        $('#selectCity').select2({
-        language: "uk",
-        maximumInputLength: 100,
+    var email = [[${#authentication?.name}]];
+    var id;
+    const currentUrl = window.location.href;
+    const myArray = currentUrl.split("/");
+    var root = myArray[3];
+    $(document).ready(function () {
+        $('#selectCity').wrap('<div class="position-relative"></div>').select2({
+            language: "uk",
+            dropdownParent: $('#selectCity').parent(),
+            maximumInputLength: 100,
             ajax: {
                 type: "GET",
-                url: "/"+root+"/getCitiesForLocations",
+                url: "/" + root + "/getCitiesForLocations",
                 data: function (params) {
                     return {
                         search: params.term,
@@ -119,7 +125,7 @@ var root = myArray[3];
                             }
                         }),
                         pagination: {
-                            more: (response.pageable.pageNumber+1)  < response.totalPages
+                            more: (response.pageable.pageNumber + 1) < response.totalPages
                         }
                     };
                 }
@@ -128,147 +134,147 @@ var root = myArray[3];
         });
 
         $.ajax({
-					type : "GET",
-					url : "getProfile",
-					data: {
-					    email: email
-					},
-					success : function(response) {
-					    $('#inputName').val(response.firstName);
-					    $('#inputLastName').val(response.lastName);
-					    $('#inputEmail').val(response.email);
-					    if(response.image != null){
-                          $("#main_image").attr("src", '/'+root+'/uploads/'+response.image);
-                        }
-					    $("#birthdate").flatpickr({
-					      locale: "uk",
-					      defaultDate: moment(response.birthDate, 'YYYY-MM-DD').format('DD.MM.YYYY'),
-					      dateFormat: "d.m.Y"
-                        });
-                        id = response.id;
-                      var option = new Option(response.city, response.city, true, true);
-                      $('#selectCity').append(option).trigger('change');
+            type: "GET",
+            url: "getProfile",
+            data: {
+                email: email
+            },
+            success: function (response) {
+                $('#inputName').val(response.firstName);
+                $('#inputLastName').val(response.lastName);
+                $('#inputEmail').val(response.email);
+                if (response.image != null) {
+                    $("#main_image").attr("src", '/' + root + '/uploads/' + response.image);
+                }
+                $("#birthdate").flatpickr({
+                    locale: "uk",
+                    defaultDate: moment(response.birthDate, 'YYYY-MM-DD').format('DD.MM.YYYY'),
+                    dateFormat: "d.m.Y"
+                });
+                id = response.id;
+                var option = new Option(response.city, response.city, true, true);
+                $('#selectCity').append(option).trigger('change');
 
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
 
     });
 
-    function edit(){
-    $("#nameValidation").text("");
-	$("#inputName").removeClass("is-invalid");
-	$("#lastNameValidation").text("");
-	$("#inputLastName").removeClass("is-invalid");
-	$("#birthDateValidation").text("");
-	$("#birthdate").removeClass("is-invalid");
-	$("#emailValidation").text("");
-	$("#inputEmail").removeClass("is-invalid");
-	$("#oldPasswordValidation").text("");
-    $("#oldPassword").removeClass("is-invalid");
-    $("#newPasswordValidation").text("");
-    $("#newPassword").removeClass("is-invalid");
-    $("#confirmNewPasswordValidation").text("");
-    $("#confirmNewPassword").removeClass("is-invalid");
-    var d = '';
-	if($("#birthdate").val().localeCompare('') != 0){
-	  d = moment($("#birthdate").val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
-	}
-	var formData = new FormData();
-      formData.append('id', id);
-      formData.append('firstName', $('#inputName').val());
-      formData.append('lastName', $('#inputLastName').val());
-      formData.append('email', $("#inputEmail").val());
-      formData.append('birthDate', d);
-      formData.append('city', $('#selectCity').val());
-      formData.append('oldPassword', $('#oldPassword').val());
-      formData.append('newPassword', $('#newPassword').val());
-      formData.append('confirmNewPassword', $('#confirmNewPassword').val());
-      formData.append('profileImage', $('#inputMainImage').prop('files')[0]);
-      $.ajax({
-					type : "POST",
-					url : "editProfile",
-					data: formData,
-					contentType: false,
-					processData: false,
-					success : function(response) {
-                          $("#successEdit").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#successEdit").addClass("d-none");
-                          }, 4000);
-                            $("#oldPassword").val("");
-                            $("#confirmNewPassword").val("");
-                            $("#newPassword").val("");
+    function edit() {
+        $("#nameValidation").text("");
+        $("#inputName").removeClass("is-invalid");
+        $("#lastNameValidation").text("");
+        $("#inputLastName").removeClass("is-invalid");
+        $("#birthDateValidation").text("");
+        $("#birthdate").removeClass("is-invalid");
+        $("#emailValidation").text("");
+        $("#inputEmail").removeClass("is-invalid");
+        $("#oldPasswordValidation").text("");
+        $("#oldPassword").removeClass("is-invalid");
+        $("#newPasswordValidation").text("");
+        $("#newPassword").removeClass("is-invalid");
+        $("#confirmNewPasswordValidation").text("");
+        $("#confirmNewPassword").removeClass("is-invalid");
+        var d = '';
+        if ($("#birthdate").val().localeCompare('') != 0) {
+            d = moment($("#birthdate").val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
+        }
+        var formData = new FormData();
+        formData.append('id', id);
+        formData.append('firstName', $('#inputName').val());
+        formData.append('lastName', $('#inputLastName').val());
+        formData.append('email', $("#inputEmail").val());
+        formData.append('birthDate', d);
+        formData.append('city', $('#selectCity').val());
+        formData.append('oldPassword', $('#oldPassword').val());
+        formData.append('newPassword', $('#newPassword').val());
+        formData.append('confirmNewPassword', $('#confirmNewPassword').val());
+        formData.append('profileImage', $('#inputMainImage').prop('files')[0]);
+        $.ajax({
+            type: "POST",
+            url: "editProfile",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                $("#successEdit").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#successEdit").addClass("d-none");
+                    }, 4000);
+                $("#oldPassword").val("");
+                $("#confirmNewPassword").val("");
+                $("#newPassword").val("");
 
 
-					},
-					error : function(XMLHttpRequest, textStatus, errorThrown) {
-                        const map = XMLHttpRequest.responseJSON;
-                        if(XMLHttpRequest.status == 400) {
-                            for (const [key, value] of Object.entries(map)) {
-                                if(key.localeCompare('firstName') == 0 ){
-                                    $("#nameValidation").text(value);
-                                    $("#inputName").addClass("is-invalid");
-                                }
-                                if(key.localeCompare('lastName') == 0){
-                                    $("#lastNameValidation").text(value);
-                                    $("#inputLastName").addClass("is-invalid");
-                                }
-                                if(key.localeCompare('birthDate') == 0){
-                                    $("#birthDateValidation").text(value);
-                                    $("#birthdate").addClass("is-invalid");
-                                }
-                                if(key.localeCompare('email') == 0){
-                                    $("#emailValidation").text(value);
-                                    $("#inputEmail").addClass("is-invalid");
-                                }
-                                if(key.localeCompare('oldPassword') == 0){
-                                    $("#oldPasswordValidation").text(value);
-                                    $("#oldPassword").addClass("is-invalid");
-                                }
-                                if(key.localeCompare('newPassword') == 0){
-                                    $("#newPasswordValidation").text(value);
-                                    $("#newPassword").addClass("is-invalid");
-                                }
-                                if(key.localeCompare('confirmNewPassword') == 0){
-                                    $("#confirmNewPasswordValidation").text(value);
-                                    $("#confirmNewPassword").addClass("is-invalid");
-                                }
-                            }
-                        } else {
-                            $("#error").removeClass("d-none");
-                            setTimeout(
-                                function () {
-                                    $("#error").addClass("d-none");
-                                }, 4000);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                const map = XMLHttpRequest.responseJSON;
+                if (XMLHttpRequest.status == 400) {
+                    for (const [key, value] of Object.entries(map)) {
+                        if (key.localeCompare('firstName') == 0) {
+                            $("#nameValidation").text(value);
+                            $("#inputName").addClass("is-invalid");
                         }
-					}
-				});
+                        if (key.localeCompare('lastName') == 0) {
+                            $("#lastNameValidation").text(value);
+                            $("#inputLastName").addClass("is-invalid");
+                        }
+                        if (key.localeCompare('birthDate') == 0) {
+                            $("#birthDateValidation").text(value);
+                            $("#birthdate").addClass("is-invalid");
+                        }
+                        if (key.localeCompare('email') == 0) {
+                            $("#emailValidation").text(value);
+                            $("#inputEmail").addClass("is-invalid");
+                        }
+                        if (key.localeCompare('oldPassword') == 0) {
+                            $("#oldPasswordValidation").text(value);
+                            $("#oldPassword").addClass("is-invalid");
+                        }
+                        if (key.localeCompare('newPassword') == 0) {
+                            $("#newPasswordValidation").text(value);
+                            $("#newPassword").addClass("is-invalid");
+                        }
+                        if (key.localeCompare('confirmNewPassword') == 0) {
+                            $("#confirmNewPasswordValidation").text(value);
+                            $("#confirmNewPassword").addClass("is-invalid");
+                        }
+                    }
+                } else {
+                    $("#error").removeClass("d-none");
+                    setTimeout(
+                        function () {
+                            $("#error").addClass("d-none");
+                        }, 4000);
+                }
+            }
+        });
     }
-    $('#inputMainImage').on("change", function() {
+
+    $('#inputMainImage').on("change", function () {
         var myFile = $(this).prop('files');
-        if(validateFile(myFile[0].name) != false){
-          $("#main_image").attr("src", window.URL.createObjectURL(myFile[0]));
+        if (validateFile(myFile[0].name) != false) {
+            $("#main_image").attr("src", window.URL.createObjectURL(myFile[0]));
         } else {
-          $("#imageValidation").text("Некоректий тип файлу");
-          $(this).val('');
+            $("#imageValidation").text("Некоректий тип файлу");
+            $(this).val('');
         }
     });
-    function validateFile(value){
+
+    function validateFile(value) {
         var ext = value.substring(value.lastIndexOf('.') + 1).toLowerCase();
-        if($.inArray(ext, ['png','jpg','jpeg']) == -1 && value != "") {
-          return false;
+        if ($.inArray(ext, ['png', 'jpg', 'jpeg']) == -1 && value != "") {
+            return false;
         } else {
-          return true;
+            return true;
         }
     }
 

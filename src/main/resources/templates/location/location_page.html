@@ -3,57 +3,60 @@
       class="light-style layout-navbar-fixed layout-menu-fixed"
       dir="ltr"
       data-theme="theme-default"
-      data-template="vertical-menu-template-no-customizer" >
+      data-template="vertical-menu-template-no-customizer">
 <head th:replace="~{fragments :: head}"></head>
 <body>
 <div class="layout-wrapper layout-content-navbar">
-  <div class="layout-container">
-    <aside th:replace="~{fragments :: sidebar(${pageNum})}"></aside>
-    <div class="layout-page">
-      <nav th:replace="~{fragments :: navbar(${image})}"></nav>
-      <div class="content-wrapper">
-        <div class="container-xxl flex-grow-1 container-p-y">
-          <div class="card py-5 px-5">
-            <form class="row g-3" style="color:black;">
-              <div class="col-md-6" >
-                <label for="selectCity" class="form-label">Місто</label>
-                <select class="form-select" id="selectCity">
-                </select>
-                <div class="text-danger" id="cityValidation"></div>
-              </div>
-              <div class="col-md-6" >
-                <label for="inputPhone" class="form-label">Номер телефону</label>
-                <input type="text" class="form-control inputPhone" id="inputPhone" placeholder="+380994445566" maxlength="20" >
-                <div class="text-danger" id="phoneValidation"></div>
-              </div>
-              <div>
-                <label for="inputAddress" class="form-label">Адреса</label>
-                <input class="form-control" id="inputAddress" placeholder="вул.Васильківська 5" maxlength="100">
-                <div class="text-danger" id="addressValidation"> </div>
-              </div>
-              <div class="col-md-6" >
-                <label for="inputCoordinates" class="form-label">Координати</label>
-                <input type="text" class="form-control" id="inputCoordinates" maxlength="100">
-                <div class="text-danger" id="coordinatesValidation"></div>
-              </div>
-              <div class="col-md-6" >
-                <label for="inputWorkingHours" class="form-label">Графік роботи</label>
-                <textarea type="text" class="form-control" id="inputWorkingHours" rows="1" maxlength="100"></textarea>
-                <div class="text-danger" id="workingValidation"></div>
-              </div>
-              <div class="col-md-12 mt-5 d-flex justify-content-end">
-                <button type="button" class="btn btn-primary" onclick="save()">Зберегти</button>
-              </div>
-            </form>
-            <div class="col-3" style="position: absolute; top:10px; right: 50px;">
-              <div class="alert alert-danger d-none" role="alert" id="error">Error happened</div>
+    <div class="layout-container">
+        <aside th:replace="~{fragments :: sidebar(${pageNum})}"></aside>
+        <div class="layout-page">
+            <nav th:replace="~{fragments :: navbar(${image})}"></nav>
+            <div class="content-wrapper">
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <div class="card py-5 px-5">
+                        <form class="row g-3" style="color:black;">
+                            <div class="col-md-6">
+                                <label for="selectCity" class="form-label">Місто</label>
+                                <select class="form-select" id="selectCity">
+                                </select>
+                                <div class="text-danger" id="cityValidation"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputPhone" class="form-label">Номер телефону</label>
+                                <input type="text" class="form-control inputPhone" id="inputPhone"
+                                       placeholder="+380994445566" maxlength="20">
+                                <div class="text-danger" id="phoneValidation"></div>
+                            </div>
+                            <div>
+                                <label for="inputAddress" class="form-label">Адреса</label>
+                                <input class="form-control" id="inputAddress" placeholder="вул.Васильківська 5"
+                                       maxlength="100">
+                                <div class="text-danger" id="addressValidation"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputCoordinates" class="form-label">Координати</label>
+                                <input type="text" class="form-control" id="inputCoordinates" maxlength="100">
+                                <div class="text-danger" id="coordinatesValidation"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputWorkingHours" class="form-label">Графік роботи</label>
+                                <textarea type="text" class="form-control" id="inputWorkingHours" rows="1"
+                                          maxlength="100"></textarea>
+                                <div class="text-danger" id="workingValidation"></div>
+                            </div>
+                            <div class="col-md-12 mt-5 d-flex justify-content-end">
+                                <button type="button" class="btn btn-primary" onclick="save()">Зберегти</button>
+                            </div>
+                        </form>
+                        <div class="col-3" style="position: absolute; top:10px; right: 50px;">
+                            <div class="alert alert-danger d-none" role="alert" id="error">Error happened</div>
+                        </div>
+                        <div th:replace="~{fragments :: logoutModal}"></div>
+                    </div>
+                </div>
             </div>
-            <div th:replace="~{fragments :: logoutModal}"></div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 <script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
 <script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
@@ -68,25 +71,26 @@
 <script th:src="@{/assets/vendor/libs/autosize/autosize.js}"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/i18n/uk.js"></script>
 <script th:inline="javascript">
-var link = [[${link}]];
-var id = null;
-const currentUrl = window.location.href;
-const myArray = currentUrl.split("/");
-var root = myArray[3];
-  $(document).ready(function(){
-    autosize($("#inputWorkingHours"));
-      new Cleave('.inputPhone', {
-        numericOnly: true,
-        blocks: [0, 15],
-        delimiters: ["+"]
-    });
-        $('#selectCity').select2({
-        language: "uk",
-        placeholder: "Оберіть місто",
-        maximumInputLength: 100,
+    var link = [[${link}]];
+    var id = null;
+    const currentUrl = window.location.href;
+    const myArray = currentUrl.split("/");
+    var root = myArray[3];
+    $(document).ready(function () {
+        autosize($("#inputWorkingHours"));
+        new Cleave('.inputPhone', {
+            numericOnly: true,
+            blocks: [0, 15],
+            delimiters: ["+"]
+        });
+        $('#selectCity').wrap('<div class="position-relative"></div>').select2({
+            language: "uk",
+            placeholder: "Оберіть місто",
+            dropdownParent: $('#selectCity').parent(),
+            maximumInputLength: 100,
             ajax: {
                 type: "GET",
-                url: "/"+root+"/getCitiesForLocations",
+                url: "/" + root + "/getCitiesForLocations",
                 data: function (params) {
                     return {
                         search: params.term,
@@ -102,7 +106,7 @@ var root = myArray[3];
                             }
                         }),
                         pagination: {
-                            more: (response.pageable.pageNumber+1)  < response.totalPages
+                            more: (response.pageable.pageNumber + 1) < response.totalPages
                         }
                     };
                 }
@@ -110,94 +114,93 @@ var root = myArray[3];
             }
         });
 
-        if(link.localeCompare('saveLocation') != 0){
-          var url = window.location.pathname;
-          id = url.substring(url.lastIndexOf('/') + 1);
-          $.ajax({
-					type : "GET",
-					url : "getLocation/"+id,
-					success : function(response) {
-					    $('#inputCoordinates').val(response.coordinates);
-					    $('#inputAddress').val(response.address);
-					    $('#inputPhone').val(response.phoneNumber);
-                        $('#inputWorkingHours').val(response.workingHours);
-                      var option = new Option(response.city, response.city, true, true);
-                      $('#selectCity').append(option).trigger('change');
+        if (link.localeCompare('saveLocation') != 0) {
+            var url = window.location.pathname;
+            id = url.substring(url.lastIndexOf('/') + 1);
+            $.ajax({
+                type: "GET",
+                url: "getLocation/" + id,
+                success: function (response) {
+                    $('#inputCoordinates').val(response.coordinates);
+                    $('#inputAddress').val(response.address);
+                    $('#inputPhone').val(response.phoneNumber);
+                    $('#inputWorkingHours').val(response.workingHours);
+                    var option = new Option(response.city, response.city, true, true);
+                    $('#selectCity').append(option).trigger('change');
 
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
+                },
+                error: function (err) {
+                    $("#error").removeClass("d-none");
+                    setTimeout(
+                        function () {
                             $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
+                        }, 4000);
+                }
+            });
 
         }
 
     });
 
-    function save(){
-      $("#addressValidation").text("");
-	  $("#inputAddress").removeClass("is-invalid");
-	  $("#cityValidation").text("");
-	  $("#selectCity").removeClass("is-invalid");
-	  $("#phoneValidation").text("");
-	  $("#inputPhone").removeClass("is-invalid");
-	  $("#workingValidation").text("");
-	  $("#inputWorkingHours").removeClass("is-invalid");
-	  $("#coordinatesValidation").text("");
-	  $("#inputCoordinates").removeClass("is-invalid");
-      $.ajax({
-					type : "POST",
-					url : link,
-					data: {
-					    id: id,
-                        city: $('#selectCity').val(),
-                        address: $("#inputAddress").val(),
-                        phoneNumber: $("#inputPhone").val(),
-                        workingHours: $("#inputWorkingHours").val(),
-                        coordinates: $('#inputCoordinates').val()
-                    },
-					success : function(response) {
-                        window.location.href = '/'+root+'/locations';
-					},
-					error : function(XMLHttpRequest, textStatus, errorThrown) {
-                      const map = XMLHttpRequest.responseJSON;
-                      if(XMLHttpRequest.status == 400) {
-                        for (const [key, value] of Object.entries(map)) {
-                          if(key.localeCompare('city') == 0 ){
+    function save() {
+        $("#addressValidation").text("");
+        $("#inputAddress").removeClass("is-invalid");
+        $("#cityValidation").text("");
+        $("#selectCity").removeClass("is-invalid");
+        $("#phoneValidation").text("");
+        $("#inputPhone").removeClass("is-invalid");
+        $("#workingValidation").text("");
+        $("#inputWorkingHours").removeClass("is-invalid");
+        $("#coordinatesValidation").text("");
+        $("#inputCoordinates").removeClass("is-invalid");
+        $.ajax({
+            type: "POST",
+            url: link,
+            data: {
+                id: id,
+                city: $('#selectCity').val(),
+                address: $("#inputAddress").val(),
+                phoneNumber: $("#inputPhone").val(),
+                workingHours: $("#inputWorkingHours").val(),
+                coordinates: $('#inputCoordinates').val()
+            },
+            success: function (response) {
+                window.location.href = '/' + root + '/locations';
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                const map = XMLHttpRequest.responseJSON;
+                if (XMLHttpRequest.status == 400) {
+                    for (const [key, value] of Object.entries(map)) {
+                        if (key.localeCompare('city') == 0) {
                             $("#cityValidation").text(value);
                             $("#selectCity").addClass("is-invalid");
-                          }
-                          if(key.localeCompare('address') == 0){
+                        }
+                        if (key.localeCompare('address') == 0) {
                             $("#addressValidation").text(value);
                             $("#inputAddress").addClass("is-invalid");
-                          }
-                          if(key.localeCompare('phoneNumber') == 0){
+                        }
+                        if (key.localeCompare('phoneNumber') == 0) {
                             $("#phoneValidation").text(value);
                             $("#inputPhone").addClass("is-invalid");
-                          }
-                          if(key.localeCompare('workingHours') == 0){
+                        }
+                        if (key.localeCompare('workingHours') == 0) {
                             $("#workingValidation").text(value);
                             $("#inputWorkingHours").addClass("is-invalid");
-                          }
-                          if(key.localeCompare('coordinates') == 0){
+                        }
+                        if (key.localeCompare('coordinates') == 0) {
                             $("#coordinatesValidation").text(value);
                             $("#inputCoordinates").addClass("is-invalid");
-                          }
                         }
-                      } else {
-                        $("#error").removeClass("d-none");
-                        setTimeout(
-                                function () {
-                                  $("#error").addClass("d-none");
-                                }, 4000);
-                      }
-					}
-				});
+                    }
+                } else {
+                    $("#error").removeClass("d-none");
+                    setTimeout(
+                        function () {
+                            $("#error").addClass("d-none");
+                        }, 4000);
+                }
+            }
+        });
 
     }
 </script>

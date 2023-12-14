@@ -123,8 +123,9 @@
     var page = 0;
     var toSearch = false;
     $(document).ready(function () {
-        $('#entitySelect').select2({
+        $('#entitySelect').wrap('<div class="position-relative"></div>').select2({
             minimumResultsForSearch: -1,
+            dropdownParent: $('#entitySelect').parent(),
             allowClear: false
         });
         $.ajax({

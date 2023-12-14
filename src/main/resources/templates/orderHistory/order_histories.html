@@ -117,8 +117,9 @@
     var toSearch = false;
     $(document).ready(function () {
         autosize($("#inputComment"));
-        $('#entitySelect').select2({
+        $('#entitySelect').wrap('<div class="position-relative"></div>').select2({
             minimumResultsForSearch: -1,
+            dropdownParent: $('#entitySelect').parent(),
             allowClear: false
         });
         $("#orderDate").flatpickr({

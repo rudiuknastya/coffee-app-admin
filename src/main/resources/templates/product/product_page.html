@@ -41,7 +41,7 @@
                 </div>
                 <div class="col-auto">
                   <img  src="https://static.vecteezy.com/system/resources/previews/004/141/669/non_2x/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg" style="width:150px; height:150px;" id="main_image">
-                  <input type="file" accept="image/jpeg, image/jpg, image/png" class="form-control d-none"  id="inputMainImage" name="mainImage">
+                  <input type="file" accept=".jpeg, .jpg, .png" class="form-control d-none"  id="inputMainImage" name="mainImage">
                 </div>
                 <div class="col-auto">
                   <label class="input-group-text col-form-label" for="inputMainImage" style="color:black;">Завантажити</label>
@@ -82,13 +82,11 @@
 <script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
 <script th:src="@{/assets/vendor/js/bootstrap.js}"></script>
 <script th:src="@{/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js}"></script>
-<script th:src="@{/assets/vendor/libs/hammer/hammer.js}"></script>
 <script th:src="@{/assets/vendor/js/menu.js}"></script>
 <script th:src="@{/assets/js/main.js}"></script>
 <script th:src="@{/assets/functions/logout.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
 <script th:src="@{/assets/vendor/libs/autosize/autosize.js}"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/i18n/uk.js"></script>
 <script th:inline="javascript">
 var link = [[${link}]];
 var id = '';
@@ -97,8 +95,9 @@ const myArray = currentUrl.split("/");
 var root = myArray[3];
   $(document).ready(function(){
     autosize($("#inputDescription"));
-        $('#selectCategory').select2({
+        $('#selectCategory').wrap('<div class="position-relative"></div>').select2({
             language: "uk",
+            dropdownParent: $('#selectCategory').parent(),
             placeholder: "Оберіть категорію",
             maximumInputLength: 100,
             ajax: {
@@ -127,9 +126,10 @@ var root = myArray[3];
             }
         });
 
-        $('#multipleSelect').select2({
+        $('#multipleSelect').wrap('<div class="position-relative"></div>').select2({
             language: "uk",
             placeholder: "Оберіть тип додатку",
+            dropdownParent: $('#multipleSelect').parent(),
             allowClear: true,
             maximumInputLength: 100,
             ajax: {

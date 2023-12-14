@@ -3,65 +3,67 @@
       class="light-style layout-navbar-fixed layout-menu-fixed"
       dir="ltr"
       data-theme="theme-default"
-      data-template="vertical-menu-template-no-customizer" >
+      data-template="vertical-menu-template-no-customizer">
 <head th:replace="~{fragments :: head}"></head>
 <body>
 <div class="layout-wrapper layout-content-navbar">
-  <div class="layout-container">
-    <aside th:replace="~{fragments :: sidebar(${pageNum})}"></aside>
-    <div class="layout-page">
-      <nav th:replace="~{fragments :: navbar(${image})}"></nav>
-      <div class="content-wrapper">
-        <div class="container-xxl flex-grow-1 container-p-y">
-          <div class="card py-5 px-5">
-            <form class="row g-3" style="color:black;">
-              <div class="col-md-6">
-                <label for="inputName" class="form-label">Ім'я</label>
-                <input id="inputName" class="form-control" maxlength="100">
-                <div class="text-danger" id="nameValidation"></div>
-              </div>
-              <div class="col-md-6" >
-                <label for="inputPhone" class="form-label">Номер телефону</label>
-                <input type="text" class="form-control inputPhone" id="inputPhone" maxlength="20" placeholder="+380994445566">
-                <div class="text-danger" id="phoneValidation"></div>
-              </div>
+    <div class="layout-container">
+        <aside th:replace="~{fragments :: sidebar(${pageNum})}"></aside>
+        <div class="layout-page">
+            <nav th:replace="~{fragments :: navbar(${image})}"></nav>
+            <div class="content-wrapper">
+                <div class="container-xxl flex-grow-1 container-p-y">
+                    <div class="card py-5 px-5">
+                        <form class="row g-3" style="color:black;">
+                            <div class="col-md-6">
+                                <label for="inputName" class="form-label">Ім'я</label>
+                                <input id="inputName" class="form-control" maxlength="100">
+                                <div class="text-danger" id="nameValidation"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="inputPhone" class="form-label">Номер телефону</label>
+                                <input type="text" class="form-control inputPhone" id="inputPhone" maxlength="20"
+                                       placeholder="+380994445566">
+                                <div class="text-danger" id="phoneValidation"></div>
+                            </div>
 
-              <div class="col-md-6" >
-                <label for="inputEmail" class="form-label">E-mail</label>
-                <input type="text" class="form-control" id="inputEmail" maxlength="100">
-                <div class="text-danger" id="emailValidation"></div>
-              </div>
+                            <div class="col-md-6">
+                                <label for="inputEmail" class="form-label">E-mail</label>
+                                <input type="text" class="form-control" id="inputEmail" maxlength="100">
+                                <div class="text-danger" id="emailValidation"></div>
+                            </div>
 
-              <div class="col-md-6" >
-                <label for="selectLanguage" class="form-label">Мова</label>
-                <select class="select2 form-select" aria-label=".form-select-lg example" id="selectLanguage">
-                </select>
-              </div>
-              <div class="col-md-6">
-                <label for="birthdate" class="form-label">Дата народження</label>
-                <input id="birthdate" class="form-control flatpickr" type="text">
-                <div class="text-danger" id="birthDateValidation"> </div>
-              </div>
+                            <div class="col-md-6">
+                                <label for="selectLanguage" class="form-label">Мова</label>
+                                <select class="select2 form-select" aria-label=".form-select-lg example"
+                                        id="selectLanguage">
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="birthdate" class="form-label">Дата народження</label>
+                                <input id="birthdate" class="form-control flatpickr" type="text">
+                                <div class="text-danger" id="birthDateValidation"></div>
+                            </div>
 
-              <div class="col-md-6" >
-                <label for="selectStatus" class="form-label">Статус</label>
-                <select class="form-select" aria-label=".form-select-lg example" id="selectStatus">
-                </select>
-              </div>
+                            <div class="col-md-6">
+                                <label for="selectStatus" class="form-label">Статус</label>
+                                <select class="form-select" aria-label=".form-select-lg example" id="selectStatus">
+                                </select>
+                            </div>
 
-              <div class="col-md-12 mt-5 d-flex justify-content-end">
-                <button type="button" class="btn btn-primary" onclick="edit()">Зберегти</button>
-              </div>
-            </form>
-            <div class="col-3" style="position: absolute; top:10px; right: 50px;">
-              <div class="alert alert-danger d-none" role="alert" id="error">Error happened</div>
+                            <div class="col-md-12 mt-5 d-flex justify-content-end">
+                                <button type="button" class="btn btn-primary" onclick="edit()">Зберегти</button>
+                            </div>
+                        </form>
+                        <div class="col-3" style="position: absolute; top:10px; right: 50px;">
+                            <div class="alert alert-danger d-none" role="alert" id="error">Error happened</div>
+                        </div>
+                        <div th:replace="~{fragments :: logoutModal}"></div>
+                    </div>
+                </div>
             </div>
-            <div th:replace="~{fragments :: logoutModal}"></div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 <script th:src="@{/assets/vendor/libs/jquery/jquery.js}"></script>
 <script th:src="@{/assets/vendor/libs/popper/popper.js}"></script>
@@ -78,24 +80,25 @@
 <script th:src="@{/assets/vendor/libs/flatpickr/flatpickr.js}"></script>
 <script src="https://npmcdn.com/flatpickr/dist/l10n/uk.js"></script>
 <script>
-var url = window.location.pathname;
-var id = url.substring(url.lastIndexOf('/') + 1);
-const currentUrl = window.location.href;
-const myArray = currentUrl.split("/");
-var root = myArray[3];
-  $(document).ready(function(){
+    var url = window.location.pathname;
+    var id = url.substring(url.lastIndexOf('/') + 1);
+    const currentUrl = window.location.href;
+    const myArray = currentUrl.split("/");
+    var root = myArray[3];
+    $(document).ready(function () {
         new Cleave('.inputPhone', {
-        numericOnly: true,
-        blocks: [0, 15],
-        delimiters: ["+"]
-    });
+            numericOnly: true,
+            blocks: [0, 15],
+            delimiters: ["+"]
+        });
 
-    $('#selectStatus').select2({
+        $('#selectStatus').wrap('<div class="position-relative"></div>').select2({
             language: "uk",
+            dropdownParent: $('#selectStatus').parent(),
             minimumResultsForSearch: -1,
             ajax: {
                 type: "GET",
-                url: "/"+root+"/users/getUserStatuses",
+                url: "/" + root + "/users/getUserStatuses",
                 processResults: function (response) {
                     return {
                         results: $.map(response, function (item) {
@@ -110,12 +113,13 @@ var root = myArray[3];
             }
         });
 
-        $('#selectLanguage').select2({
+        $('#selectLanguage').wrap('<div class="position-relative"></div>').select2({
             language: "uk",
+            dropdownParent: $('#selectStatus').parent(),
             minimumResultsForSearch: -1,
             ajax: {
                 type: "GET",
-                url: "/"+root+"/users/getUserLanguages",
+                url: "/" + root + "/users/getUserLanguages",
                 processResults: function (response) {
                     return {
                         results: $.map(response, function (item) {
@@ -129,105 +133,103 @@ var root = myArray[3];
 
             }
         });
-    $.ajax({
-					type : "GET",
-					url : "getUser/"+id,
-					success : function(response) {
-					    $('#inputName').val(response.name);
-					    $('#inputPhone').val(response.phoneNumber);
-					    $("#inputEmail").val(response.email);
-					    $("#birthdate").flatpickr({
-					      locale: "uk",
-                          maxDate: moment().subtract(17, 'years').format('DD.MM.YYYY'),
-					      defaultDate: moment(response.birthDate, 'YYYY-MM-DD').format('DD.MM.YYYY'),
-					      dateFormat: "d.m.Y"
-                        });
+        $.ajax({
+            type: "GET",
+            url: "getUser/" + id,
+            success: function (response) {
+                $('#inputName').val(response.name);
+                $('#inputPhone').val(response.phoneNumber);
+                $("#inputEmail").val(response.email);
+                $("#birthdate").flatpickr({
+                    locale: "uk",
+                    maxDate: moment().subtract(17, 'years').format('DD.MM.YYYY'),
+                    defaultDate: moment(response.birthDate, 'YYYY-MM-DD').format('DD.MM.YYYY'),
+                    dateFormat: "d.m.Y"
+                });
 
-                      var option = new Option(response.status.name, response.status.userStatus, true, true);
-                      $('#selectStatus').append(option).trigger('change');
+                var option = new Option(response.status.name, response.status.userStatus, true, true);
+                $('#selectStatus').append(option).trigger('change');
 
-                      var option = new Option(response.language.name, response.language.language, true, true);
-                      $('#selectLanguage').append(option).trigger('change');
+                var option = new Option(response.language.name, response.language.language, true, true);
+                $('#selectLanguage').append(option).trigger('change');
 
-					},
-					error : function(err) {
-						$("#error").removeClass("d-none");
-                          setTimeout(
-                          function()
-                          {
-                            $("#error").addClass("d-none");
-                          }, 4000);
-					}
-				});
+            },
+            error: function (err) {
+                $("#error").removeClass("d-none");
+                setTimeout(
+                    function () {
+                        $("#error").addClass("d-none");
+                    }, 4000);
+            }
+        });
 
     });
 
-    $('#inputName').on('keypress', function(e) {
+    $('#inputName').on('keypress', function (e) {
         if (e.which == 32)
             return false;
     });
 
-    function edit(){
-    $("#nameValidation").text("");
-	$("#inputName").removeClass("is-invalid");
-	$("#phoneValidation").text("");
-	$("#inputPhone").removeClass("is-invalid");
-	$("#birthDateValidation").text("");
-	$("#birthdate").removeClass("is-invalid");
-	$("#emailValidation").text("");
-	$("#inputEmail").removeClass("is-invalid");
-	if($("#birthdate").val().localeCompare('') == 0){
-	  var d = null;
-	} else {
-	  var d = moment($("#birthdate").val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
-	}
-      $.ajax({
-					type : "POST",
-					url : "editUser",
-					data: {
-                        id: id,
-                        name: $("#inputName").val(),
-                        phoneNumber: $("#inputPhone").val(),
-                        birthDate: d,
-                        email: $("#inputEmail").val(),
-                        language: $('#selectLanguage').val(),
-                        status: $('#selectStatus').val()
-                    },
-					success : function(response) {
-                        window.location.href = "/"+root+'/users';
-					},
-					error : function(XMLHttpRequest, textStatus, errorThrown) {
-                      const map = XMLHttpRequest.responseJSON;
-                      if(XMLHttpRequest.status == 400) {
-                        for (const [key, value] of Object.entries(map)) {
-                          if(key.localeCompare('name') == 0 ){
+    function edit() {
+        $("#nameValidation").text("");
+        $("#inputName").removeClass("is-invalid");
+        $("#phoneValidation").text("");
+        $("#inputPhone").removeClass("is-invalid");
+        $("#birthDateValidation").text("");
+        $("#birthdate").removeClass("is-invalid");
+        $("#emailValidation").text("");
+        $("#inputEmail").removeClass("is-invalid");
+        if ($("#birthdate").val().localeCompare('') == 0) {
+            var d = null;
+        } else {
+            var d = moment($("#birthdate").val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
+        }
+        $.ajax({
+            type: "POST",
+            url: "editUser",
+            data: {
+                id: id,
+                name: $("#inputName").val(),
+                phoneNumber: $("#inputPhone").val(),
+                birthDate: d,
+                email: $("#inputEmail").val(),
+                language: $('#selectLanguage').val(),
+                status: $('#selectStatus').val()
+            },
+            success: function (response) {
+                window.location.href = "/" + root + '/users';
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                const map = XMLHttpRequest.responseJSON;
+                if (XMLHttpRequest.status == 400) {
+                    for (const [key, value] of Object.entries(map)) {
+                        if (key.localeCompare('name') == 0) {
                             $("#nameValidation").text(value);
                             $("#inputName").addClass("is-invalid");
-                          }
-                          if(key.localeCompare('phoneNumber') == 0){
+                        }
+                        if (key.localeCompare('phoneNumber') == 0) {
                             $("#phoneValidation").text(value);
                             $("#inputPhone").addClass("is-invalid");
-                          }
-                          if(key.localeCompare('birthDate') == 0){
+                        }
+                        if (key.localeCompare('birthDate') == 0) {
                             $("#birthDateValidation").text(value);
                             $("#birthdate").addClass("is-invalid");
-                          }
-                          if(key.localeCompare('email') == 0){
+                        }
+                        if (key.localeCompare('email') == 0) {
                             $("#emailValidation").text(value);
                             $("#inputEmail").addClass("is-invalid");
-                          }
                         }
-                      } else {
-                        $("#error").removeClass("d-none");
-                        setTimeout(
-                                function () {
-                                  $("#error").addClass("d-none");
-                                }, 4000);
-                      }
-					}
-				});
+                    }
+                } else {
+                    $("#error").removeClass("d-none");
+                    setTimeout(
+                        function () {
+                            $("#error").addClass("d-none");
+                        }, 4000);
+                }
+            }
+        });
     }
-
 
 
 </script>
