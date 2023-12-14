@@ -16,6 +16,7 @@ import project.model.userModel.UserResponse;
 import project.repository.UserRepository;
 import project.service.UserService;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -58,15 +59,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserDTO> searchUser(String phone, UserStatus status, Pageable pageable) {
+    public Page<UserDTO> searchUser(String phone, UserStatus status, LocalDate date, Pageable pageable) {
         logger.info("searchUser() - Finding users for phone "+ phone + " and status "+status);
         Page<User> users;
-        if(status != null  &&  (phone == null || phone.equals(""))) {
-            users = userRepository.findAll(where(byStatus(status).and(byDeleted())),pageable);
-        } else if((phone != null && !phone.equals(""))  && status == null){
+        if(status != null  &&  (phone == null || phone.equals("")) && date == null) {
+            users = userRepository.findAll(byStatus(status).and(byDeleted()),pageable);
+        } else if((phone != null && !phone.equals(""))  && status == null && date == null) {
             users = userRepository.findAll(where(byPhoneNumberLike(phone).and(byDeleted())),pageable);
-        } else if((phone != null && !phone.equals("")) && status != null) {
+        } else if(date != null && status == null && (phone == null || phone.equals(""))) {
+            users = userRepository.findAll(where(byBirthDate(date).and(byDeleted())),pageable);
+        } else if(date != null  &&  (phone != null && !phone.equals("")) && status == null){
+            users = userRepository.findAll(where(byPhoneNumberLike(phone).and(byBirthDate(date)).and(byDeleted())),pageable);
+        } else if(date != null  &&  (phone == null || phone.equals("")) && status != null) {
+            users = userRepository.findAll(where(byStatus(status).and(byBirthDate(date)).and(byDeleted())), pageable);
+        } else if(status != null  &&  (phone != null && !phone.equals("")) && date == null) {
             users = userRepository.findAll(where(byStatus(status).and(byPhoneNumberLike(phone).and(byDeleted()))),pageable);
+        } else if((phone != null && !phone.equals("")) && status != null && date != null) {
+            users = userRepository.findAll(where(byStatus(status).and(byPhoneNumberLike(phone)).and(byBirthDate(date)).and(byDeleted())),pageable);
         } else {
             users = userRepository.findAll(byDeleted(),pageable);
         }

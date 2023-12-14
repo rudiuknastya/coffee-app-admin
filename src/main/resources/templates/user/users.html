@@ -25,9 +25,13 @@
                                 </select>
                             </div>
                             <div class="row col-11">
-                                <div class="col-9">
+                                <div class="col-6 ps-0 pe-2">
                                     <input class="form-control me-2" type="search" id="searchInput"
                                            placeholder="Пошук за номером телефону" aria-label="Search" maxlength="100">
+                                </div>
+                                <div class="col px-0">
+                                    <input id="birthDate" placeholder="Оберіть дату" class="form-control" type="text"
+                                           autocomplete="off">
                                 </div>
                                 <div class="col-3">
                                     <select class="form-select" id="statusSelect">
@@ -100,6 +104,8 @@
 <script th:src="@{/assets/functions/logout.js}"></script>
 <script th:src="@{/assets/vendor/libs/select2/select2.js}"></script>
 <script th:src="@{/assets/vendor/libs/moment/moment.js}"></script>
+<script th:src="@{/assets/vendor/libs/flatpickr/flatpickr.js}"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/uk.js"></script>
 <script>
     var page = 0;
     var toSearch = false;
@@ -114,6 +120,11 @@
             placeholder: "Оберіть статус",
             dropdownParent: $('#statusSelect').parent(),
             allowClear: true
+        });
+        $("#birthDate").flatpickr({
+            locale: "uk",
+            maxDate: moment().subtract(17, 'years').format('DD.MM.YYYY'),
+            dateFormat: "d.m.Y"
         });
         getUsers(0);
     });
@@ -325,6 +336,15 @@
         selectValue = $(this).val();
         searchAndFilter(0);
     });
+    var dateValue;
+    $('#birthDate').on("change", function () {
+        if ($(this).val().localeCompare('') == 0) {
+            dateValue = null;
+        } else {
+            dateValue = moment($(this).val(), 'DD.MM.YYYY').format('YYYY-MM-DD');
+        }
+        searchAndFilter(0);
+    });
 
     function searchAndFilter(currentPage) {
         toSearch = true;
@@ -335,7 +355,8 @@
                 page: currentPage,
                 size: $('#entitySelect').val(),
                 searchValue: searchValue,
-                status: selectValue
+                status: selectValue,
+                date: dateValue
             },
             success: function (response) {
                 $('.tr').remove();

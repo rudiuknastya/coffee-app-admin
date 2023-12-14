@@ -22,6 +22,7 @@ import project.service.AdminService;
 import project.service.UserService;
 import project.serviceImpl.AdminServiceImpl;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -52,9 +53,9 @@ public class UserController {
         return userService.getUsers(pageable);
     }
     @GetMapping("/searchUsers")
-    public @ResponseBody Page<UserDTO> searchUsers(@RequestParam("page")int page,@RequestParam("size")int size, @RequestParam(name="searchValue", required = false) String phone, @RequestParam(name="status", required = false) UserStatus status){
+    public @ResponseBody Page<UserDTO> searchUsers(@RequestParam("page")int page,@RequestParam("size")int size, @RequestParam(name="searchValue", required = false) String phone, @RequestParam(name="status", required = false) UserStatus status, @RequestParam(name="date", required = false) LocalDate date){
         Pageable pageable = PageRequest.of(page, size);
-        return userService.searchUser(phone, status, pageable);
+        return userService.searchUser(phone, status, date, pageable);
     }
     @GetMapping("/deleteUser/{id}")
     public @ResponseBody ResponseEntity deleteUser(@PathVariable Long id){

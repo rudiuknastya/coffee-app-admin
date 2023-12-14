@@ -4,6 +4,8 @@ import org.springframework.data.jpa.domain.Specification;
 import project.entity.User;
 import project.entity.UserStatus;
 
+import java.time.LocalDate;
+
 public interface UserSpecification {
     static Specification<User> byDeleted(){
         return (root, query, builder) ->
@@ -16,5 +18,9 @@ public interface UserSpecification {
     static Specification<User> byStatus(UserStatus status){
         return (root, query, builder) ->
                 builder.equal(root.get("status"), status);
+    }
+    static Specification<User> byBirthDate(LocalDate date){
+        return (root, query, builder) ->
+                builder.equal(root.get("birthDate"), date);
     }
 }
