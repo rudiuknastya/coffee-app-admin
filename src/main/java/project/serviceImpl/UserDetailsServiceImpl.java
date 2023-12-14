@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import project.entity.Admin;
+import project.model.adminModel.AdminDetails;
 import project.repository.AdminRepository;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -16,11 +17,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username){
-        Admin admin = adminRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not exists by email"));
-        UserDetails userInDetails = org.springframework.security.core.userdetails.User.withUsername(admin.getEmail())
-                .password(admin.getPassword())
-                .roles(admin.getRole().toString())
-                .build();
-        return userInDetails;
+        Admin admin = adminRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("Admin not exists by email"));
+        return new AdminDetails(admin);
     }
 }
