@@ -3,6 +3,7 @@ package project.serviceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -38,8 +39,8 @@ public class AdminServiceImpl implements AdminService {
         this.adminRepository = adminRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
-//    @Value("${upload.path}")
-    private String uploadPath = "C:\\Users\\Anastassia\\IdeaProjects\\Coffee-app-admin\\uploads";
+    @Value("${upload.path}")
+    private String uploadPath;
     private Logger logger = LogManager.getLogger("serviceLogger");
     @Override
     public Page<AdminDTO> getAdmins(Pageable pageable, String email) {
@@ -206,18 +207,5 @@ public class AdminServiceImpl implements AdminService {
         File file = new File(uploadPath+"/"+name);
         file.delete();
     }
-    private void saveImage(Admin admin) throws IOException {
-        File uploadDir = new File(uploadPath);
-        if (!uploadDir.exists()) {
-            uploadDir.mkdir();
-        }
-        File file = new File("src/main/resources/static/assets/img/avatars/1.png");
-        String uuidFile = UUID.randomUUID().toString();
-        String uniqueName = uuidFile+"."+file.getName();
-        //file.renameTo()
-        admin.setImage(uniqueName);
-        Path path = Paths.get(uploadPath+"/"+uniqueName);
 
-
-    }
 }
