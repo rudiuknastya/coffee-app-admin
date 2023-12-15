@@ -30,7 +30,7 @@ public class ValidationExceptionHandler {
                 }
             }
             String errorMessage = error.getDefaultMessage();
-            if(errorMessage.contains("BigDecimal")){
+            if(errorMessage.contains("String")){
                 errorMessage = "Некоректний тип";
             }
             errors.put(fieldName, errorMessage);

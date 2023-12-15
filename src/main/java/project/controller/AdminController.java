@@ -1,8 +1,7 @@
 package project.controller;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,8 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import project.model.adminModel.*;
@@ -144,9 +141,8 @@ public class AdminController {
         return adminService.getProfileResponseByEmail(email);
     }
     @PostMapping("/editProfile")
-    public @ResponseBody ResponseEntity<?> editProfile(@Valid @ModelAttribute("profile") ProfileDTO profileDTO, @RequestParam("oldPassword")String oldPassword, @RequestParam("newPassword")String newPassword,
-                                                      @RequestParam("confirmNewPassword")String confirmNewPassword, @ValidFile @RequestParam(name = "profileImage", required = false) MultipartFile profileImage) throws IOException {
-        adminService.updateAdminProfile(profileDTO,newPassword,confirmNewPassword,oldPassword,profileImage);
+    public @ResponseBody ResponseEntity<?> editProfile(@Valid @ModelAttribute("profile") ProfileRequest profileRequest, @ValidFile @RequestParam(name = "profileImage", required = false) MultipartFile profileImage) throws IOException {
+        adminService.updateAdminProfile(profileRequest,profileImage);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

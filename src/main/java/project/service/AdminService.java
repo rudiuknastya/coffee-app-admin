@@ -21,7 +21,7 @@ public interface AdminService {
     Page<AdminDTO> searchAdmins(String input, Role role,String email, Pageable pageable);
     void deleteAdmin(Long id);
     void updateAdmin(AdminRequest adminRequest);
-    void updateAdminProfile(ProfileDTO profileDTO, String newPassword, String confirmNewPassword, String oldPassword, MultipartFile file) throws IOException;
+    void updateAdminProfile(ProfileRequest profileRequest, MultipartFile file) throws IOException;
     Long getAdminsCount();
     void createFirstAdmin();
     void createAndSaveAdmin(SaveAdminRequest adminRequest);

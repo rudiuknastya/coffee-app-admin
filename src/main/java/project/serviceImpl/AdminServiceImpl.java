@@ -144,19 +144,19 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void updateAdminProfile(ProfileDTO profileDTO, String newPassword, String confirmNewPassword, String oldPassword, MultipartFile file) throws IOException {
+    public void updateAdminProfile(ProfileRequest profileRequest, MultipartFile file) throws IOException {
         logger.info("updateAdminProfile() - Updating admin profile");
-        Admin admin = adminRepository.findById(profileDTO.getId()).orElseThrow(EntityNotFoundException::new);
-        admin.setFirstName(profileDTO.getFirstName());
-        admin.setLastName(profileDTO.getLastName());
-        admin.setEmail(profileDTO.getEmail());
-        admin.setBirthDate(profileDTO.getBirthDate());
-        admin.setCity(profileDTO.getCity());
+        Admin admin = adminRepository.findById(profileRequest.getId()).orElseThrow(EntityNotFoundException::new);
+        admin.setFirstName(profileRequest.getFirstName());
+        admin.setLastName(profileRequest.getLastName());
+        admin.setEmail(profileRequest.getEmail());
+        admin.setBirthDate(profileRequest.getBirthDate());
+        admin.setCity(profileRequest.getCity());
         if(file != null) {
             updateImage(file, admin);
         }
-        if(!newPassword.equals("") && !confirmNewPassword.equals("") && !oldPassword.equals("") && newPassword.equals(confirmNewPassword)){
-            admin.setPassword(bCryptPasswordEncoder.encode(newPassword));
+        if(!profileRequest.getNewPassword().equals("") && !profileRequest.getConfirmNewPassword().equals("") && !profileRequest.getOldPassword().equals("") && profileRequest.getNewPassword().equals(profileRequest.getConfirmNewPassword())){
+            admin.setPassword(bCryptPasswordEncoder.encode(profileRequest.getNewPassword()));
         }
         adminRepository.save(admin);
         logger.info("updateAdminProfile() - Admin profile was updated");

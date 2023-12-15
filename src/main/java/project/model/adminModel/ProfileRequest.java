@@ -12,7 +12,7 @@ import java.time.LocalDate;
         id = "id",
         email = "email"
 )
-public class ProfileDTO {
+public class ProfileRequest {
     private Long id;
     @NotEmpty(message = "Поле не може бути порожнім")
     @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
@@ -28,6 +28,36 @@ public class ProfileDTO {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
     private String city;
+    @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
+    private String oldPassword;
+    @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
+    private String newPassword;
+    @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
+    private String confirmNewPassword;
+
+    public String getOldPassword() {
+        return oldPassword;
+    }
+
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
+    }
+
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public String getConfirmNewPassword() {
+        return confirmNewPassword;
+    }
+
+    public void setConfirmNewPassword(String confirmNewPassword) {
+        this.confirmNewPassword = confirmNewPassword;
+    }
 
     public Long getId() {
         return id;
