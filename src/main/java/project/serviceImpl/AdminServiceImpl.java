@@ -1,6 +1,7 @@
 package project.serviceImpl;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -180,6 +181,7 @@ public class AdminServiceImpl implements AdminService {
         admin.setLastName("");
         admin.setCity("");
         admin.setBirthDate(LocalDate.now());
+        saveImage(admin);
         adminRepository.save(admin);
         logger.info("createFirstAdmin() - First admin was created");
     }
@@ -189,6 +191,7 @@ public class AdminServiceImpl implements AdminService {
         logger.info("createAndSaveAdmin() - Creating and saving admin");
         Admin admin = AdminMapper.ADMIN_MAPPER.saveAdminRequestToAdmin(adminRequest);
         admin.setPassword(bCryptPasswordEncoder.encode(adminRequest.getNewPassword()));
+        saveImage(admin);
         adminRepository.save(admin);
         logger.info("createAndSaveAdmin() - Admin was created and saved");
     }
@@ -207,5 +210,19 @@ public class AdminServiceImpl implements AdminService {
         File file = new File(uploadPath+"/"+name);
         file.delete();
     }
-
+    private void saveImage(Admin admin){
+        File file = new File("src/main/resources/static/assets/img/avatars/1.png");
+        String uuidFile = UUID.randomUUID().toString();
+        String uniqueName = uuidFile+"."+file.getName();
+        File copyDirectory = new File(uploadPath);
+        File newFile = new File(uploadPath+"/"+uniqueName);
+        admin.setImage(uniqueName);
+        try {
+            FileUtils.copyFileToDirectory(file, copyDirectory);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        File copiedFile = new File(uploadPath+"/1.png");
+        copiedFile.renameTo(newFile);
+    }
 }
