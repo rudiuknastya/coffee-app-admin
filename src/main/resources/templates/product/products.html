@@ -159,10 +159,13 @@
                 var count = response.pageable.pageNumber*response.size+1;
                 for (i = 0; i < data.length; i++) {
                     var st;
+                    var statusTd;
                     if (data[i].status == true) {
-                        st = 'Увім'
+                        st = 'Увім';
+                        statusTd = '</td> <td> <span class="badge bg-label-primary">';
                     } else {
-                        st = 'Вимк'
+                        st = 'Вимк';
+                        statusTd = '</td> <td> <span class="badge bg-label-danger">';
                     }
                     $("#myTable")
                         .append(
@@ -174,7 +177,7 @@
                             + data[i].price
                             + '</td> <td>'
                             + data[i].categoryName
-                            + '</td> <td>'
+                            + statusTd
                             + st
                             + '</td> <td><a href="products/edit/' + data[i].id + '" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
                             + data[i].id
@@ -363,10 +366,14 @@
                 data = response.content;
                 var count = response.pageable.pageNumber*response.size+1;
                 for (i = 0; i < data.length; i++) {
+                    var statusTd;
+                    var st;
                     if (data[i].status == true) {
-                        st = 'Увім'
+                        st = 'Увім';
+                        statusTd = '</td> <td> <span class="badge bg-label-primary">';
                     } else {
-                        st = 'Вимк'
+                        st = 'Вимк';
+                        statusTd = '</td> <td> <span class="badge bg-label-danger">';
                     }
                     $("#myTable")
                         .append(
@@ -378,7 +385,7 @@
                             + data[i].price
                             + '</td> <td>'
                             + data[i].categoryName
-                            + '</td> <td>'
+                            + statusTd
                             + st
                             + '</td> <td><a href="products/edit/' + data[i].id + '" role="button" class="btn btn-primary" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" onclick="openDeleteModal('
                             + data[i].id

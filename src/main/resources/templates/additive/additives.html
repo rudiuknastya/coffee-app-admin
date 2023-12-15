@@ -249,13 +249,16 @@
                 $('.tr').remove();
                 $('ul.pagination li').remove();
                 data = response.content;
-                console.log(response.pageable.pageNumber);
                 var count = response.pageable.pageNumber*response.size+1;
                 for (i = 0; i < data.length; i++) {
+                    var st;
+                    var statusTd;
                     if (data[i].status == true) {
                         st = 'Увім'
+                        statusTd = '</td> <td> <span class="badge bg-label-primary">';
                     } else {
                         st = 'Вимк'
+                        statusTd = '</td> <td> <span class="badge bg-label-danger">';
                     }
                     $("#myTable")
                         .append(
@@ -267,7 +270,7 @@
                             + data[i].price
                             + '</td> <td>'
                             + data[i].additiveTypeName
-                            + '</td> <td>'
+                            + statusTd
                             + st
                             + '</td> <td><button type="button" class="btn btn-primary" title="Редагувати" onclick="openEditModal('
                             + data[i].id
@@ -678,10 +681,14 @@
                 data = response.content;
                 var count = response.pageable.pageNumber*response.size+1;
                 for (i = 0; i < data.length; i++) {
+                    var st;
+                    var statusTd;
                     if (data[i].status == true) {
                         st = 'Увім'
+                        statusTd = '</td> <td> <span class="badge bg-label-primary">';
                     } else {
                         st = 'Вимк'
+                        statusTd = '</td> <td> <span class="badge bg-label-danger">';
                     }
                     $("#myTable")
                         .append(
@@ -693,7 +700,7 @@
                             + data[i].price
                             + '</td> <td>'
                             + data[i].additiveTypeName
-                            + '</td> <td>'
+                            + statusTd
                             + st
                             + '</td> <td><button type="button" class="btn btn-primary" title="Редагувати" onclick="openEditModal('
                             + data[i].id

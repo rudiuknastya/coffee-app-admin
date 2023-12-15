@@ -192,10 +192,13 @@
                 var count = response.pageable.pageNumber*response.size+1;
                 for (i = 0; i < data.length; i++) {
                     var st;
+                    var statusTd;
                     if (data[i].status == true) {
                         st = 'Увім'
+                        statusTd = '</td> <td> <span class="badge bg-label-primary">';
                     } else {
                         st = 'Вимк'
+                        statusTd = '</td> <td> <span class="badge bg-label-danger">';
                     }
                     $("#myTable")
                         .append(
@@ -205,9 +208,9 @@
                             + data[i].name
                             + '</td> <td>'
                             + data[i].goodsQuantity
-                            + '</td> <td>'
+                            + statusTd
                             + st
-                            + '</td> <td><button type="button" class="btn btn-primary" title="Редагувати" onclick="openEditModal('
+                            + '</span></td> <td><button type="button" class="btn btn-primary" title="Редагувати" onclick="openEditModal('
                             + data[i].id
                             + ');"><i class="ti ti-pencil"></i></button> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
                             + data[i].id
@@ -499,10 +502,13 @@
                 var count = response.pageable.pageNumber * response.size + 1;
                 for (i = 0; i < data.length; i++) {
                     var st;
+                    var statusTd;
                     if (data[i].status == true) {
                         st = 'Увім'
+                        statusTd = '</td> <td> <span class="badge bg-label-primary">';
                     } else {
                         st = 'Вимк'
+                        statusTd = '</td> <td> <span class="badge bg-label-danger">';
                     }
                     $("#myTable")
                         .append(
@@ -512,9 +518,9 @@
                             + data[i].name
                             + '</td> <td>'
                             + data[i].goodsQuantity
-                            + '</td> <td>'
+                            + statusTd
                             + st
-                            + '</td> <td><button type="button" class="btn btn-primary" title="Редагувати" onclick="openEditModal('
+                            + '</span></td> <td><button type="button" class="btn btn-primary" title="Редагувати" onclick="openEditModal('
                             + data[i].id
                             + ');"><i class="ti ti-pencil"></i></button> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
                             + data[i].id
