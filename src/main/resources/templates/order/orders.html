@@ -386,7 +386,8 @@
             success: function (response) {
                 $('.tr').remove();
                 $('ul.pagination li').remove();
-                data = response.content
+                data = response.content;
+                var count = response.pageable.pageNumber * response.size + 1;
                 for (i = 0; i < data.length; i++) {
                     var date = moment(data[i].orderDate).format('DD.MM.YYYY');
                     if (data[i].status.localeCompare('Відмінено') != 0) {
@@ -411,6 +412,8 @@
                     $("#myTable")
                         .append(
                             '<tr class="tr"> <td>'
+                            + count
+                            + '</td> <td>'
                             + data[i].name
                             + '</td> <td>'
                             + data[i].locationAddress
@@ -421,7 +424,7 @@
                             + statusTd
                             + data[i].status
                             + '</span></td> <td>' + canc + '<a href="orders/orderHistory/' + data[i].id + '" role="button" class="btn btn-warning" title="Історія замовлень" style="color: white"><i class="ti ti-list"></i></a> </td> </tr>');
-
+                    count++;
                 }
 
                 paginationType = 2;

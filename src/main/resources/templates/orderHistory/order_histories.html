@@ -328,7 +328,8 @@
             success: function (response) {
                 $('.tr').remove();
                 $('ul.pagination li').remove();
-                data = response.content
+                data = response.content;
+                var count = response.pageable.pageNumber*response.size+1;
                 for (i = 0; i < data.length; i++) {
                     var date = moment(data[i].eventDate).format('DD.MM.YYYY');
                     if (data[i].comment == null) {
@@ -339,6 +340,8 @@
                     $("#myTable")
                         .append(
                             '<tr class="tr"> <td>'
+                            + count
+                            + '</td> <td>'
                             + data[i].event
                             + '</td> <td>'
                             + date
@@ -349,7 +352,7 @@
                             + '</td> <td><button type="button" class="btn btn-primary" title="Редагувати" onclick="openEditModal('
                             + data[i].id
                             + ');"><i class="ti ti-pencil"></i></button></td> </tr>');
-
+                    count++;
                 }
 
                 paginationType = 2;

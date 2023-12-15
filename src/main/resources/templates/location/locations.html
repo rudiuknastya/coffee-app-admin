@@ -353,11 +353,14 @@
             success: function (response) {
                 $('.tr').remove();
                 $('ul.pagination li').remove();
-                data = response.content
+                data = response.content;
+                var count = response.pageable.pageNumber * response.size + 1;
                 for (i = 0; i < data.length; i++) {
                     $("#locationsTable")
                         .append(
                             '<tr class="tr"> <td>'
+                            + count
+                            + '</td> <td>'
                             + data[i].city
                             + '</td> <td>'
                             + data[i].address
@@ -366,7 +369,7 @@
                             + '</td> <td><a href="locations/edit/' + data[i].id + '" role="button" class="btn btn-primary" title="Редагувати" style="color: white"><i class="ti ti-pencil"></i></a> <button type="button" class="btn btn-danger" title="Видалити" onclick="openModal('
                             + data[i].id
                             + ');" ><i class="ti ti-trash"></button></td> </tr>');
-
+                    count++;
                 }
 
                 paginationType = 2;

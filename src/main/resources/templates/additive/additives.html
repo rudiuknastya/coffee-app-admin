@@ -675,7 +675,8 @@
             success: function (response) {
                 $('.tr').remove();
                 $('ul.pagination li').remove();
-                data = response.content
+                data = response.content;
+                var count = response.pageable.pageNumber*response.size+1;
                 for (i = 0; i < data.length; i++) {
                     if (data[i].status == true) {
                         st = 'Увім'
@@ -685,6 +686,8 @@
                     $("#myTable")
                         .append(
                             '<tr class="tr"> <td>'
+                            + count
+                            + '</td> <td>'
                             + data[i].name
                             + '</td> <td>'
                             + data[i].price
@@ -697,7 +700,7 @@
                             + ');"><i class="ti ti-pencil"></i></button> <button type="button" class="btn btn-danger" title="Видалити" onclick="openDeleteModal('
                             + data[i].id
                             + ');" ><i class="ti ti-trash"></button></td> </tr>');
-
+                    count++;
                 }
 
                 paginationType = 2;
