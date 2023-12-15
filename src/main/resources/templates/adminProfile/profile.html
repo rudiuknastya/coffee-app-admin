@@ -208,11 +208,12 @@
                 setTimeout(
                     function () {
                         $("#successEdit").addClass("d-none");
+                        location.reload();
                     }, 4000);
                 $("#oldPassword").val("");
                 $("#confirmNewPassword").val("");
                 $("#newPassword").val("");
-
+                //location.reload();
 
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
