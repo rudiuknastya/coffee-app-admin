@@ -37,6 +37,15 @@ public class Admin {
     private Role role;
     @OneToOne(mappedBy = "admin", cascade = CascadeType.ALL)
     private PasswordResetToken passwordResetToken;
+    private Boolean isRoot;
+
+    public Boolean getRoot() {
+        return isRoot;
+    }
+
+    public void setRoot(Boolean root) {
+        isRoot = root;
+    }
 
     public PasswordResetToken getPasswordResetToken() {
         return passwordResetToken;

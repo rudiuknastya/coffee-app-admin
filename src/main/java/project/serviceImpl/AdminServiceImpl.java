@@ -8,10 +8,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 import project.entity.Admin;
 import project.entity.Role;
@@ -22,6 +24,7 @@ import project.service.AdminService;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -97,7 +100,9 @@ public class AdminServiceImpl implements AdminService {
                 .getPrincipal();
         String email = userDetails.getUsername();
         Admin admin = adminRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        if(!admin.getEmail().equals(email)){
+        if(admin.getEmail().equals(email) || (admin.getRoot() != null && !admin.getRoot())){
+            throw new HttpClientErrorException(HttpStatus.CONFLICT);
+        } else {
             adminRepository.deleteById(id);
         }
         logger.info("deleteAdmin() - Admin was deleted");
@@ -108,7 +113,7 @@ public class AdminServiceImpl implements AdminService {
         logger.info("getAdminResponseById() - Finding admin for admin response by id "+id);
         Admin admin = adminRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         AdminResponse adminResponse = null;
-        if(!admin.getEmail().equals("admin@gmail.com")){
+        if(admin.getRoot() == null){
             adminResponse = AdminMapper.adminToAdminResponse(admin);
         }
         logger.info("getAdminResponseById() - Admin was found");
@@ -165,7 +170,7 @@ public class AdminServiceImpl implements AdminService {
         if(file != null) {
             updateImage(file, admin);
         }
-        if(!admin.getEmail().equals("admin@gmail.com")){
+        if(admin.getRoot() == null){
             admin.setEmail(profileRequest.getEmail());
             if(!profileRequest.getNewPassword().equals("") && !profileRequest.getConfirmNewPassword().equals("") && !profileRequest.getOldPassword().equals("") && profileRequest.getNewPassword().equals(profileRequest.getConfirmNewPassword())){
                 admin.setPassword(bCryptPasswordEncoder.encode(profileRequest.getNewPassword()));
@@ -224,7 +229,8 @@ public class AdminServiceImpl implements AdminService {
         file.delete();
     }
     private void saveImage(Admin admin){
-        File file = new File("src/main/resources/static/assets/img/avatars/1.png");
+        URL url = this.getClass().getResource("/1.png");
+        File file = new File(String.valueOf(url));
         String uuidFile = UUID.randomUUID().toString();
         String uniqueName = uuidFile+"."+file.getName();
         File copyDirectory = new File(uploadPath);
