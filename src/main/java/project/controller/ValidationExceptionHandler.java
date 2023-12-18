@@ -25,6 +25,8 @@ public class ValidationExceptionHandler {
             } catch (ClassCastException e) {
                 if(error.getArguments()[1].toString().equals("id")){
                     fieldName = error.getArguments()[2].toString();
+                } else if(error.getArguments()[1].toString().equals("newPassword")){
+                    fieldName = error.getArguments()[2].toString();
                 } else {
                     fieldName = error.getArguments()[1].toString();
                 }

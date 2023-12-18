@@ -5,12 +5,22 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
+import project.validators.confirmPassword.PasswordMatching;
 import project.validators.emailValidation.EmailExist;
+import project.validators.notEmptyPasswords.NotEmptyOldPasswordPassword;
 
 import java.time.LocalDate;
 @EmailExist(
         id = "id",
         email = "email"
+)
+@NotEmptyOldPasswordPassword(
+        newPassword = "newPassword",
+        oldPassword = "oldPassword"
+)
+@PasswordMatching(
+        newPassword = "newPassword",
+        confirmNewPassword = "confirmNewPassword"
 )
 public class ProfileRequest {
     private Long id;
