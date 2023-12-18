@@ -8,13 +8,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import project.model.adminModel.*;
 import project.entity.Admin;
 import project.entity.Role;
 import project.mapper.AdminMapper;
+import project.model.adminModel.*;
 import project.repository.AdminRepository;
 import project.service.AdminService;
 
@@ -80,7 +82,7 @@ public class AdminServiceImpl implements AdminService {
         } else if((input != null && !input.equals("")) && role != null) {
             admins = adminRepository.findAll(where(byRole(role).and(byEmailNot(email)).and(byLastNameLike(input).or(byEmailLike(input)))),pageable);
         } else {
-            admins = adminRepository.findAll(pageable);
+            admins = adminRepository.findAll(byEmailNot(email),pageable);
         }
         List<AdminDTO> adminDTOS = AdminMapper.adminListToAdminDTOList(admins.getContent());
         Page<AdminDTO> adminDTOPage = new PageImpl<>(adminDTOS, pageable, admins.getTotalElements());
@@ -91,7 +93,13 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void deleteAdmin(Long id) {
         logger.info("deleteAdmin() - Deleting admin by id "+id);
-        adminRepository.deleteById(id);
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        String email = userDetails.getUsername();
+        Admin admin = adminRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        if(!admin.getEmail().equals(email)){
+            adminRepository.deleteById(id);
+        }
         logger.info("deleteAdmin() - Admin was deleted");
     }
 
@@ -99,7 +107,10 @@ public class AdminServiceImpl implements AdminService {
     public AdminResponse getAdminResponseById(Long id) {
         logger.info("getAdminResponseById() - Finding admin for admin response by id "+id);
         Admin admin = adminRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        AdminResponse adminResponse = AdminMapper.adminToAdminResponse(admin);
+        AdminResponse adminResponse = null;
+        if(!admin.getEmail().equals("admin@gmail.com")){
+            adminResponse = AdminMapper.adminToAdminResponse(admin);
+        }
         logger.info("getAdminResponseById() - Admin was found");
         return adminResponse;
     }
@@ -149,14 +160,16 @@ public class AdminServiceImpl implements AdminService {
         Admin admin = adminRepository.findById(profileRequest.getId()).orElseThrow(EntityNotFoundException::new);
         admin.setFirstName(profileRequest.getFirstName());
         admin.setLastName(profileRequest.getLastName());
-        admin.setEmail(profileRequest.getEmail());
         admin.setBirthDate(profileRequest.getBirthDate());
         admin.setCity(profileRequest.getCity());
         if(file != null) {
             updateImage(file, admin);
         }
-        if(!profileRequest.getNewPassword().equals("") && !profileRequest.getConfirmNewPassword().equals("") && !profileRequest.getOldPassword().equals("") && profileRequest.getNewPassword().equals(profileRequest.getConfirmNewPassword())){
-            admin.setPassword(bCryptPasswordEncoder.encode(profileRequest.getNewPassword()));
+        if(!admin.getEmail().equals("admin@gmail.com")){
+            admin.setEmail(profileRequest.getEmail());
+            if(!profileRequest.getNewPassword().equals("") && !profileRequest.getConfirmNewPassword().equals("") && !profileRequest.getOldPassword().equals("") && profileRequest.getNewPassword().equals(profileRequest.getConfirmNewPassword())){
+                admin.setPassword(bCryptPasswordEncoder.encode(profileRequest.getNewPassword()));
+            }
         }
         adminRepository.save(admin);
         logger.info("updateAdminProfile() - Admin profile was updated");
