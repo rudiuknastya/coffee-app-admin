@@ -408,9 +408,9 @@
     }
     $('#entitySelect').on("change", function () {
         if (toSearch == true) {
-            searchAndFilter(page);
+            searchAndFilter(0);
         } else {
-            getUsers(page);
+            getUsers(0);
         }
     })
 

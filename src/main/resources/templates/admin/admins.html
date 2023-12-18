@@ -386,9 +386,9 @@
 
     $('#entitySelect').on("change", function () {
         if (toSearch == true) {
-            searchAndFilter(page);
+            searchAndFilter(0);
         } else {
-            getAdmins(page);
+            getAdmins(0);
         }
     })
 
