@@ -20,7 +20,7 @@ import java.time.LocalDate;
 public class UserRequest {
     private Long id;
     @NotEmpty(message = "Поле не може бути порожнім")
-    @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
+    @Size(max=25, message = "Розмір поля має бути не більше 25 символів")
     private String name;
     @NotEmpty(message = "Поле не може бути порожнім ")
     @Size(max=13, message = "Розмір номеру має бути не більше 13 символів")
@@ -31,7 +31,7 @@ public class UserRequest {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
     @NotEmpty(message = "Поле не може бути порожнім ")
-    @Size(max=200, message = "Розмір поля має бути не більше 200 символів")
+    @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
     @Email(regexp = "[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\\.[a-z]{2,3}", message = "Невірний формат email")
     private String email;
 
