@@ -4,7 +4,8 @@ import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 import project.entity.Additive;
 import project.entity.AdditiveType;
-import project.entity.Location;
+
+import java.math.BigDecimal;
 
 public interface AdditiveSpecification {
     static Specification<Additive> byName(String name){
@@ -17,9 +18,17 @@ public interface AdditiveSpecification {
             return builder.equal(additiveJoin.get("id"), additiveType);
         };
     }
-    static Specification<Additive> byPrice(Integer price){
+    static Specification<Additive> byPriceBetween(BigDecimal from, BigDecimal to){
         return (root, query, builder) ->
-                builder.equal(root.get("price"), price);
+                builder.between(root.get("price"),from, to);
+    }
+    static Specification<Additive> byPriceGreaterThan(BigDecimal from){
+        return (root, query, builder) ->
+                builder.greaterThan(root.get("price"),from);
+    }
+    static Specification<Additive> byPriceLessThan(BigDecimal to){
+        return (root, query, builder) ->
+                builder.lessThan(root.get("price"),to);
     }
     static Specification<Additive> byDeleted(){
         return (root, query, builder) ->

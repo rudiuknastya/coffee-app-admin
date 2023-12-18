@@ -23,6 +23,7 @@ import project.service.AdditiveService;
 import project.service.AdditiveTypeService;
 import project.service.AdminService;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -87,8 +88,8 @@ public class AdditiveController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/searchAdditive")
-    public @ResponseBody Page<AdditiveDTO> searchAdditive(@RequestParam("page")int page,@RequestParam("size")int size, @RequestParam(name="searchValue", required = false) String input, @RequestParam(name="additiveType", required = false) Long additiveType){
+    public @ResponseBody Page<AdditiveDTO> searchAdditive(@RequestParam("page")int page, @RequestParam("size")int size, @RequestParam(name="searchValue", required = false) String input, @RequestParam(name="additiveType", required = false) Long additiveType, @RequestParam(value = "from", required = false) BigDecimal from, @RequestParam(value = "to", required = false)BigDecimal to){
         Pageable pageable = PageRequest.of(page,size);
-        return additiveService.searchAdditive(input, additiveType, pageable);
+        return additiveService.searchAdditive(input, additiveType, from, to, pageable);
     }
 }

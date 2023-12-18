@@ -18,6 +18,7 @@ import project.repository.AdditiveRepository;
 import project.repository.AdditiveTypeRepository;
 import project.service.AdditiveService;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static project.specifications.AdditiveSpecification.*;
@@ -91,34 +92,41 @@ public class AdditiveServiceImpl implements AdditiveService {
         return additiveRequest;
     }
     @Override
-    public Page<AdditiveDTO> searchAdditive(String input, Long additiveType, Pageable pageable) {
+    public Page<AdditiveDTO> searchAdditive(String input, Long additiveType, BigDecimal from, BigDecimal to, Pageable pageable) {
         logger.info("searchAdditive() - Finding additive for input "+input+" additive type "+additiveType);
-        Page<Additive> additives;
-        if((additiveType != null && !additiveType.equals(0L)) &&  (input == null || input.equals(""))){
-            additives = additiveRepository.findAll(byDeleted().and(byAdditiveType(additiveType)), pageable);
-        } else if((input != null && !input.equals(""))  && (additiveType == null || additiveType.equals(0L))) {
-            try {
-                Integer price = Integer.parseInt(input);
-                additives = additiveRepository.findAll(byDeleted().and(byPrice(price)),pageable);
-            } catch (NumberFormatException e) {
-                additives = additiveRepository.findAll(byDeleted().and(byName(input)),pageable);
-            }
-        } else if((input != null && !input.equals(""))  && (additiveType != null && !additiveType.equals(0L))){
-            try {
-                Integer price = Integer.parseInt(input);
-                additives = additiveRepository.findAll(byDeleted().and(byPrice(price).and(byAdditiveType(additiveType))),pageable);
-            } catch (NumberFormatException e) {
-                additives = additiveRepository.findAll(byDeleted().and(byName(input).and(byAdditiveType(additiveType))),pageable);
-            }
-        } else {
-            additives = additiveRepository.findAll(byDeleted(),pageable);
-        }
+        Page<Additive> additives = filterAdditives(input,additiveType,from,to,pageable);
         List<AdditiveDTO> additiveDTOS = AdditiveMapper.ADDITIVE_MAPPER.additiveListToDTOList(additives.getContent());
         Page<AdditiveDTO> additiveDTOPage = new PageImpl<>(additiveDTOS,pageable,additives.getTotalElements());
         logger.info("searchAdditive() - Additives were found");
         return additiveDTOPage;
     }
-
+    private Page<Additive> filterAdditives(String name, Long additiveType, BigDecimal from, BigDecimal to, Pageable pageable){
+        if(name == null  &&  additiveType == null && from != null && to != null){
+            return additiveRepository.findAll(byDeleted().and(byPriceBetween(from,to)), pageable);
+        } else if (name == null  &&  additiveType == null && from == null && to != null){
+            return additiveRepository.findAll(byDeleted().and(byPriceLessThan(to)), pageable);
+        } else if (name == null  &&  additiveType == null && from != null && to == null) {
+            return additiveRepository.findAll(byDeleted().and(byPriceGreaterThan(from)), pageable);
+        } else if (name != null  &&  additiveType == null && from != null && to != null) {
+            return additiveRepository.findAll(byDeleted().and(byPriceBetween(from,to)).and(byName(name)), pageable);
+        } else if (name != null  &&  additiveType == null && from == null && to != null){
+            return additiveRepository.findAll(byDeleted().and(byPriceLessThan(to)).and(byName(name)), pageable);
+        } else if (name != null  &&  additiveType == null && from != null && to == null) {
+            return additiveRepository.findAll(byDeleted().and(byPriceGreaterThan(from)).and(byName(name)), pageable);
+        }else if (name != null  &&  additiveType != null && from != null && to != null) {
+            return additiveRepository.findAll(byDeleted().and(byPriceBetween(from,to)).and(byName(name)).and(byAdditiveType(additiveType)), pageable);
+        } else if (name != null  &&  additiveType != null && from == null && to != null){
+            return additiveRepository.findAll(byDeleted().and(byPriceLessThan(to)).and(byName(name)).and(byAdditiveType(additiveType)), pageable);
+        } else if (name != null  &&  additiveType != null && from != null && to == null) {
+            return additiveRepository.findAll(byDeleted().and(byPriceGreaterThan(from)).and(byName(name)).and(byAdditiveType(additiveType)), pageable);
+        } else if (name != null  &&  additiveType != null && from == null && to == null) {
+            return additiveRepository.findAll(byDeleted().and(byName(name)).and(byAdditiveType(additiveType)), pageable);
+        } else if (name != null  &&  additiveType == null && from == null && to == null) {
+            return additiveRepository.findAll(byDeleted().and(byName(name)), pageable);
+        } else {
+            return additiveRepository.findAll(byDeleted(),pageable);
+        }
+    }
     @Override
     public List<Additive> getAdditivesForAdditiveType(Long id) {
         logger.info("getAdditivesForAdditiveType() - Finding additives for additive type with id "+id);

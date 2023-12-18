@@ -14,7 +14,14 @@
             <div class="content-wrapper">
                 <div class="container-xxl flex-grow-1 container-p-y">
                     <div class="card py-5 px-5">
-                        <h4>Додатки</h4>
+                        <div class="row">
+                            <h4 class="col-3">Додатки</h4>
+                            <div class="col-9 d-flex justify-content-end">
+                                <button type="button" id="createButton" class="btn btn-label-primary col-4 mb-3"><i
+                                        class="ti ti-plus"></i>Створити додаток
+                                </button>
+                            </div>
+                        </div>
                         <div class="row mb-4">
                             <div class="col pe-0">
                                 <select class="form-select" id="entitySelect">
@@ -25,18 +32,29 @@
                                 </select>
                             </div>
                             <div class="row col-11">
-                                <div class="col-5 ps-2 pe-2">
+                                <div class="col-4 ps-2 pe-0">
                                     <input class="form-control" type="search" id="searchInput"
-                                           placeholder="Пошук за назвою або ціною" aria-label="Search" maxlength="100">
+                                           placeholder="Пошук за назвою" aria-label="Search" maxlength="100">
                                 </div>
 
-                                <div class="col ps-0 pe-2">
+                                <div class="col ps-2 pe-2">
                                     <select class="form-select" id="atSelect">
                                     </select>
                                 </div>
-                                <button type="button" id="createButton" class="btn btn-label-primary col-3 me-3"><i
-                                        class="ti ti-plus"></i>Створити додаток
-                                </button>
+                                <div class="row col-5 pe-0 ps-2 d-flex justify-content-center">
+                                    <div class="row col-6 px-0 me-1">
+                                        <label for="from" class="col-sm-5 col-form-label px-0">Ціна  від</label>
+                                        <div class="col-sm-7 px-0">
+                                            <input class="form-control" type="number" id="from">
+                                        </div>
+                                    </div>
+                                    <div class="row col-6 pe-1">
+                                        <label for="to" class="col-sm-2 col-form-label px-0 mx-1">до</label>
+                                        <div class="col-sm-8 px-0">
+                                            <input class="form-control" type="number" id="to">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -663,6 +681,16 @@
         selectValue = $(this).val();
         searchAndFilter(0);
     });
+    var from;
+    $('#from').on("change", function () {
+        from = $(this).val();
+        searchAndFilter(0);
+    });
+    var to;
+    $('#to').on("change", function () {
+        to = $(this).val();
+        searchAndFilter(0);
+    });
 
     function searchAndFilter(currentPage) {
         search = true;
@@ -673,7 +701,9 @@
                 page: currentPage,
                 size: $('#entitySelect').val(),
                 searchValue: searchValue,
-                additiveType: selectValue
+                additiveType: selectValue,
+                from: from,
+                to: to
             },
             success: function (response) {
                 $('.tr').remove();

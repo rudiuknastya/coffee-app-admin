@@ -8,6 +8,7 @@ import project.model.additiveModel.AdditiveOrderResponse;
 import project.model.additiveModel.AdditiveOrderSelect;
 import project.model.additiveModel.AdditiveRequest;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface AdditiveService {
@@ -16,7 +17,7 @@ public interface AdditiveService {
     void createAdditive(AdditiveRequest additiveRequest);
     void updateAdditive(AdditiveRequest additiveRequest);
     Additive getAdditiveById(Long id);
-    Page<AdditiveDTO> searchAdditive(String input, Long additiveType, Pageable pageable);
+    Page<AdditiveDTO> searchAdditive(String input, Long additiveType, BigDecimal from, BigDecimal to, Pageable pageable);
     List<Additive> getAdditivesForAdditiveType(Long id);
     AdditiveRequest getAdditiveResponseById(Long id);
     AdditiveOrderResponse getAdditiveOrderResponseById(Long id);
