@@ -49,14 +49,38 @@
                                 </select>
                                 <div class="text-danger" id="roleValidation"></div>
                             </div>
-                            <div class="col-md-6">
-                                <input id="newPassword" class="form-control" type="password" placeholder="Пароль">
+                            <div class="col-md-6 form-password-toggle">
+                                <div class="input-group input-group-merge">
+                                    <input
+                                            type="password"
+                                            id="newPassword"
+                                            class="form-control"
+                                            name="password"
+                                            placeholder="Пароль"
+                                            aria-describedby="password"
+                                            maxlength="100"
+                                    >
+                                    <span class="input-group-text cursor-pointer"><i class="ti ti-eye-off"></i></span>
+                                </div>
+                                <div id="passwordHelpBlock" class="form-text">
+                                    Пароль має мати принаймні одну цифру, одну велику літеру, один спецсимвол ,./? та розмір більше 8
+                                </div>
                                 <div class="text-danger" id="newPasswordValidation"></div>
                             </div>
                             <div class="col-md-6"></div>
-                            <div class="col-md-6">
-                                <input id="confirmNewPassword" class="form-control" type="password"
-                                       placeholder="Підтвердити пароль">
+                            <div class="col-md-6 form-password-toggle">
+                                <div class="input-group input-group-merge">
+                                <input
+                                        type="password"
+                                        id="confirmNewPassword"
+                                        class="form-control"
+                                        name="password"
+                                        placeholder="Підтвердити пароль"
+                                        aria-describedby="password"
+                                        maxlength="100"
+                                >
+                                <span class="input-group-text cursor-pointer"><i class="ti ti-eye-off"></i></span>
+                                </div>
                                 <div class="text-danger" id="confirmNewPasswordValidation"></div>
                             </div>
 

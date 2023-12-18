@@ -47,10 +47,20 @@
                                 <input id="birthdate" class="form-control flatpickr" type="text">
                                 <div class="text-danger" id="birthDateValidation"></div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-6 form-password-toggle">
                                 <label for="oldPassword" class="form-label">Змінити пароль</label>
-                                <input id="oldPassword" class="form-control" type="password" maxlength="100"
-                                       placeholder="Старий пароль">
+                                <div class="input-group input-group-merge">
+                                    <input
+                                            type="password"
+                                            id="oldPassword"
+                                            class="form-control"
+                                            name="password"
+                                            placeholder="Старий пароль"
+                                            aria-describedby="password"
+                                            maxlength="100"
+                                    >
+                                    <span class="input-group-text cursor-pointer"><i class="ti ti-eye-off"></i></span>
+                                </div>
                                 <div class="text-danger" id="oldPasswordValidation"></div>
                             </div>
                             <div class="col-md-6">
@@ -58,14 +68,35 @@
                                 <select class="form-select" id="selectCity">
                                 </select>
                             </div>
-                            <div class="col-md-6">
-                                <input id="newPassword" class="form-control" type="password" maxlength="100" placeholder="Новий пароль">
+                            <div class="col-md-6 form-password-toggle">
+                                <div class="input-group input-group-merge">
+                                    <input
+                                            type="password"
+                                            id="newPassword"
+                                            class="form-control"
+                                            name="password"
+                                            placeholder="Новий пароль"
+                                            aria-describedby="password"
+                                            maxlength="100"
+                                    >
+                                    <span class="input-group-text cursor-pointer"><i class="ti ti-eye-off"></i></span>
+                                </div>
                                 <div class="text-danger" id="newPasswordValidation"></div>
                             </div>
                             <div class="col-md-6"></div>
-                            <div class="col-md-6">
-                                <input id="confirmNewPassword" class="form-control" type="password" maxlength="100"
-                                       placeholder="Підтвердити новий пароль">
+                            <div class="col-md-6 form-password-toggle">
+                                <div class="input-group input-group-merge">
+                                    <input
+                                            type="password"
+                                            id="confirmNewPassword"
+                                            class="form-control"
+                                            name="password"
+                                            placeholder="Підтвердити новий пароль"
+                                            aria-describedby="password"
+                                            maxlength="100"
+                                    >
+                                    <span class="input-group-text cursor-pointer"><i class="ti ti-eye-off"></i></span>
+                                </div>
                                 <div class="text-danger" id="confirmNewPasswordValidation"></div>
                             </div>
 
