@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,9 +24,9 @@ public class Additive {
     @ManyToOne
     @JoinColumn(name = "additive_type_id", referencedColumnName = "id")
     private AdditiveType additiveType;
-    @ManyToMany(mappedBy = "additives")
+    @ManyToMany(mappedBy = "additives",fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<OrderItem> orderItems;
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     public List<OrderItem> getOrderItems() {
         return orderItems;

@@ -3,6 +3,7 @@ package project.entity;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -28,7 +29,7 @@ public class OrderItem {
             joinColumns = { @JoinColumn(name = "order_item_id") },
             inverseJoinColumns = { @JoinColumn(name = "additive_id") }
     )
-    private List<Additive> additives;
+    private List<Additive> additives = new ArrayList<>();
 
     public Boolean getDeleted() {
         return deleted;

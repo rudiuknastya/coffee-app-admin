@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,7 +19,7 @@ public class AdditiveType {
     private Boolean status;
     @ManyToMany(mappedBy = "additiveTypes", fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<Product> products;
+    private List<Product> products = new ArrayList<>();
 
     public List<Product> getProducts() {
         return products;

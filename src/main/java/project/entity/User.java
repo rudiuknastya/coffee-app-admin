@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -40,13 +41,13 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
     private Boolean deleted;
-    @ManyToMany(cascade = { CascadeType.PERSIST})
+    @ManyToMany(cascade = { CascadeType.PERSIST},fetch = FetchType.LAZY)
     @JoinTable(
             name = "award",
             joinColumns = { @JoinColumn(name = "user_id") },
             inverseJoinColumns = { @JoinColumn(name = "product_id") }
     )
-    private List<Product> products;
+    private List<Product> products = new ArrayList<>();
 
     public List<Product> getProducts() {
         return products;

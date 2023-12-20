@@ -1,7 +1,9 @@
 package project.entity;
 
 public enum Language {
-    ENG("Англійська"), UKR("Українська"), SPA("Іспанська");
+    ENG("Англійська"),
+    UKR("Українська"),
+    SPA("Іспанська");
 
     Language(String languageName) {
         this.languageName = languageName;

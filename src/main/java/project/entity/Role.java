@@ -1,7 +1,9 @@
 package project.entity;
 
 public enum Role {
-    USER("Користувач"), ADMIN("Адмін"), MANAGER("Менеджер");
+    USER("Користувач"),
+    ADMIN("Адмін"),
+    MANAGER("Менеджер");
 
     Role(String roleName) {
         this.roleName = roleName;

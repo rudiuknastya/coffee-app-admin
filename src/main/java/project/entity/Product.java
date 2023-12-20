@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -33,8 +34,8 @@ public class Product {
             inverseJoinColumns = { @JoinColumn(name = "additive_type_id") }
     )
     private List<AdditiveType> additiveTypes;
-    @ManyToMany(mappedBy = "products")
-    private List<User> users;
+    @ManyToMany(mappedBy = "products", fetch = FetchType.LAZY)
+    private List<User> users = new ArrayList<>();
 
     public List<User> getUsers() {
         return users;
