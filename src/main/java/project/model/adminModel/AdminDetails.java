@@ -55,4 +55,12 @@ public class AdminDetails implements UserDetails {
     public String getFullName() {
         return admin.getFirstName()+" "+admin.getLastName();
     }
+
+    public Admin getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Admin admin) {
+        this.admin = admin;
+    }
 }

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -176,6 +177,10 @@ public class AdminServiceImpl implements AdminService {
                 admin.setPassword(bCryptPasswordEncoder.encode(profileRequest.getNewPassword()));
             }
         }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        AdminDetails adminDetails = (AdminDetails) authentication.getPrincipal();
+        adminDetails.getAdmin().setFirstName(profileRequest.getFirstName());
+        adminDetails.getAdmin().setLastName(profileRequest.getLastName());
         adminRepository.save(admin);
         logger.info("updateAdminProfile() - Admin profile was updated");
     }
