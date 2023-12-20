@@ -234,8 +234,8 @@ public class AdminServiceImpl implements AdminService {
         file.delete();
     }
     private void saveImage(Admin admin){
-        URL url = this.getClass().getResource("/1.png");
-        File file = new File(String.valueOf(url));
+        Path path = Paths.get("1.png");
+        File file = new File(path.toAbsolutePath().toUri());
         String uuidFile = UUID.randomUUID().toString();
         String uniqueName = uuidFile+"."+file.getName();
         File copyDirectory = new File(uploadPath);
