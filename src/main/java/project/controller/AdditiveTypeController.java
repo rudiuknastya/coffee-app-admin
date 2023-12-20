@@ -36,8 +36,6 @@ public class AdditiveTypeController {
         this.adminService = adminService;
     }
 
-    private int pageSize = 5;
-
     @GetMapping("/additiveTypes")
     public String additiveTypes(Model model){
         model.addAttribute("pageNum", 4);

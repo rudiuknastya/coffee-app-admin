@@ -21,6 +21,7 @@ import java.util.List;
 
 @Service
 public class AdditiveTypeServiceImpl implements AdditiveTypeService {
+    private Logger logger = LogManager.getLogger("serviceLogger");
     private final AdditiveTypeRepository additiveTypeRepository;
     private final AdditiveRepository additiveRepository;
 
@@ -28,8 +29,6 @@ public class AdditiveTypeServiceImpl implements AdditiveTypeService {
         this.additiveTypeRepository = additiveTypeRepository;
         this.additiveRepository = additiveRepository;
     }
-
-    private Logger logger = LogManager.getLogger("serviceLogger");
     @Override
     public Page<AdditiveTypeDTO> getAdditiveTypes(Pageable pageable) {
         logger.info("getAdditiveTypes() - Finding all additive types for page "+ pageable.getPageNumber());
@@ -41,7 +40,7 @@ public class AdditiveTypeServiceImpl implements AdditiveTypeService {
     @Override
     public AdditiveType getAdditiveTypeById(Long id) {
         logger.info("getAdditiveTypeById() - Finding additive type for id "+ id);
-        AdditiveType additiveType = additiveTypeRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        AdditiveType additiveType = additiveTypeRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Additive type was not found by id "+id));
         logger.info("getAdditiveTypeById() - Additive type was found");
         return additiveType;
     }
@@ -81,7 +80,7 @@ public class AdditiveTypeServiceImpl implements AdditiveTypeService {
     @Override
     public AdditiveTypeNameDTO getAdditiveTypeNameDTOById(Long id) {
         logger.info("getAdditiveTypeNameDTOById() - Finding additive type for additive type name dto by id "+ id);
-        AdditiveType additiveType = additiveTypeRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        AdditiveType additiveType = additiveTypeRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Additive type was not found by id "+id));
         AdditiveTypeNameDTO additiveTypeNameDTO = AdditiveTypeMapper.ADDITIVE_TYPE_MAPPER.additiveTypeToAdditiveTypeNameDTO(additiveType);
         logger.info("getAdditiveTypeNames() - Additive type name was found");
         return additiveTypeNameDTO;
@@ -99,8 +98,7 @@ public class AdditiveTypeServiceImpl implements AdditiveTypeService {
     public void updateAdditiveType(AdditiveTypeRequest additiveTypeRequest) {
         logger.info("updateAdditiveType() - Updating additive type");
         AdditiveType additiveTypeInDb = additiveTypeRepository.findById(additiveTypeRequest.getId()).orElseThrow(EntityNotFoundException::new);
-        additiveTypeInDb.setName(additiveTypeRequest.getName());
-        additiveTypeInDb.setStatus(additiveTypeRequest.getStatus());
+        AdditiveTypeMapper.ADDITIVE_TYPE_MAPPER.setAdditiveTypeRequest(additiveTypeInDb,additiveTypeRequest);
         additiveTypeRepository.save(additiveTypeInDb);
         logger.info("updateAdditiveType() - Additive type was updated");
     }
@@ -123,7 +121,7 @@ public class AdditiveTypeServiceImpl implements AdditiveTypeService {
     public void createAndSaveAdditiveType(AdditiveTypeRequest additiveTypeRequest) {
         logger.info("deleteAdditiveType() - Creating and saving additive type");
         AdditiveType additiveType = AdditiveTypeMapper.ADDITIVE_TYPE_MAPPER.additiveTypeRequestToadditiveType(additiveTypeRequest);
-        additiveType.setDeleted(false);
+        //additiveType.setDeleted(false);
         additiveTypeRepository.save(additiveType);
         logger.info("createAndSaveAdditiveType() - Additive type was created and saved");
     }
