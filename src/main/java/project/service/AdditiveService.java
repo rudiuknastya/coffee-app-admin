@@ -16,6 +16,7 @@ public interface AdditiveService {
     Additive saveAdditive(Additive additive);
     void createAdditive(AdditiveRequest additiveRequest);
     void updateAdditive(AdditiveRequest additiveRequest);
+    void deleteAdditiveById(Long id);
     Additive getAdditiveById(Long id);
     Page<AdditiveDTO> searchAdditive(String input, Long additiveType, BigDecimal from, BigDecimal to, Pageable pageable);
     List<Additive> getAdditivesForAdditiveType(Long id);

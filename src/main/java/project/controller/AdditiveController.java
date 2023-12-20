@@ -67,9 +67,7 @@ public class AdditiveController {
     }
     @GetMapping("/deleteAdditive/{id}")
     public @ResponseBody ResponseEntity deleteAdditive(@PathVariable Long id){
-        Additive additive = additiveService.getAdditiveById(id);
-        additive.setDeleted(true);
-        additiveService.saveAdditive(additive);
+        additiveService.deleteAdditiveById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

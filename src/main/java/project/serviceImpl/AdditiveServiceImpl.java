@@ -25,6 +25,7 @@ import static project.specifications.AdditiveSpecification.*;
 
 @Service
 public class AdditiveServiceImpl implements AdditiveService {
+    private Logger logger = LogManager.getLogger("serviceLogger");
     private final AdditiveRepository additiveRepository;
     private final AdditiveTypeRepository additiveTypeRepository;
 
@@ -32,8 +33,6 @@ public class AdditiveServiceImpl implements AdditiveService {
         this.additiveRepository = additiveRepository;
         this.additiveTypeRepository = additiveTypeRepository;
     }
-
-    private Logger logger = LogManager.getLogger("serviceLogger");
     @Override
     public Page<AdditiveDTO> getAllAdditives(Pageable pageable) {
         logger.info("getAllAdditives() - Finding all additives for page "+ pageable.getPageNumber());
@@ -55,8 +54,8 @@ public class AdditiveServiceImpl implements AdditiveService {
     @Override
     public void createAdditive(AdditiveRequest additiveRequest) {
         logger.info("createAdditive() - Creating additive");
-        Additive additive = AdditiveMapper.additiveRequestToAdditive(additiveRequest);
-        AdditiveType additiveType = additiveTypeRepository.findById(additiveRequest.getAdditiveTypeId()).orElseThrow(EntityNotFoundException::new);
+        Additive additive = AdditiveMapper.ADDITIVE_MAPPER.additiveRequestToAdditive(additiveRequest);
+        AdditiveType additiveType = additiveTypeRepository.findById(additiveRequest.getAdditiveTypeId()).orElseThrow(()-> new EntityNotFoundException("Additive type was not found by id "+additiveRequest.getAdditiveTypeId()));
         additive.setAdditiveType(additiveType);
         additiveRepository.save(additive);
         logger.info("createAdditive() - Additive was created");
@@ -65,12 +64,9 @@ public class AdditiveServiceImpl implements AdditiveService {
     @Override
     public void updateAdditive(AdditiveRequest additiveRequest) {
         logger.info("updateAdditive() - Updating additive");
-        Additive additiveInDB = additiveRepository.findById(additiveRequest.getId()).orElseThrow(EntityNotFoundException::new);
-        additiveInDB.setName(additiveRequest.getName());
-        additiveInDB.setPrice(additiveRequest.getPrice());
-        additiveInDB.setStatus(additiveRequest.getStatus());
-        AdditiveType additiveType = additiveTypeRepository.findById(additiveRequest.getAdditiveTypeId()).orElseThrow(EntityNotFoundException::new);
-        additiveInDB.setAdditiveType(additiveType);
+        Additive additiveInDB = additiveRepository.findById(additiveRequest.getId()).orElseThrow(()-> new EntityNotFoundException("Additive was not found by id "+additiveRequest.getId()));
+        AdditiveType additiveType = additiveTypeRepository.findById(additiveRequest.getAdditiveTypeId()).orElseThrow(()-> new EntityNotFoundException("Additive type was not found by id "+additiveRequest.getAdditiveTypeId()));
+        AdditiveMapper.ADDITIVE_MAPPER.setAdditiveRequest(additiveInDB,additiveRequest,additiveType);
         additiveRepository.save(additiveInDB);
         logger.info("updateAdditive() - Additive was updated");
     }
@@ -86,7 +82,7 @@ public class AdditiveServiceImpl implements AdditiveService {
     @Override
     public AdditiveRequest getAdditiveResponseById(Long id) {
         logger.info("getAdditiveResponseById() - Finding additive for additive response by id "+id);
-        Additive additive = additiveRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Additive additive = additiveRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Additive was not found by id "+ id));
         AdditiveRequest additiveRequest = AdditiveMapper.ADDITIVE_MAPPER.additiveTOAdditiveRequest(additive);
         logger.info("getAdditiveResponseById() - Additive was found");
         return additiveRequest;
@@ -138,7 +134,7 @@ public class AdditiveServiceImpl implements AdditiveService {
     @Override
     public AdditiveOrderResponse getAdditiveOrderResponseById(Long id) {
         logger.info("getAdditiveOrderResponseById() - Finding additive for additive order response by id "+id);
-        Additive additive = additiveRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Additive additive = additiveRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Additive was not found by id "+id));
         AdditiveOrderResponse additiveOrderResponse = AdditiveMapper.ADDITIVE_MAPPER.additiveToAdditiveOrderResponse(additive);
         logger.info("getAdditiveOrderResponseById() - Additive was found");
         return additiveOrderResponse;
@@ -150,6 +146,16 @@ public class AdditiveServiceImpl implements AdditiveService {
         Page<Additive> additives = additiveRepository.findAdditivesForAdditiveType(id,pageable);
         List<AdditiveOrderSelect> additiveOrderSelects = AdditiveMapper.ADDITIVE_MAPPER.additiveListToAdditiveOrderSelectList(additives.getContent());
         Page<AdditiveOrderSelect> additiveOrderSelectPage = new PageImpl<>(additiveOrderSelects,pageable,additives.getTotalElements());
+        logger.info("getAdditivesForAdditiveTypeForOrder() - Additives for order were found");
         return additiveOrderSelectPage;
+    }
+
+    @Override
+    public void deleteAdditiveById(Long id) {
+        logger.info("deleteAdditiveById() - Deleting additive by id "+id);
+        Additive additiveInDB = additiveRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Additive was not found by id "+id));
+        additiveInDB.setDeleted(true);
+        additiveRepository.save(additiveInDB);
+        logger.info("deleteAdditiveById() - Additives was deleted");
     }
 }

@@ -234,7 +234,7 @@ public class AdminServiceImpl implements AdminService {
         file.delete();
     }
     private void saveImage(Admin admin){
-        Path path = Paths.get("../../resources/static/assets/img/avatars/1.png");
+        Path path = Paths.get("src/main/resources/static/assets/img/avatars/1.png");
         File file = new File(path.toAbsolutePath().toString());
         String uuidFile = UUID.randomUUID().toString();
         String uniqueName = uuidFile+"."+file.getName();
