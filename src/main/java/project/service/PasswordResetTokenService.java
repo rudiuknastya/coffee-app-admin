@@ -4,8 +4,7 @@ import project.entity.Admin;
 import project.entity.PasswordResetToken;
 
 public interface PasswordResetTokenService {
-    PasswordResetToken savePasswordResetToken(PasswordResetToken passwordResetToken);
+    void updatePassword(String token,String password);
     boolean validatePasswordResetToken(String token);
-    PasswordResetToken getPasswordResetToken(String token);
     String createAndSavePasswordResetToken(Admin admin);
 }

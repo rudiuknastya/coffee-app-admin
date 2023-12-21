@@ -3,6 +3,7 @@ package project.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,8 +23,6 @@ public class SecurityController {
     private final AdminService adminService;
     private final PasswordResetTokenService passwordResetTokenService;
     private final MailService mailService;
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public SecurityController(AdminService adminService, PasswordResetTokenService passwordResetTokenService, MailService mailService) {
         this.adminService = adminService;
@@ -60,12 +59,9 @@ public class SecurityController {
         return "security/successful";
     }
     @PostMapping("/changePassword")
-    public @ResponseBody String setNewPassword(@RequestParam("token")String token,@RequestParam("password")String password, Model model){
+    public @ResponseBody String setNewPassword(@RequestParam("token")String token,@RequestParam("password")String password){
         if(passwordResetTokenService.validatePasswordResetToken(token)){
-            String encodedPassword = bCryptPasswordEncoder.encode(password);
-            PasswordResetToken passwordResetToken = passwordResetTokenService.getPasswordResetToken(token);
-            passwordResetToken.getAdmin().setPassword(encodedPassword);
-            passwordResetTokenService.savePasswordResetToken(passwordResetToken);
+            passwordResetTokenService.updatePassword(token,password);
             return "success";
         } else {
             return "wrong";
@@ -73,11 +69,11 @@ public class SecurityController {
     }
     @PostMapping("/resetPassword")
     public @ResponseBody String resetPassword(HttpServletRequest request, @RequestParam("email")String email){
-        if(email.equals("")){
+        if(email.isEmpty()){
             return "blank";
         }
         Optional<Admin> admin = adminService.getAdminByEmail(email);
-        if(!admin.isPresent()){
+        if(admin.isEmpty()){
             return "wrong";
         }
         String token = passwordResetTokenService.createAndSavePasswordResetToken(admin.get());
