@@ -10,20 +10,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import project.entity.Admin;
-import project.model.userModel.*;
 import project.entity.Language;
-import project.entity.User;
 import project.entity.UserStatus;
+import project.model.userModel.*;
 import project.service.AdminService;
 import project.service.UserService;
-import project.serviceImpl.AdminServiceImpl;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,7 +53,7 @@ public class UserController {
         return userService.searchUser(phone, status, date, pageable);
     }
     @GetMapping("/deleteUser/{id}")
-    public @ResponseBody ResponseEntity deleteUser(@PathVariable Long id){
+    public @ResponseBody ResponseEntity<?> deleteUser(@PathVariable Long id){
         userService.deleteUser(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

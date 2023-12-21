@@ -25,37 +25,19 @@ import static org.springframework.data.jpa.domain.Specification.where;
 import static project.specifications.UserSpecification.*;
 @Service
 public class UserServiceImpl implements UserService {
+    private Logger logger = LogManager.getLogger("serviceLogger");
     private final UserRepository userRepository;
-
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
-    private Logger logger = LogManager.getLogger("serviceLogger");
     @Override
     public Page<UserDTO> getUsers(Pageable pageable) {
         logger.info("getUsers() - Finding all users for page "+ pageable.getPageNumber());
         Page<User> users = userRepository.findAll(byDeleted(), pageable);
-        List<UserDTO> userDTOS = UserMapper.userListToUserDtoList(users.getContent());
+        List<UserDTO> userDTOS = UserMapper.USER_MAPPER.userListToUserDtoList(users.getContent());
         Page<UserDTO> userDTOPage = new PageImpl<>(userDTOS, pageable, users.getTotalElements());
         logger.info("getUsers() - All users were found");
         return userDTOPage;
-    }
-
-    @Override
-    public User getUserById(Long id) {
-        logger.info("getUserById() - Finding user by id "+id);
-        User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        logger.info("getUserById() - User was found");
-        return user;
-    }
-
-    @Override
-    public User saveUser(User user) {
-        logger.info("saveUser() - Saving user");
-        User user1 = userRepository.save(user);
-        logger.info("saveUser() - User was saved");
-        return user1;
     }
 
     @Override
@@ -79,35 +61,19 @@ public class UserServiceImpl implements UserService {
         } else {
             users = userRepository.findAll(byDeleted(),pageable);
         }
-        List<UserDTO> userDTOS = UserMapper.userListToUserDtoList(users.getContent());
+        List<UserDTO> userDTOS = UserMapper.USER_MAPPER.userListToUserDtoList(users.getContent());
         Page<UserDTO> userDTOPage = new PageImpl<>(userDTOS, pageable, users.getTotalElements());
         logger.info("searchUser() - Users were found");
         return userDTOPage;
     }
 
     @Override
-    public User getUserWithProducts(Long id) {
-        logger.info("getUserWithProducts() - Finding user with products by id "+id);
-        User user = userRepository.findUserWithProductsById(id);
-        logger.info("getUserWithProducts() - User was found");
-        return user;
-    }
-
-    @Override
     public UserResponse getUserResponseById(Long id) {
         logger.info("getUserResponseById() - Finding user for user response by id "+id);
-        User user = userRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        UserResponse userRequest = UserMapper.userToUserRequest(user);
+        User user = userRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("User was not found by id "+id));
+        UserResponse userRequest = UserMapper.USER_MAPPER.userToUserRequest(user);
         logger.info("getUserResponseById() - User was found");
         return userRequest;
-    }
-
-    @Override
-    public Optional<User> getUserByPhoneNumber(String phoneNumber) {
-        logger.info("getUserByPhoneNumber() - Finding user by phoneNumber "+phoneNumber);
-        Optional<User> user = userRepository.findByPhoneNumber(phoneNumber);
-        logger.info("getUserByPhoneNumber() - User was found");
-        return user;
     }
 
     @Override
@@ -132,13 +98,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUser(UserRequest userRequest) {
         logger.info("updateUser() - Updating user");
-        User userInDB = userRepository.findById(userRequest.getId()).orElseThrow(EntityNotFoundException::new);
-        userInDB.setEmail(userRequest.getEmail());
-        userInDB.setName(userRequest.getName());
-        userInDB.setPhoneNumber(userRequest.getPhoneNumber());
-        userInDB.setLanguage(userRequest.getLanguage());
-        userInDB.setBirthDate(userRequest.getBirthDate());
-        userInDB.setStatus(userRequest.getStatus());
+        User userInDB = userRepository.findById(userRequest.getId()).orElseThrow(()-> new EntityNotFoundException("User was not found by id "+userRequest.getId()));
+        UserMapper.USER_MAPPER.setUserRequest(userInDB,userRequest);
         userRepository.save(userInDB);
         logger.info("updateUser() - User was updated");
     }
@@ -151,13 +112,5 @@ public class UserServiceImpl implements UserService {
         user.getProducts().clear();
         userRepository.save(user);
         logger.info("deleteUser() - User was deleted");
-    }
-
-    @Override
-    public Optional<User> getUserByEmail(String email) {
-        logger.info("getUserByEmail() - Finding user by email");
-        Optional<User> user = userRepository.findByEmail(email);
-        logger.info("getUserByEmail() - User was found");
-        return user;
     }
 }
