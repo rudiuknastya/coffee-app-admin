@@ -22,11 +22,11 @@ import static project.specifications.LocationSpecification.*;
 
 @Service
 public class LocationServiceImpl implements LocationService {
+    private Logger logger = LogManager.getLogger("serviceLogger");
     private final LocationRepository locationRepository;
     public LocationServiceImpl(LocationRepository locationRepository) {
         this.locationRepository = locationRepository;
     }
-    private Logger logger = LogManager.getLogger("serviceLogger");
     @Override
     public Page<Location> getLocationsByPage(Pageable pageable) {
         logger.info("getLocationsByPage() - Finding all locations for page "+ pageable.getPageNumber());
@@ -63,7 +63,7 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public Location getLocationById(Long id) {
         logger.info("getLocationById() - Finding location with id "+id);
-        Location location = locationRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Location location = locationRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Location was not found by id "+id));
         logger.info("getLocationById() - Location was found");
         return location;
     }
@@ -87,12 +87,8 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public void updateLocation(LocationRequest locationRequest) {
         logger.info("updateLocation() - Updating location");
-        Location locationInDB = locationRepository.findById(locationRequest.getId()).orElseThrow(EntityNotFoundException::new);
-        locationInDB.setCity(locationRequest.getCity());
-        locationInDB.setAddress(locationRequest.getAddress());
-        locationInDB.setCoordinates(locationRequest.getCoordinates());
-        locationInDB.setPhoneNumber(locationRequest.getPhoneNumber());
-        locationInDB.setWorkingHours(locationRequest.getWorkingHours());
+        Location locationInDB = locationRepository.findById(locationRequest.getId()).orElseThrow(()-> new EntityNotFoundException("Location was not found by id "+locationRequest.getId()));
+        LocationMapper.LOCATION_MAPPER.setLocationRequest(locationInDB,locationRequest);
         locationRepository.save(locationInDB);
         logger.info("updateLocation() - Location was updated");
     }
@@ -101,7 +97,6 @@ public class LocationServiceImpl implements LocationService {
     public void createAndSaveLocation(SaveLocationRequest saveLocationRequest) {
         logger.info("createAndSaveLocation() - Creating and saving location");
         Location location = LocationMapper.LOCATION_MAPPER.saveLocationRequestToLocation(saveLocationRequest);
-        location.setDeleted(false);
         locationRepository.save(location);
         logger.info("createAndSaveLocation() - Location was created and saved");
     }
