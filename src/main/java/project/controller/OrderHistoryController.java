@@ -51,9 +51,7 @@ public class OrderHistoryController {
     }
     @PostMapping("/orders/orderHistory/editOrderHistory")
     public @ResponseBody ResponseEntity<?> editOrderHistory(@Valid @ModelAttribute("orderHistory") OrderHistoryDTO orderHistoryDTO){
-        OrderHistory orderHistory = orderHistoryService.getOrderHistoryById(orderHistoryDTO.getId());
-        orderHistory.setComment(orderHistoryDTO.getComment());
-        orderHistoryService.saveOrderHistory(orderHistory);
+        orderHistoryService.updateOrderHistory(orderHistoryDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/orders/orderHistory/searchOrderHistories")

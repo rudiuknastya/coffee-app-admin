@@ -23,18 +23,10 @@ import static org.springframework.data.jpa.domain.Specification.where;
 import static project.specifications.OrderHistorySpecification.*;
 @Service
 public class OrderHistoryServiceImpl implements OrderHistoryService {
+    private Logger logger = LogManager.getLogger("serviceLogger");
     private final OrderHistoryRepository orderHistoryRepository;
-
     public OrderHistoryServiceImpl(OrderHistoryRepository orderHistoryRepository) {
         this.orderHistoryRepository = orderHistoryRepository;
-    }
-    private Logger logger = LogManager.getLogger("serviceLogger");
-    @Override
-    public OrderHistory saveOrderHistory(OrderHistory orderHistory) {
-        logger.info("saveOrderHistory() - Saving order history");
-        OrderHistory orderHistory1 = orderHistoryRepository.save(orderHistory);
-        logger.info("saveOrderHistory() - Order history was saved");
-        return orderHistory1;
     }
 
     @Override
@@ -50,18 +42,19 @@ public class OrderHistoryServiceImpl implements OrderHistoryService {
     @Override
     public OrderHistoryDTO getOrderHistoryResponseById(Long id) {
         logger.info("getOrderHistoryResponseById() - Finding order history for order history response by id "+id);
-        OrderHistory orderHistory = orderHistoryRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        OrderHistory orderHistory = orderHistoryRepository.findById(id).orElseThrow(()->new EntityNotFoundException("Order history was not found by id "+id));
         OrderHistoryDTO orderHistoryDTO = OrderHistoryMapper.ORDER_HISTORY_MAPPER.orderHistoryToOrderHistoryDTO(orderHistory);
         logger.info("getOrderHistoryResponseById() - Order history was found");
         return orderHistoryDTO;
     }
 
     @Override
-    public OrderHistory getOrderHistoryById(Long id) {
-        logger.info("getOrderHistoryById() - Finding order history by id "+id);
-        OrderHistory orderHistory = orderHistoryRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        logger.info("getOrderHistoryById() - Order history was found");
-        return orderHistory;
+    public void updateOrderHistory(OrderHistoryDTO orderHistoryDTO) {
+        logger.info("updateOrderHistory() - Updating order history by id "+orderHistoryDTO.getId());
+        OrderHistory orderHistory = orderHistoryRepository.findById(orderHistoryDTO.getId()).orElseThrow(()->new EntityNotFoundException("Order history was not found by id "+orderHistoryDTO.getId()));
+        orderHistory.setComment(orderHistoryDTO.getComment());
+        orderHistoryRepository.save(orderHistory);
+        logger.info("updateOrderHistory() - Order history was updated");
     }
 
     @Override
@@ -83,20 +76,4 @@ public class OrderHistoryServiceImpl implements OrderHistoryService {
         return orderHistoryResponsePage;
     }
 
-    @Override
-    public void createAndSaveOrderHistory(String event, Order order) {
-        logger.info("createAndSaveOrderHistory() - Creating and saving order history");
-        OrderHistory orderHistory = new OrderHistory(event,LocalDate.now(), LocalTime.now(),order);
-        orderHistoryRepository.save(orderHistory);
-        logger.info("createAndSaveOrderHistory() - Order history was created and saved");
-    }
-
-    @Override
-    public void createAndSaveOrderHistory(String event, Order order, String comment) {
-        logger.info("createAndSaveOrderHistory() - Creating and saving order history with comment");
-        OrderHistory orderHistory = new OrderHistory(event,LocalDate.now(), LocalTime.now(),order);
-        orderHistory.setComment(comment);
-        orderHistoryRepository.save(orderHistory);
-        logger.info("createAndSaveOrderHistory() - Order history was created and saved");
-    }
 }
