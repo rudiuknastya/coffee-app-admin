@@ -7,14 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import project.entity.Additive;
-import project.entity.Order;
-import project.entity.OrderHistory;
+import project.entity.*;
 import project.mapper.OrderItemMapper;
 import project.model.additiveModel.AdditiveOrderRequest;
 import project.model.orderModel.OrderAdditive;
 import project.model.orderItemModel.OrderItemDTO;
-import project.entity.OrderItem;
 import project.model.orderItemModel.OrderItemResponse;
 import project.repository.AdditiveRepository;
 import project.repository.OrderHistoryRepository;
@@ -29,6 +26,7 @@ import java.util.List;
 
 @Service
 public class OrderItemServiceImpl implements OrderItemService {
+    private Logger logger = LogManager.getLogger("serviceLogger");
     private final OrderItemRepository orderItemRepository;
     private final OrderHistoryRepository orderHistoryRepository;
     private final AdditiveRepository additiveRepository;
@@ -38,13 +36,11 @@ public class OrderItemServiceImpl implements OrderItemService {
         this.orderHistoryRepository = orderHistoryRepository;
         this.additiveRepository = additiveRepository;
     }
-
-    private Logger logger = LogManager.getLogger("serviceLogger");
     @Override
     public Page<OrderItemDTO> getOrderItemDTOs(Pageable pageable, Long orderId) {
         logger.info("getOrderItemDTOs() - Finding order items for page "+ pageable.getPageNumber());
         Page<OrderItem> orderItems = orderItemRepository.findAll(byDeleted().and(byOrder(orderId)),pageable);
-        List<OrderItemDTO> orderItemDTOS = OrderItemMapper.orderListToOrderItemDTOList(orderItems.getContent());
+        List<OrderItemDTO> orderItemDTOS = OrderItemMapper.ORDER_ITEM_MAPPER.orderListToOrderItemDTOList(orderItems.getContent());
         Page<OrderItemDTO> orderItemDTOPage = new PageImpl<>(orderItemDTOS, pageable, orderItems.getTotalElements());
         logger.info("getOrderItemDTOs() - Order items were found");
         return orderItemDTOPage;
@@ -54,7 +50,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     public Page<OrderItemDTO> searchOrderItemDTOs(Pageable pageable, Long orderId, String name) {
         logger.info("searchOrderItemDTOs() - Finding order items for page "+ pageable.getPageNumber()+ " and search "+name);
         Page<OrderItem> orderItems = orderItemRepository.findAll(byProductNameLike(name).and(byDeleted()).and(byOrder(orderId)), pageable);
-        List<OrderItemDTO> orderItemDTOS = OrderItemMapper.orderListToOrderItemDTOList(orderItems.getContent());
+        List<OrderItemDTO> orderItemDTOS = OrderItemMapper.ORDER_ITEM_MAPPER.orderListToOrderItemDTOList(orderItems.getContent());
         Page<OrderItemDTO> orderItemDTOPage = new PageImpl<>(orderItemDTOS, pageable, orderItems.getTotalElements());
         logger.info("searchOrderItemDTOs() - Order items were found");
         return orderItemDTOPage;
@@ -71,7 +67,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public OrderItemResponse getOrderItemResponseById(Long id) {
         logger.info("getOrderItemResponseById() - Finding order item for order item response by id "+id);
-        OrderItem orderItem = orderItemRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        OrderItem orderItem = orderItemRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Order item was not found by id "+id));
         OrderItemResponse orderItemRequest = OrderItemMapper.ORDER_ITEM_MAPPER.orderToOrderItemRequest(orderItem);
         logger.info("getOrderItemResponseById() - Order item was found");
         return orderItemRequest;
@@ -97,7 +93,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public OrderItem getOrderItemById(Long id) {
         logger.info("getOrderItemById() - Finding order item by id "+id);
-        OrderItem orderItem = orderItemRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        OrderItem orderItem = orderItemRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Order item was not found by id "+id));
         logger.info("getOrderItemById() - Order item was found");
         return orderItem;
     }
@@ -119,22 +115,45 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
 
     @Override
+    public void cancelOrder(Long id, String comment) {
+        logger.info("cancelOrder() - Canceling order");
+        OrderItem orderItem = orderItemRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Order item was not found by id "+id));
+        String s = "Замовлення скасовано";
+        createAndSaveOrderHistory(s,orderItem.getOrder(),comment);
+        orderItem.setDeleted(true);
+        orderItem.getOrder().setStatus(OrderStatus.CANCELED);
+        orderItemRepository.save(orderItem);
+        logger.info("cancelOrder() - Order was canceled");
+    }
+
+    @Override
+    public void deleteOrderItemById(Long id) {
+        logger.info("deleteOrderItemById() - Deleting order item by id "+id);
+        OrderItem orderItem = orderItemRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Order item was not found by id "+id));
+        String s = "Видалено товар "+orderItem.getProduct().getName()+" із замовлення";
+        createAndSaveOrderHistory(s,orderItem.getOrder());
+        orderItem.setDeleted(true);
+        orderItemRepository.save(orderItem);
+        logger.info("deleteOrderItemById() - Order item was deleted");
+    }
+
+    @Override
     public void updateOrderItem(OrderItemResponse orderItemResponse) {
         logger.info("updateOrderItem() - Updating order item");
-        OrderItem orderItem = orderItemRepository.findById(orderItemResponse.getId()).orElseThrow(EntityNotFoundException::new);
+        OrderItem orderItem = orderItemRepository.findById(orderItemResponse.getId()).orElseThrow(()-> new EntityNotFoundException("Order item was not found by id "+orderItemResponse.getId()));
         if(!orderItem.getQuantity().equals(orderItemResponse.getQuantity())){
             String s = "Змінено кількість товарів у замовленні з "+orderItem.getQuantity()+" на "+orderItemResponse.getQuantity();
             createAndSaveOrderHistory(s,orderItem.getOrder());
         }
-        BigDecimal p = orderItem.getPrice();
-        p = p.divide(new BigDecimal(orderItem.getQuantity()));
-        p = p.multiply(new BigDecimal(orderItemResponse.getQuantity()));
-        BigDecimal op = orderItem.getOrder().getPrice();
-        op = op.subtract(orderItem.getPrice());
-        orderItem.setPrice(p);
+        BigDecimal orderItemPrice = orderItem.getPrice();
+        orderItemPrice = orderItemPrice.divide(new BigDecimal(orderItem.getQuantity()));
+        orderItemPrice = orderItemPrice.multiply(new BigDecimal(orderItemResponse.getQuantity()));
+        BigDecimal orderPrice = orderItem.getOrder().getPrice();
+        orderPrice = orderPrice.subtract(orderItem.getPrice());
+        orderItem.setPrice(orderItemPrice);
         orderItem.setQuantity(orderItemResponse.getQuantity());
-        op = op.add(orderItem.getPrice());
-        orderItem.getOrder().setPrice(op);
+        orderPrice = orderPrice.add(orderItem.getPrice());
+        orderItem.getOrder().setPrice(orderPrice);
         orderItemRepository.save(orderItem);
         logger.info("updateOrderItem() - Order item was updated");
     }
@@ -142,20 +161,20 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     public void updateOrderItemAdditive(AdditiveOrderRequest additiveOrderRequest, Long oldAdditiveId) {
         logger.info("updateOrderItemAdditive() - Updating order item additive");
-        Additive newAdditive = additiveRepository.findById(additiveOrderRequest.getAdditiveId()).orElseThrow(EntityNotFoundException::new);
+        Additive newAdditive = additiveRepository.findById(additiveOrderRequest.getAdditiveId()).orElseThrow(()-> new EntityNotFoundException("Additive was not found by id "+additiveOrderRequest.getAdditiveId()));
         OrderItem orderItem = orderItemRepository.findOrderItemWithAdditives(additiveOrderRequest.getOrderItemId());
         int i = 0;
         for(Additive additive: orderItem.getAdditives()){
             if(additive.getId().equals(oldAdditiveId)){
                 orderItem.getAdditives().set(i,newAdditive);
-                BigDecimal p = orderItem.getPrice();
-                BigDecimal op = orderItem.getOrder().getPrice();
-                op = op.subtract(orderItem.getPrice());
-                p = p.subtract(additive.getPrice().multiply(new BigDecimal(orderItem.getQuantity())));
-                p = p.add(newAdditive.getPrice().multiply(new BigDecimal(orderItem.getQuantity())));
-                orderItem.setPrice(p);
-                op = op.add(orderItem.getPrice());
-                orderItem.getOrder().setPrice(op);
+                BigDecimal orderItemPrice = orderItem.getPrice();
+                BigDecimal orderPrice = orderItem.getOrder().getPrice();
+                orderPrice = orderPrice.subtract(orderItem.getPrice());
+                orderItemPrice = orderItemPrice.subtract(additive.getPrice().multiply(new BigDecimal(orderItem.getQuantity())));
+                orderItemPrice = orderItemPrice.add(newAdditive.getPrice().multiply(new BigDecimal(orderItem.getQuantity())));
+                orderItem.setPrice(orderItemPrice);
+                orderPrice = orderPrice.add(orderItem.getPrice());
+                orderItem.getOrder().setPrice(orderPrice);
                 if(!additive.getName().equals(newAdditive.getName()) ) {
                     String s = "Змінено додаток для товару " + orderItem.getProduct().getName() + " з " + additive.getName() + " на " + newAdditive.getName();
                     createAndSaveOrderHistory(s,orderItem.getOrder());
@@ -169,6 +188,11 @@ public class OrderItemServiceImpl implements OrderItemService {
 
     private void createAndSaveOrderHistory(String event, Order order) {
         OrderHistory orderHistory = new OrderHistory(event, LocalDate.now(), LocalTime.now(),order);
+        orderHistoryRepository.save(orderHistory);
+    }
+    private void createAndSaveOrderHistory(String event, Order order,String comment) {
+        OrderHistory orderHistory = new OrderHistory(event,LocalDate.now(), LocalTime.now(),order);
+        orderHistory.setComment(comment);
         orderHistoryRepository.save(orderHistory);
     }
 }

@@ -18,6 +18,8 @@ public interface OrderItemService {
     OrderItem getOrderItemById(Long id);
     OrderItem saveOrderItem(OrderItem orderItem);
     Long getOrderItemsCount(Long id);
+    void deleteOrderItemById(Long id);
+    void cancelOrder(Long id, String comment);
     void updateOrderItem(OrderItemResponse orderItemResponse);
     void updateOrderItemAdditive(AdditiveOrderRequest additiveOrderRequest, Long oldAdditiveId);
 }

@@ -31,13 +31,11 @@ import java.util.List;
 public class OrderItemController {
     private final OrderItemService orderItemService;
     private final AdditiveService additiveService;
-    private final OrderHistoryService orderHistoryService;
     private int pageSize = 5;
 
-    public OrderItemController(OrderItemService orderItemService, AdditiveService additiveService, OrderHistoryService orderHistoryService) {
+    public OrderItemController(OrderItemService orderItemService, AdditiveService additiveService) {
         this.orderItemService = orderItemService;
         this.additiveService = additiveService;
-        this.orderHistoryService = orderHistoryService;
     }
 
     @GetMapping("/getOrderItems/{id}")
@@ -51,23 +49,14 @@ public class OrderItemController {
         return orderItemService.searchOrderItemDTOs(pageable, id, name);
     }
     @PostMapping("/cancelOrder/{id}")
-    public @ResponseBody ResponseEntity cancelOrder(@PathVariable Long id, @RequestParam("comment")String comment){
-        OrderItem orderItem = orderItemService.getOrderItemById(id);
-        String s = "Замовлення скасовано";
-        orderHistoryService.createAndSaveOrderHistory(s,orderItem.getOrder(),comment);
-        orderItem.setDeleted(true);
-        orderItem.getOrder().setStatus(OrderStatus.CANCELED);
-        orderItemService.saveOrderItem(orderItem);
-        return new ResponseEntity(HttpStatus.OK);
+    public @ResponseBody ResponseEntity<?> cancelOrder(@PathVariable Long id, @RequestParam("comment")String comment){
+        orderItemService.cancelOrder(id,comment);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/deleteOrderItem/{id}")
-    public @ResponseBody ResponseEntity deleteOrderItem(@PathVariable Long id){
-        OrderItem orderItem = orderItemService.getOrderItemById(id);
-        String s = "Видалено товар "+orderItem.getProduct().getName()+" із замовлення";
-        orderHistoryService.createAndSaveOrderHistory(s,orderItem.getOrder());
-        orderItem.setDeleted(true);
-        orderItemService.saveOrderItem(orderItem);
-        return new ResponseEntity(HttpStatus.OK);
+    public @ResponseBody ResponseEntity<?> deleteOrderItem(@PathVariable Long id){
+        orderItemService.deleteOrderItemById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/checkOrderItem/{id}")
@@ -108,8 +97,8 @@ public class OrderItemController {
         return additiveService.getAdditivesForAdditiveTypeForOrder(id, pageable);
     }
     @PostMapping("/orderItem/edit/editOrderItemAdditive")
-    public @ResponseBody ResponseEntity editOrderItemAdditive(@ModelAttribute("orderItemAdditive") AdditiveOrderRequest additiveOrderRequest, BindingResult bindingResult, @RequestParam("oldAdditiveId")Long oldAdditiveId){
+    public @ResponseBody ResponseEntity<?> editOrderItemAdditive(@ModelAttribute("orderItemAdditive") AdditiveOrderRequest additiveOrderRequest, BindingResult bindingResult, @RequestParam("oldAdditiveId")Long oldAdditiveId){
         orderItemService.updateOrderItemAdditive(additiveOrderRequest,oldAdditiveId);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
