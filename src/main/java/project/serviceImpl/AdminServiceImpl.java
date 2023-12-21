@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,21 +40,22 @@ import static project.specifications.AdminSpecification.*;
 
 @Service
 public class AdminServiceImpl implements AdminService {
-    private final AdminRepository adminRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    public AdminServiceImpl(AdminRepository adminRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.adminRepository = adminRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
-    }
     @Value("${upload.path}")
     private String uploadPath;
     private Logger logger = LogManager.getLogger("serviceLogger");
+    private final AdminRepository adminRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public AdminServiceImpl(AdminRepository adminRepository, PasswordEncoder passwordEncoder) {
+        this.adminRepository = adminRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
     @Override
     public Page<AdminDTO> getAdmins(Pageable pageable, String email) {
         logger.info("getAdmins() - Finding admins for page "+ pageable.getPageNumber());
         Page<Admin> admins = adminRepository.findAll(byEmailNot(email),pageable);
-        List<AdminDTO> adminDTOS = AdminMapper.adminListToAdminDTOList(admins.getContent());
+        List<AdminDTO> adminDTOS = AdminMapper.ADMIN_MAPPER.adminListToAdminDtoList(admins.getContent());
         Page<AdminDTO> adminDTOPage = new PageImpl<>(adminDTOS, pageable, admins.getTotalElements());
         logger.info("getAdmins() - Admins were found");
         return adminDTOPage;
@@ -62,7 +64,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Admin getAdminById(Long id) {
         logger.info("getAdminById() - Finding admin by id "+id);
-        Admin admin = adminRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Admin admin = adminRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Admin was not found by id "+id));
         logger.info("getAdminById() - Admin was found");
         return admin;
     }
@@ -88,7 +90,7 @@ public class AdminServiceImpl implements AdminService {
         } else {
             admins = adminRepository.findAll(byEmailNot(email),pageable);
         }
-        List<AdminDTO> adminDTOS = AdminMapper.adminListToAdminDTOList(admins.getContent());
+        List<AdminDTO> adminDTOS = AdminMapper.ADMIN_MAPPER.adminListToAdminDtoList(admins.getContent());
         Page<AdminDTO> adminDTOPage = new PageImpl<>(adminDTOS, pageable, admins.getTotalElements());
         logger.info("searchAdmins() - Admins were found");
         return adminDTOPage;
@@ -100,7 +102,7 @@ public class AdminServiceImpl implements AdminService {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
         String email = userDetails.getUsername();
-        Admin admin = adminRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Admin admin = adminRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Admin was not found by id "+id));
         if(admin.getEmail().equals(email) || (admin.getRoot() != null && !admin.getRoot())){
             throw new HttpClientErrorException(HttpStatus.CONFLICT);
         } else {
@@ -112,10 +114,10 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public AdminResponse getAdminResponseById(Long id) {
         logger.info("getAdminResponseById() - Finding admin for admin response by id "+id);
-        Admin admin = adminRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Admin admin = adminRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Admin was not found by id "+id));
         AdminResponse adminResponse = null;
         if(admin.getRoot() == null){
-            adminResponse = AdminMapper.adminToAdminResponse(admin);
+            adminResponse = AdminMapper.ADMIN_MAPPER.adminToAdminResponse(admin);
         }
         logger.info("getAdminResponseById() - Admin was found");
         return adminResponse;
@@ -132,7 +134,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public ProfileResponse getProfileResponseByEmail(String email) {
         logger.info("getAdminByEmail() - Finding admin for profile response by email "+email);
-        Admin admin = adminRepository.findByEmail(email).orElseThrow(EntityNotFoundException::new);
+        Admin admin = adminRepository.findByEmail(email).orElseThrow(()-> new EntityNotFoundException("Admin was not found by email "+email));
         ProfileResponse profileResponse = AdminMapper.ADMIN_MAPPER.adminToProfileResponse(admin);
         logger.info("getAdminByEmail() - Admin was found");
         return profileResponse;
@@ -149,13 +151,8 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void updateAdmin(AdminRequest adminRequest) {
         logger.info("updateAdmin() - Updating admin");
-        Admin adminInDB = adminRepository.findById(adminRequest.getId()).orElseThrow(EntityNotFoundException::new);
-        adminInDB.setFirstName(adminRequest.getFirstName());
-        adminInDB.setLastName(adminRequest.getLastName());
-        adminInDB.setEmail(adminRequest.getEmail());
-        adminInDB.setCity(adminRequest.getCity());
-        adminInDB.setBirthDate(adminRequest.getBirthDate());
-        adminInDB.setRole(adminRequest.getRole());
+        Admin adminInDB = adminRepository.findById(adminRequest.getId()).orElseThrow(()-> new EntityNotFoundException("Admin was not found by id "+adminRequest.getId()));
+        AdminMapper.ADMIN_MAPPER.setAdminRequest(adminInDB,adminRequest);
         adminRepository.save(adminInDB);
         logger.info("updateAdmin() - Admin was updated");
     }
@@ -163,18 +160,15 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void updateAdminProfile(ProfileRequest profileRequest, MultipartFile file) throws IOException {
         logger.info("updateAdminProfile() - Updating admin profile");
-        Admin admin = adminRepository.findById(profileRequest.getId()).orElseThrow(EntityNotFoundException::new);
-        admin.setFirstName(profileRequest.getFirstName());
-        admin.setLastName(profileRequest.getLastName());
-        admin.setBirthDate(profileRequest.getBirthDate());
-        admin.setCity(profileRequest.getCity());
+        Admin admin = adminRepository.findById(profileRequest.getId()).orElseThrow(()-> new EntityNotFoundException("Admin was not found by id "+profileRequest.getId()));
+        AdminMapper.ADMIN_MAPPER.setProfileRequest(admin, profileRequest);
         if(file != null) {
             updateImage(file, admin);
         }
         if(admin.getRoot() == null){
             admin.setEmail(profileRequest.getEmail());
             if(!profileRequest.getNewPassword().equals("") && !profileRequest.getConfirmNewPassword().equals("") && !profileRequest.getOldPassword().equals("") && profileRequest.getNewPassword().equals(profileRequest.getConfirmNewPassword())){
-                admin.setPassword(bCryptPasswordEncoder.encode(profileRequest.getNewPassword()));
+                admin.setPassword(passwordEncoder.encode(profileRequest.getNewPassword()));
             }
         }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -198,7 +192,7 @@ public class AdminServiceImpl implements AdminService {
         logger.info("createFirstAdmin() - Creating first admin");
         Admin admin = new Admin();
         admin.setEmail("admin@gmail.com");
-        admin.setPassword(bCryptPasswordEncoder.encode("admin"));
+        admin.setPassword(passwordEncoder.encode("admin"));
         admin.setRole(Role.ADMIN);
         admin.setFirstName("");
         admin.setLastName("");
@@ -213,7 +207,7 @@ public class AdminServiceImpl implements AdminService {
     public void createAndSaveAdmin(SaveAdminRequest adminRequest) {
         logger.info("createAndSaveAdmin() - Creating and saving admin");
         Admin admin = AdminMapper.ADMIN_MAPPER.saveAdminRequestToAdmin(adminRequest);
-        admin.setPassword(bCryptPasswordEncoder.encode(adminRequest.getNewPassword()));
+        admin.setPassword(passwordEncoder.encode(adminRequest.getNewPassword()));
         saveImage(admin);
         adminRepository.save(admin);
         logger.info("createAndSaveAdmin() - Admin was created and saved");

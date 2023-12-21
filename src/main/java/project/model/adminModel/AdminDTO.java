@@ -1,7 +1,5 @@
 package project.model.adminModel;
 
-import project.entity.Role;
-
 public class AdminDTO {
     private Long id;
     private String firstName;
