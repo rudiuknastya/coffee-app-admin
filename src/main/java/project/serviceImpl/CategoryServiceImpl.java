@@ -48,7 +48,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category getCategoryById(Long id) {
         logger.info("getCategoryById() - Finding category by id "+id);
-        Category category = categoryRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Category category = categoryRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Category was not found by id "+id));
         logger.info("getCategoryById() - Category was found");
         return category;
     }
@@ -80,7 +80,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryNameDTO getCategoryNameDTOById(Long id) {
         logger.info("getCategoryNameDTOById() - Finding category for category name dto by id "+id);
-        Category category = categoryRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Category category = categoryRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Category was not found by id "+id));
         CategoryNameDTO categoryNameDTO = CategoryMapper.CATEGORY_MAPPER.categoryToCategoryNameDTO(category);
         logger.info("getCategoryNameDTOById() - Category name was found");
         return categoryNameDTO;
@@ -89,7 +89,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void updateCategory(Category category) {
         logger.info("updateCategory() - Updating category");
-        Category categoryInDb = categoryRepository.findById(category.getId()).orElseThrow(EntityNotFoundException::new);
+        Category categoryInDb = categoryRepository.findById(category.getId()).orElseThrow(()-> new EntityNotFoundException("Category was not found by id "+category.getId()));
         categoryInDb.setName(category.getName());
         categoryInDb.setStatus(category.getStatus());
         categoryRepository.save(categoryInDb);
@@ -99,7 +99,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void deleteCategory(Long id) {
         logger.info("deleteCategory() - Deleting category");
-        Category category = categoryRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Category category = categoryRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Category was not found by id "+id));
         category.setDeleted(true);
         List<Product> products = productRepository.findProductsForCategory(id);
         for(Product product: products){
