@@ -56,7 +56,7 @@ public class AwardServiceImpl implements AwardService {
         int i = 0;
         for(Product product: user.getProducts()){
             if(product.getId().equals(oldProductId)){
-                Product product1 = productRepository.findById(newProductId).orElseThrow(EntityNotFoundException::new);
+                Product product1 = productRepository.findById(newProductId).orElseThrow(()-> new EntityNotFoundException("Award was not found by product id "+newProductId));
                 user.getProducts().set(i, product1);
             }
             i++;
