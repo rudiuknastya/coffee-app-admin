@@ -34,6 +34,9 @@ import java.util.UUID;
 
 @Service
 public class ProductServiceImpl implements ProductService {
+    @Value("${upload.path}")
+    private String uploadPath;
+    private Logger logger = LogManager.getLogger("serviceLogger");
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final AdditiveTypeRepository additiveTypeRepository;
@@ -43,40 +46,30 @@ public class ProductServiceImpl implements ProductService {
         this.categoryRepository = categoryRepository;
         this.additiveTypeRepository = additiveTypeRepository;
     }
-    @Value("${upload.path}")
-    private String uploadPath;
-    private Logger logger = LogManager.getLogger("serviceLogger");
     @Override
     public Page<ProductDTO> getProducts(Pageable pageable) {
         logger.info("getProducts() - Finding products for page "+ pageable.getPageNumber());
         Page<Product> products = productRepository.findAll(byDeleted(), pageable);
-        List<ProductDTO> productDTOS = ProductMapper.productToProductDTO(products.getContent());
+        List<ProductDTO> productDTOS = ProductMapper.PRODUCT_MAPPER.productListToProductDTOList(products.getContent());
         Page<ProductDTO> productDTOPage = new PageImpl<>(productDTOS, pageable, products.getTotalElements());
         logger.info("getProducts() - Products were found");
         return productDTOPage;
     }
 
     @Override
-    public Product saveProduct(Product product) {
-        logger.info("saveProduct() - Saving product");
-        Product product1 = productRepository.save(product);
-        logger.info("saveProduct() - Product was saved");
-        return product1;
-    }
-
-    @Override
-    public Product getProductById(Long id) {
-        logger.info("getProductById() - Finding product by id "+ id);
-        Product product = productRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        logger.info("getProductById() - Product was found");
-        return product;
+    public void deleteProductById(Long id) {
+        logger.info("deleteProductById() - Deleting product by id "+id);
+        Product product = productRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Product was not found by id "+id));
+        product.setDeleted(true);
+        productRepository.save(product);
+        logger.info("deleteProductById() - Product was deleted");
     }
 
     @Override
     public ProductResponse getProductResponseById(Long id) {
         logger.info("getProductResponseById() - Finding product for product response by id "+ id);
         Product product = productRepository.findProductWithAdditiveTypesById(id);
-        ProductResponse productResponse = ProductMapper.productToProductResponse(product);
+        ProductResponse productResponse = ProductMapper.PRODUCT_MAPPER.productToProductResponse(product);
         logger.info("getProductResponseById() - Product was found");
         return productResponse;
     }
@@ -112,7 +105,7 @@ public class ProductServiceImpl implements ProductService {
         } else {
             products = productRepository.findAll(byDeleted(),pageable);
         }
-        List<ProductDTO> productDTOS = ProductMapper.productToProductDTO(products.getContent());
+        List<ProductDTO> productDTOS = ProductMapper.PRODUCT_MAPPER.productListToProductDTOList(products.getContent());
         Page<ProductDTO> productDTOPage = new PageImpl<>(productDTOS, pageable, products.getTotalElements());
         logger.info("searchProducts() - Products were found");
         return productDTOPage;
@@ -144,7 +137,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductNameDTO getProductNameDTO(Long id) {
         logger.info("getProductNameDTO() - Finding product for product name dto by id "+id);
-        Product product = productRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Product product = productRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Product was not found by id "+id));
         ProductNameDTO productNameDTO = ProductMapper.PRODUCT_MAPPER.productToProductNameDTO(product);
         logger.info("getProductNameDTO() - Product name was found");
         return productNameDTO;

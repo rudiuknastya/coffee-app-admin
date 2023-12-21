@@ -14,8 +14,6 @@ import java.util.List;
 
 public interface ProductService {
     Page<ProductDTO> getProducts(Pageable pageable);
-    Product saveProduct(Product product);
-    Product getProductById(Long id);
     Product getProductWithAdditiveTypesById(Long id);
     ProductResponse getProductResponseById(Long id);
     Page<ProductDTO> searchProducts(String input, Long categoryId, Pageable pageable);
@@ -23,6 +21,7 @@ public interface ProductService {
     Page<ProductNameDTO> getProductNameDTOS(Pageable pageable, String name);
     ProductNameDTO getProductNameDTO(Long id);
     Long getProductsCount();
+    void deleteProductById(Long id);
     void createAndSaveProduct(ProductRequest productRequest, Long[]adTypes, MultipartFile mainImage, String mainImageName) throws IOException;
     void updateProduct(ProductRequest productRequest, Long[]adTypes, MultipartFile mainImage, String mainImageName) throws IOException;
 }

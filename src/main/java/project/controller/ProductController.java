@@ -71,9 +71,7 @@ public class ProductController {
 
     @GetMapping("/deleteProduct/{id}")
     public @ResponseBody ResponseEntity<?> deleteProduct(@PathVariable Long id){
-        Product product = productService.getProductById(id);
-        product.setDeleted(true);
-        productService.saveProduct(product);
+        productService.deleteProductById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/getProductsCount")
