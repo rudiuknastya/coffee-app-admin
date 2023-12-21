@@ -31,12 +31,10 @@ import java.util.Optional;
 @Controller
 public class OrderController {
     private final OrderService orderService;
-    private final OrderHistoryService orderHistoryService;
     private final AdminService adminService;
 
-    public OrderController(OrderService orderService, OrderHistoryService orderHistoryService, AdminService adminService) {
+    public OrderController(OrderService orderService, AdminService adminService) {
         this.orderService = orderService;
-        this.orderHistoryService = orderHistoryService;
         this.adminService = adminService;
     }
 
@@ -64,11 +62,7 @@ public class OrderController {
     }
     @PostMapping("/deleteOrder/{id}")
     public @ResponseBody ResponseEntity deleteOrder(@PathVariable Long id, @RequestParam("comment")String comment){
-        Order order = orderService.gerOrderById(id);
-        order.setStatus(OrderStatus.CANCELED);
-        String s = "Замовлення скасовано";
-        orderHistoryService.createAndSaveOrderHistory(s,order,comment);
-        orderService.saveOrder(order);
+        orderService.deleteOrderById(id, comment);
         return new ResponseEntity(HttpStatus.OK);
     }
     @GetMapping("/orders/edit/getOrderStatuses")

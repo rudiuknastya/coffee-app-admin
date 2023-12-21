@@ -29,6 +29,7 @@ import java.util.List;
 
 @Service
 public class OrderServiceImpl implements OrderService {
+    private Logger logger = LogManager.getLogger("serviceLogger");
     private final OrderRepository orderRepository;
     private final OrderHistoryRepository orderHistoryRepository;
 
@@ -37,12 +38,11 @@ public class OrderServiceImpl implements OrderService {
         this.orderHistoryRepository = orderHistoryRepository;
     }
 
-    private Logger logger = LogManager.getLogger("serviceLogger");
     @Override
     public Page<OrderDTO> getOrders(Pageable pageable) {
         logger.info("getOrders() - Finding orders for page "+ pageable.getPageNumber());
         Page<Order> orders = orderRepository.findAll(pageable);
-        List<OrderDTO> orderDTOS = OrderMapper.orderListToOrderDTOList(orders.getContent());
+        List<OrderDTO> orderDTOS = OrderMapper.ORDER_MAPPER.orderListToOrderDTOList(orders.getContent());
         Page<OrderDTO> orderDTOPage = new PageImpl<>(orderDTOS,pageable,orders.getTotalElements());
         logger.info("getOrders() - Orders were found");
         return orderDTOPage;
@@ -51,8 +51,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderResponse getOrderResponseById(Long id) {
         logger.info("getOrderResponseById() - Finding order for order response by id "+id);
-        Order order = orderRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-        OrderResponse orderResponse = OrderMapper.orderToOrderRequest(order);
+        Order order = orderRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Order was not found by id "+id));
+        OrderResponse orderResponse = OrderMapper.ORDER_MAPPER.orderToOrderRequest(order);
         logger.info("getOrderResponseById() - Order was found");
         return orderResponse;
     }
@@ -78,7 +78,7 @@ public class OrderServiceImpl implements OrderService {
         } else {
             orders = orderRepository.findAll(pageable);
         }
-        List<OrderDTO> orderDTOS = OrderMapper.orderListToOrderDTOList(orders.getContent());
+        List<OrderDTO> orderDTOS = OrderMapper.ORDER_MAPPER.orderListToOrderDTOList(orders.getContent());
         Page<OrderDTO> orderDTOPage = new PageImpl<>(orderDTOS,pageable,orders.getTotalElements());
         logger.info("searchOrders() - Orders were found");
         return orderDTOPage;
@@ -87,7 +87,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order gerOrderById(Long id) {
         logger.info("gerOrderById() - Finding order by id "+id);
-        Order order = orderRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Order order = orderRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Order was not found by id "+id));
         logger.info("gerOrderById() - Order was found");
         return order;
     }
@@ -117,6 +117,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public void deleteOrderById(Long id, String comment) {
+        logger.info("deleteOrderById() - Deleting order by id "+id);
+        Order order = orderRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Order was not found by id "+id));
+        order.setStatus(OrderStatus.CANCELED);
+        String s = "Замовлення скасовано";
+        createAndSaveOrderHistory(s,order,comment);
+        orderRepository.save(order);
+        logger.info("deleteOrderById() - Order was deleted");
+    }
+
+    @Override
     public List<Long> getOrdersCountInMonth() {
         logger.info("getOrdersCountInMonth() - Finding orders count in month");
         List<Long> counts = orderRepository.findOrdersCountInMonth();
@@ -127,7 +138,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void updateOrder(OrderRequest orderRequest) {
         logger.info("updateOrder() - Updating order");
-        Order orderInDb = orderRepository.findById(orderRequest.getId()).orElseThrow(EntityNotFoundException::new);
+        Order orderInDb = orderRepository.findById(orderRequest.getId()).orElseThrow(()-> new EntityNotFoundException("Order was not found by id "+orderRequest.getId()));
         if(!orderInDb.getStatus().equals(orderRequest.getStatus())){
             String s = "Змінено статус "+orderInDb.getStatus().getStatusName()+" на "+orderRequest.getStatus().getStatusName();
             createAndSaveOrderHistory(s,orderInDb);
@@ -140,7 +151,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void updateOrderWithDelivery(OrderRequest orderRequest, DeliveryDTO deliveryDTO) {
         logger.info("updateOrderWithDelivery() - Updating order with delivery");
-        Order orderInDb = orderRepository.findById(orderRequest.getId()).orElseThrow(EntityNotFoundException::new);
+        Order orderInDb = orderRepository.findById(orderRequest.getId()).orElseThrow(()-> new EntityNotFoundException("Order was not found by id "+orderRequest.getId()));
         if(!orderInDb.getStatus().equals(orderRequest.getStatus())){
             String s = "Змінено статус "+orderInDb.getStatus().getStatusName()+" на "+orderRequest.getStatus().getStatusName();
             createAndSaveOrderHistory(s,orderInDb);
@@ -199,6 +210,11 @@ public class OrderServiceImpl implements OrderService {
 
     private void createAndSaveOrderHistory(String event, Order order) {
         OrderHistory orderHistory = new OrderHistory(event,LocalDate.now(), LocalTime.now(),order);
+        orderHistoryRepository.save(orderHistory);
+    }
+    private void createAndSaveOrderHistory(String event, Order order,String comment) {
+        OrderHistory orderHistory = new OrderHistory(event,LocalDate.now(), LocalTime.now(),order);
+        orderHistory.setComment(comment);
         orderHistoryRepository.save(orderHistory);
     }
 }

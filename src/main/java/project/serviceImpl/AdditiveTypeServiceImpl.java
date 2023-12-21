@@ -121,7 +121,6 @@ public class AdditiveTypeServiceImpl implements AdditiveTypeService {
     public void createAndSaveAdditiveType(AdditiveTypeRequest additiveTypeRequest) {
         logger.info("deleteAdditiveType() - Creating and saving additive type");
         AdditiveType additiveType = AdditiveTypeMapper.ADDITIVE_TYPE_MAPPER.additiveTypeRequestToadditiveType(additiveTypeRequest);
-        //additiveType.setDeleted(false);
         additiveTypeRepository.save(additiveType);
         logger.info("createAndSaveAdditiveType() - Additive type was created and saved");
     }

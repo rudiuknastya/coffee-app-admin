@@ -24,5 +24,6 @@ public interface OrderService {
     List<Long> getOrdersCountInMonth();
     void updateOrderWithDelivery(OrderRequest orderRequest, DeliveryDTO deliveryDTO);
     void updateOrder(OrderRequest orderRequest);
+    void deleteOrderById(Long id, String comment);
 
 }
