@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import org.springframework.format.annotation.DateTimeFormat;
 import project.validators.confirmPassword.PasswordMatching;
 import project.validators.emailValidation.EmailExist;
+import project.validators.newPasswordValidator.NewPasswordValid;
 import project.validators.notEmptyPasswords.NotEmptyOldPasswordPassword;
 
 import java.time.LocalDate;
@@ -41,6 +42,7 @@ public class ProfileRequest {
     @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
     private String oldPassword;
     @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
+    @NewPasswordValid
     private String newPassword;
     @Size(max=100, message = "Розмір поля має бути не більше 100 символів")
     private String confirmNewPassword;
