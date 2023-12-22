@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 import project.entity.Admin;
@@ -25,6 +26,7 @@ import project.repository.AdminRepository;
 import project.service.AdminService;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -228,8 +230,12 @@ public class AdminServiceImpl implements AdminService {
         file.delete();
     }
     private void saveImage(Admin admin){
-        Path path = Paths.get("src/main/resources/static/assets/img/avatars/1.png");
-        File file = new File(path.toAbsolutePath().toString());
+        File file = null;
+        try {
+            file = ResourceUtils.getFile("classpath:static/assets/img/avatars/1.png");
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         String uuidFile = UUID.randomUUID().toString();
         String uniqueName = uuidFile+"."+file.getName();
         File copyDirectory = new File(uploadPath);
