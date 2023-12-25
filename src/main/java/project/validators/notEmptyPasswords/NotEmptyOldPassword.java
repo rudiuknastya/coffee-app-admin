@@ -11,7 +11,7 @@ import static java.lang.annotation.ElementType.TYPE;
 @Constraint(validatedBy = NotEmptyOldPasswordValidator.class)
 @Target({TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface NotEmptyOldPasswordPassword {
+public @interface NotEmptyOldPassword {
     String oldPassword();
     String newPassword();
 

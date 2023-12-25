@@ -8,14 +8,14 @@ import org.springframework.format.annotation.DateTimeFormat;
 import project.validators.confirmPassword.PasswordMatching;
 import project.validators.emailValidation.EmailExist;
 import project.validators.newPasswordValidator.NewPasswordValid;
-import project.validators.notEmptyPasswords.NotEmptyOldPasswordPassword;
+import project.validators.notEmptyPasswords.NotEmptyOldPassword;
 
 import java.time.LocalDate;
 @EmailExist(
         id = "id",
         email = "email"
 )
-@NotEmptyOldPasswordPassword(
+@NotEmptyOldPassword(
         newPassword = "newPassword",
         oldPassword = "oldPassword"
 )

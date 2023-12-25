@@ -17,10 +17,7 @@ public class FieldPhoneNumberExistValidator implements ConstraintValidator<Field
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
         Optional<Location> location = locationRepository.findByPhoneNumber(s);
-        if(location.isPresent()){
-            return false;
-        }
-        return true;
+        return location.isEmpty();
 
     }
 }

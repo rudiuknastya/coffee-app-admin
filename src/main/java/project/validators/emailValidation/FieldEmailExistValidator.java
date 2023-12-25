@@ -18,10 +18,7 @@ public class FieldEmailExistValidator implements ConstraintValidator<FieldEmailE
     @Override
     public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
         Optional<Admin> admin = adminRepository.findByEmail(s);
-        if(admin.isPresent()){
-            return false;
-        }
-        return true;
+        return admin.isEmpty();
 
     }
 }

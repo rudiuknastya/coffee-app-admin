@@ -5,12 +5,12 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.BeanWrapperImpl;
 
-public class NotEmptyOldPasswordValidator implements ConstraintValidator<NotEmptyOldPasswordPassword,Object> {
+public class NotEmptyOldPasswordValidator implements ConstraintValidator<NotEmptyOldPassword,Object> {
     private String oldPassword;
     private String newPassword;
 
     @Override
-    public void initialize(NotEmptyOldPasswordPassword constraintAnnotation) {
+    public void initialize(NotEmptyOldPassword constraintAnnotation) {
         this.newPassword = constraintAnnotation.newPassword();
         this.oldPassword = constraintAnnotation.oldPassword();
     }
