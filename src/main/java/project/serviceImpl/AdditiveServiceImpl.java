@@ -74,7 +74,7 @@ public class AdditiveServiceImpl implements AdditiveService {
     @Override
     public Additive getAdditiveById(Long id) {
         logger.info("getAdditiveById() - Finding additive by id "+id);
-        Additive additive = additiveRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        Additive additive = additiveRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("Additive was not found by id "+id));
         logger.info("getAdditiveById() - Additive was found");
         return additive;
     }
@@ -103,6 +103,12 @@ public class AdditiveServiceImpl implements AdditiveService {
             return additiveRepository.findAll(byDeleted().and(byPriceLessThan(to)), pageable);
         } else if (name == null  &&  additiveType == null && from != null && to == null) {
             return additiveRepository.findAll(byDeleted().and(byPriceGreaterThan(from)), pageable);
+        } else if(name == null  &&  additiveType != null && from != null && to != null){
+            return additiveRepository.findAll(byDeleted().and(byPriceBetween(from,to)).and(byAdditiveType(additiveType)), pageable);
+        } else if (name == null  &&  additiveType != null && from == null && to != null){
+            return additiveRepository.findAll(byDeleted().and(byPriceLessThan(to)).and(byAdditiveType(additiveType)), pageable);
+        } else if (name == null  &&  additiveType != null && from != null && to == null) {
+            return additiveRepository.findAll(byDeleted().and(byPriceGreaterThan(from)).and(byAdditiveType(additiveType)), pageable);
         } else if (name != null  &&  additiveType == null && from != null && to != null) {
             return additiveRepository.findAll(byDeleted().and(byPriceBetween(from,to)).and(byName(name)), pageable);
         } else if (name != null  &&  additiveType == null && from == null && to != null){
