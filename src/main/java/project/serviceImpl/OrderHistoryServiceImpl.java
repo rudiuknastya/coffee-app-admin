@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import project.entity.Order;
 import project.entity.OrderHistory;
@@ -60,20 +61,21 @@ public class OrderHistoryServiceImpl implements OrderHistoryService {
     @Override
     public Page<OrderHistoryResponse> searchOrderHistories(Long id, String event, LocalDate date, Pageable pageable) {
         logger.info("searchOrderHistories() - Searching order history by order id "+id+" and search "+event+" and date "+date);
-        Page<OrderHistory> orderHistories;
-        if(date != null &&  (event == null || event.equals(""))) {
-            orderHistories = orderHistoryRepository.findAll(where(byOrderId(id).and(byDate(date))),pageable);
-        } else if((event != null && !event.equals(""))  && date == null){
-            orderHistories = orderHistoryRepository.findAll(where(byEventLike(event).and(byOrderId(id))),pageable);
-        } else if((event != null && !event.equals("")) && date != null) {
-            orderHistories = orderHistoryRepository.findAll(where(byDate(date).and(byEventLike(event).and(byOrderId(id)))),pageable);
-        } else {
-            orderHistories = orderHistoryRepository.findAll(byOrderId(id),pageable);
-        }
+        Page<OrderHistory> orderHistories = filterOrderHistories(id, event, date, pageable);
         List<OrderHistoryResponse> orderHistoryResponses = OrderHistoryMapper.ORDER_HISTORY_MAPPER.orderHistoryToOrderHistoryResponse(orderHistories.getContent());
         Page<OrderHistoryResponse> orderHistoryResponsePage = new PageImpl<>(orderHistoryResponses,pageable,orderHistories.getTotalElements());
         logger.info("searchOrderHistories() - Order histories were found");
         return orderHistoryResponsePage;
+    }
+    private Page<OrderHistory> filterOrderHistories(Long id, String event, LocalDate date, Pageable pageable){
+        Specification<OrderHistory> specification = Specification.where(byOrderId(id));
+        if(event != null){
+            specification = specification.and(byEventLike(event));
+        }
+        if(date != null){
+            specification = specification.and(byDate(date));
+        }
+        return orderHistoryRepository.findAll(specification,pageable);
     }
 
 }

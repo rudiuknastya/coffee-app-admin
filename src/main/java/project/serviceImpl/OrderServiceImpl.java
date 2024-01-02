@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import project.entity.OrderHistory;
 import project.entity.OrderStatus;
@@ -60,28 +61,24 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Page<OrderDTO> searchOrders(Pageable pageable, String address, OrderStatus status, LocalDate date) {
         logger.info("searchOrders() - Finding orders for page "+ pageable.getPageNumber() + " for status "+ status+" for address "+address+" for date "+date);
-        Page<Order> orders;
-        if(status != null  &&  (address == null || address.equals("")) && date == null) {
-            orders = orderRepository.findAll(byStatus(status),pageable);
-        } else if((address != null && !address.equals(""))  && status == null && date == null) {
-            orders = orderRepository.findAll(byAddressLike(address), pageable);
-        } else if(date != null  &&  (address == null || address.equals("")) && status == null) {
-            orders = orderRepository.findAll(byOrderDate(date), pageable);
-        } else if(date != null  &&  (address != null || !address.equals("")) && status == null){
-            orders = orderRepository.findAll(where(byAddressLike(address).and(byOrderDate(date))),pageable);
-        } else if(date != null  &&  (address == null || address.equals("")) && status != null) {
-            orders = orderRepository.findAll(where(byStatus(status).and(byOrderDate(date))), pageable);
-        } else if(status != null  &&  (address != null || !address.equals("")) && date == null) {
-            orders = orderRepository.findAll(where(byStatus(status).and(byAddressLike(address))),pageable);
-        } else if((address != null && !address.equals("")) && status != null && date != null) {
-            orders = orderRepository.findAll(where(byStatus(status).and(byAddressLike(address)).and(byOrderDate(date))),pageable);
-        } else {
-            orders = orderRepository.findAll(pageable);
-        }
+        Page<Order> orders = filterOrders(pageable, address, status, date);
         List<OrderDTO> orderDTOS = OrderMapper.ORDER_MAPPER.orderListToOrderDTOList(orders.getContent());
         Page<OrderDTO> orderDTOPage = new PageImpl<>(orderDTOS,pageable,orders.getTotalElements());
         logger.info("searchOrders() - Orders were found");
         return orderDTOPage;
+    }
+    private Page<Order> filterOrders(Pageable pageable, String address, OrderStatus status, LocalDate date){
+        Specification<Order> specification = Specification.where(null);
+        if(address != null){
+            specification = specification.and(byAddressLike(address));
+        }
+        if(status != null){
+            specification = specification.and(byStatus(status));
+        }
+        if(date != null){
+            specification = specification.and(byOrderDate(date));
+        }
+        return orderRepository.findAll(specification, pageable);
     }
 
     @Override

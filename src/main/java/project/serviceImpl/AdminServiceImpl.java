@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
+import project.entity.Additive;
 import project.entity.Admin;
 import project.entity.Role;
 import project.mapper.AdminMapper;
@@ -37,6 +39,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.springframework.data.jpa.domain.Specification.where;
+import static project.specifications.AdditiveSpecification.byDeleted;
 import static project.specifications.AdminSpecification.*;
 
 
@@ -82,20 +85,21 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public Page<AdminDTO> searchAdmins(String input, Role role,String email, Pageable pageable) {
         logger.info("searchAdmins() - Finding admins for input "+ input + "and role "+role);
-        Page<Admin> admins;
-        if(role != null  &&  (input == null || input.equals(""))) {
-            admins = adminRepository.findAll(where(byRole(role).and(byEmailNot(email))),pageable);
-        } else if((input != null && !input.equals(""))  && role == null){
-            admins = adminRepository.findAll(where(byEmailNot(email).and(byEmailLike(input).or(byLastNameLike(input)))),pageable);
-        } else if((input != null && !input.equals("")) && role != null) {
-            admins = adminRepository.findAll(where(byRole(role).and(byEmailNot(email)).and(byLastNameLike(input).or(byEmailLike(input)))),pageable);
-        } else {
-            admins = adminRepository.findAll(byEmailNot(email),pageable);
-        }
+        Page<Admin> admins = filterAdmins(input, role, email, pageable);
         List<AdminDTO> adminDTOS = AdminMapper.ADMIN_MAPPER.adminListToAdminDtoList(admins.getContent());
         Page<AdminDTO> adminDTOPage = new PageImpl<>(adminDTOS, pageable, admins.getTotalElements());
         logger.info("searchAdmins() - Admins were found");
         return adminDTOPage;
+    }
+    private Page<Admin> filterAdmins(String input, Role role,String email, Pageable pageable){
+        Specification<Admin> specification = Specification.where(byEmailNot(email));
+        if(role != null){
+            specification = specification.and(byRole(role));
+        }
+        if(input != null){
+            specification = specification.and(byLastNameLike(input).or(byEmailLike(input)));
+        }
+        return adminRepository.findAll(specification,pageable);
     }
 
     @Override

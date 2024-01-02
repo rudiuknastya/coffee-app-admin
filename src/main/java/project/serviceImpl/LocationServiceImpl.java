@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import project.entity.Location;
 import project.mapper.LocationMapper;
@@ -38,18 +39,18 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public Page<Location> getLocationsByAddressAndCity(String address, String city, Pageable pageable) {
         logger.info("getLocationsByAddress() - Finding all locations for address "+ address+ " and city "+ city);
-        Page<Location> locations;
-        if((city != null && !city.equals("")) &&  (address == null || address.equals(""))) {
-            locations = locationRepository.findAll(where(byCity(city).and(byDeleted())),pageable);
-        } else if((address != null && !address.equals(""))  && (city == null || city.equals(""))){
-            locations = locationRepository.findAll(where(byAddressLike(address).and(byDeleted())),pageable);
-        } else if((address != null && !address.equals("")) && (city != null && !city.equals(""))) {
-            locations = locationRepository.findAll(where(byCity(city).and(byAddressLike(address).and(byDeleted()))),pageable);
-        } else {
-            locations = locationRepository.findAll(byDeleted(),pageable);
-        }
+        Page<Location> locations = filterLocations(address, city, pageable);
         logger.info("getLocationsByAddress() - All locations were found");
         return locations;
+    }
+    private Page<Location> filterLocations(String address, String city, Pageable pageable){
+        Specification<Location> specification = Specification.where(byDeleted());
+        if(address != null){
+            specification = specification.and(byAddressLike(address));
+        } if(city != null && !city.isEmpty()){
+            specification = specification.and(byCity(city));
+        }
+        return locationRepository.findAll(specification,pageable);
     }
 
     @Override

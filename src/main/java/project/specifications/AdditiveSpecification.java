@@ -24,11 +24,11 @@ public interface AdditiveSpecification {
     }
     static Specification<Additive> byPriceGreaterThan(BigDecimal from){
         return (root, query, builder) ->
-                builder.greaterThan(root.get("price"),from);
+                builder.greaterThanOrEqualTo(root.get("price"),from);
     }
     static Specification<Additive> byPriceLessThan(BigDecimal to){
         return (root, query, builder) ->
-                builder.lessThan(root.get("price"),to);
+                builder.lessThanOrEqualTo(root.get("price"),to);
     }
     static Specification<Additive> byDeleted(){
         return (root, query, builder) ->

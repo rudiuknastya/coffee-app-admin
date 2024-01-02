@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import project.entity.AdditiveType;
 import project.model.additiveModel.AdditiveDTO;
@@ -97,37 +98,22 @@ public class AdditiveServiceImpl implements AdditiveService {
         return additiveDTOPage;
     }
     private Page<Additive> filterAdditives(String name, Long additiveType, BigDecimal from, BigDecimal to, Pageable pageable){
-        if(name == null  &&  additiveType == null && from != null && to != null){
-            return additiveRepository.findAll(byDeleted().and(byPriceBetween(from,to)), pageable);
-        } else if (name == null  &&  additiveType == null && from == null && to != null){
-            return additiveRepository.findAll(byDeleted().and(byPriceLessThan(to)), pageable);
-        } else if (name == null  &&  additiveType == null && from != null && to == null) {
-            return additiveRepository.findAll(byDeleted().and(byPriceGreaterThan(from)), pageable);
-        } else if(name == null  &&  additiveType != null && from != null && to != null){
-            return additiveRepository.findAll(byDeleted().and(byPriceBetween(from,to)).and(byAdditiveType(additiveType)), pageable);
-        } else if (name == null  &&  additiveType != null && from == null && to != null){
-            return additiveRepository.findAll(byDeleted().and(byPriceLessThan(to)).and(byAdditiveType(additiveType)), pageable);
-        } else if (name == null  &&  additiveType != null && from != null && to == null) {
-            return additiveRepository.findAll(byDeleted().and(byPriceGreaterThan(from)).and(byAdditiveType(additiveType)), pageable);
-        } else if (name != null  &&  additiveType == null && from != null && to != null) {
-            return additiveRepository.findAll(byDeleted().and(byPriceBetween(from,to)).and(byName(name)), pageable);
-        } else if (name != null  &&  additiveType == null && from == null && to != null){
-            return additiveRepository.findAll(byDeleted().and(byPriceLessThan(to)).and(byName(name)), pageable);
-        } else if (name != null  &&  additiveType == null && from != null && to == null) {
-            return additiveRepository.findAll(byDeleted().and(byPriceGreaterThan(from)).and(byName(name)), pageable);
-        }else if (name != null  &&  additiveType != null && from != null && to != null) {
-            return additiveRepository.findAll(byDeleted().and(byPriceBetween(from,to)).and(byName(name)).and(byAdditiveType(additiveType)), pageable);
-        } else if (name != null  &&  additiveType != null && from == null && to != null){
-            return additiveRepository.findAll(byDeleted().and(byPriceLessThan(to)).and(byName(name)).and(byAdditiveType(additiveType)), pageable);
-        } else if (name != null  &&  additiveType != null && from != null && to == null) {
-            return additiveRepository.findAll(byDeleted().and(byPriceGreaterThan(from)).and(byName(name)).and(byAdditiveType(additiveType)), pageable);
-        } else if (name != null  &&  additiveType != null && from == null && to == null) {
-            return additiveRepository.findAll(byDeleted().and(byName(name)).and(byAdditiveType(additiveType)), pageable);
-        } else if (name != null  &&  additiveType == null && from == null && to == null) {
-            return additiveRepository.findAll(byDeleted().and(byName(name)), pageable);
-        } else {
-            return additiveRepository.findAll(byDeleted(),pageable);
+        Specification<Additive> specification = Specification.where(byDeleted());
+        if(name != null){
+            specification = specification.and(byName(name));
         }
+        if(additiveType != null){
+            specification = specification.and(byAdditiveType(additiveType));
+        }
+        if(from != null && to != null){
+            specification = specification.and(byPriceBetween(from, to));
+        } else if(from == null && to != null){
+            specification = specification.and(byPriceLessThan(to));
+        } else if(from != null && to == null){
+            specification = specification.and(byPriceGreaterThan(from));
+        }
+        return additiveRepository.findAll(specification,pageable);
+
     }
     @Override
     public List<Additive> getAdditivesForAdditiveType(Long id) {

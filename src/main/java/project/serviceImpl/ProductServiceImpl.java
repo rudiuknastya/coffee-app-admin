@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import project.entity.AdditiveType;
@@ -85,30 +86,26 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<ProductDTO> searchProducts(String input, Long categoryId, Pageable pageable) {
         logger.info("searchProducts() - Finding products for input "+ input+" and category id "+ categoryId);
-        Page<Product> products;
-        if((categoryId != null && !categoryId.equals(0L)) &&  (input == null || input.equals(""))){
-            products = productRepository.findAll(byDeleted().and(byCategory(categoryId)), pageable);
-        } else if((input != null && !input.equals(""))  && (categoryId == null || categoryId.equals(0L))) {
-            try {
-                Integer price = Integer.parseInt(input);
-                products = productRepository.findAll(byDeleted().and(byPrice(price)),pageable);
-            } catch (NumberFormatException e) {
-                products = productRepository.findAll(byDeleted().and(byNameLike(input)),pageable);
-            }
-        } else if((input != null && !input.equals(""))  && (categoryId != null && !categoryId.equals(0L))){
-            try {
-                Integer price = Integer.parseInt(input);
-                products = productRepository.findAll(byDeleted().and(byPrice(price).and(byCategory(categoryId))),pageable);
-            } catch (NumberFormatException e) {
-                products = productRepository.findAll(byDeleted().and(byNameLike(input).and(byCategory(categoryId))),pageable);
-            }
-        } else {
-            products = productRepository.findAll(byDeleted(),pageable);
-        }
+        Page<Product> products = filterProducts(input, categoryId, pageable);
         List<ProductDTO> productDTOS = ProductMapper.PRODUCT_MAPPER.productListToProductDTOList(products.getContent());
         Page<ProductDTO> productDTOPage = new PageImpl<>(productDTOS, pageable, products.getTotalElements());
         logger.info("searchProducts() - Products were found");
         return productDTOPage;
+    }
+    private Page<Product> filterProducts(String input, Long categoryId, Pageable pageable){
+        Specification<Product> specification = Specification.where(byDeleted());
+        if(input != null) {
+            try {
+                Integer price = Integer.parseInt(input);
+                specification = specification.and(byPrice(price));
+            } catch (NumberFormatException e) {
+                specification = specification.and(byNameLike(input));
+            }
+        }
+        if (categoryId != null){
+            specification = specification.and(byCategory(categoryId));
+        }
+        return productRepository.findAll(specification,pageable);
     }
 
     @Override

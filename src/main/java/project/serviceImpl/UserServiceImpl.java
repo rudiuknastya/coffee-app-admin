@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import project.model.userModel.UserDTO;
 import project.entity.User;
@@ -26,15 +27,19 @@ import static project.specifications.UserSpecification.*;
 @Service
 public class UserServiceImpl implements UserService {
     private Logger logger = LogManager.getLogger("serviceLogger");
+    private final UserMapper userMapper;
     private final UserRepository userRepository;
-    public UserServiceImpl(UserRepository userRepository) {
+
+    public UserServiceImpl(UserMapper userMapper, UserRepository userRepository) {
+        this.userMapper = userMapper;
         this.userRepository = userRepository;
     }
+
     @Override
     public Page<UserDTO> getUsers(Pageable pageable) {
         logger.info("getUsers() - Finding all users for page "+ pageable.getPageNumber());
         Page<User> users = userRepository.findAll(byDeleted(), pageable);
-        List<UserDTO> userDTOS = UserMapper.USER_MAPPER.userListToUserDtoList(users.getContent());
+        List<UserDTO> userDTOS = userMapper.userListToUserDtoList(users.getContent());
         Page<UserDTO> userDTOPage = new PageImpl<>(userDTOS, pageable, users.getTotalElements());
         logger.info("getUsers() - All users were found");
         return userDTOPage;
@@ -43,35 +48,30 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<UserDTO> searchUser(String phone, UserStatus status, LocalDate date, Pageable pageable) {
         logger.info("searchUser() - Finding users for phone "+ phone + " and status "+status);
-        Page<User> users;
-        if(status != null  &&  (phone == null || phone.equals("")) && date == null) {
-            users = userRepository.findAll(byStatus(status).and(byDeleted()),pageable);
-        } else if((phone != null && !phone.equals(""))  && status == null && date == null) {
-            users = userRepository.findAll(where(byPhoneNumberLike(phone).and(byDeleted())),pageable);
-        } else if(date != null && status == null && (phone == null || phone.equals(""))) {
-            users = userRepository.findAll(where(byBirthDate(date).and(byDeleted())),pageable);
-        } else if(date != null  &&  (phone != null && !phone.equals("")) && status == null){
-            users = userRepository.findAll(where(byPhoneNumberLike(phone).and(byBirthDate(date)).and(byDeleted())),pageable);
-        } else if(date != null  &&  (phone == null || phone.equals("")) && status != null) {
-            users = userRepository.findAll(where(byStatus(status).and(byBirthDate(date)).and(byDeleted())), pageable);
-        } else if(status != null  &&  (phone != null && !phone.equals("")) && date == null) {
-            users = userRepository.findAll(where(byStatus(status).and(byPhoneNumberLike(phone).and(byDeleted()))),pageable);
-        } else if((phone != null && !phone.equals("")) && status != null && date != null) {
-            users = userRepository.findAll(where(byStatus(status).and(byPhoneNumberLike(phone)).and(byBirthDate(date)).and(byDeleted())),pageable);
-        } else {
-            users = userRepository.findAll(byDeleted(),pageable);
-        }
-        List<UserDTO> userDTOS = UserMapper.USER_MAPPER.userListToUserDtoList(users.getContent());
+        Page<User> users = filterUsers(phone, status, date, pageable);
+        List<UserDTO> userDTOS = userMapper.userListToUserDtoList(users.getContent());
         Page<UserDTO> userDTOPage = new PageImpl<>(userDTOS, pageable, users.getTotalElements());
         logger.info("searchUser() - Users were found");
         return userDTOPage;
+    }
+    private Page<User> filterUsers(String phone, UserStatus status, LocalDate date, Pageable pageable){
+        Specification<User> specification = Specification.where(byDeleted());
+        if(phone != null){
+            specification = specification.and(byPhoneNumberLike(phone));
+        } if(status != null){
+            specification = specification.and(byStatus(status));
+        }
+        if(date != null){
+            specification = specification.and(byBirthDate(date));
+        }
+        return userRepository.findAll(specification, pageable);
     }
 
     @Override
     public UserResponse getUserResponseById(Long id) {
         logger.info("getUserResponseById() - Finding user for user response by id "+id);
         User user = userRepository.findById(id).orElseThrow(()-> new EntityNotFoundException("User was not found by id "+id));
-        UserResponse userRequest = UserMapper.USER_MAPPER.userToUserRequest(user);
+        UserResponse userRequest = userMapper.userToUserRequest(user);
         logger.info("getUserResponseById() - User was found");
         return userRequest;
     }
@@ -98,8 +98,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUser(UserRequest userRequest) {
         logger.info("updateUser() - Updating user");
-        User userInDB = userRepository.findById(userRequest.getId()).orElseThrow(()-> new EntityNotFoundException("User was not found by id "+userRequest.getId()));
-        UserMapper.USER_MAPPER.setUserRequest(userInDB,userRequest);
+        User userInDB = userRepository.findById(userRequest.id()).orElseThrow(()-> new EntityNotFoundException("User was not found by id "+userRequest.id()));
+        userMapper.setUserRequest(userInDB,userRequest);
         userRepository.save(userInDB);
         logger.info("updateUser() - User was updated");
     }
