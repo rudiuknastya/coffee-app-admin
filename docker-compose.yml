@@ -1,0 +1,53 @@
+version: "3.1"
+services:
+  mysqldb:
+    image: mysql:8.2
+    restart: always
+    ports:
+      - 3307:3306
+    networks:
+      - coffee-app-network
+    environment:
+      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_DATABASE=coffee_app
+    volumes:
+      - coffee-app-db-volume:/var/lib/mysql
+
+  coffee-app-admin:
+    image: coffe-app-admin-image
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - coffee-app-network
+    environment:
+      - MYSQL_HOST=mysqldb
+      - MYSQL_USER=
+      - MYSQL_PASSWORD=
+    volumes:
+      - coffee-app-volume:/home/projects/A.Rudiuk/Coffee-app/uploads
+    depends_on:
+      - mysqldb
+
+  coffee-app-rest:
+    image: coffe-app-rest-image
+    restart: always
+    ports:
+      - 9090:8080
+    networks:
+      - coffee-app-network
+    environment:
+      - MYSQL_HOST=mysqldb
+      - MYSQL_USER=
+      - MYSQL_PASSWORD=
+    volumes:
+      - coffee-app-volume:/home/projects/A.Rudiuk/Coffee-app/uploads
+    depends_on:
+      - mysqldb
+networks:
+  coffee-app-network:
+    external: true
+
+volumes:
+  coffee-app-volume:
+  coffee-app-db-volume:
